@@ -14,12 +14,17 @@
     "web:test": "npm --workspace web run test",
     "web:lint": "npm --workspace web run lint",
     "web:typecheck": "npm --workspace web run typecheck",
-    "web:build": "npm --workspace web run build"
+    "web:build": "npm --workspace web run build",
+    "check": "npm run api:lint && npm run api:test && npm run web:lint && npm run web:typecheck && npm run web:test && npm run web:build",
+    "dev": "npm run db:start && echo \"Database is up. Now run 'npm run api:dev' and 'npm run web:dev' in two more terminals.\""
   },
   "devDependencies": {
     "supabase": "^2.122.0"
   },
   "workspaces": [
     "web"
-  ]
+  ],
+  "engines": {
+    "node": ">=22"
+  }
 }
