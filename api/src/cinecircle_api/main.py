@@ -1,6 +1,7 @@
 """FastAPI application factory. Run with: uvicorn cinecircle_api.main:create_app --factory"""
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from cinecircle_api.db import make_engine
 from cinecircle_api.routes import health
@@ -12,6 +13,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(title="CineCircle API", version="0.1.0")
     app.state.settings = settings
     app.state.engine = make_engine(settings.database_url)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origins,
+        allow_methods=["GET", "POST", "PATCH", "DELETE"],
+        allow_headers=["Authorization", "Content-Type"],
+        allow_credentials=False,
+    )
 
     @app.get("/live")
     def live() -> dict[str, str]:
