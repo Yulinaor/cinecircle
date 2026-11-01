@@ -25,3 +25,8 @@ Task 2: complete (commits 298122c..HEAD, tests: npm run api:test → 37 passed; 
 - Task 3: Ruling: added `test_parse_omdb_from_fixtures` (Odyssey 8.4/477953/94/88; Severance IMDb only) to pin the real fixture shapes — cost if wrong: none.
 - Task 3: RED: ModuleNotFoundError cinecircle_api.catalog.parse (matches Expected).
 Task 3: complete (commits c3bfc5b..HEAD, tests: npm run api:test → 49 passed; npm run api:lint → All checks passed)
+- Task 4: Ruling: migration also does `REVOKE ALL … FROM PUBLIC, anon, authenticated` before the grants — makes "anon gets nothing, authenticated SELECT only" hold regardless of Supabase default privileges — cost if wrong: none.
+- Task 4: Ruling: a season upsert never overwrites `name_he`/`overview_he` (Phase 3 fills them from `tv/{id}/season/{n}`; a 30-day refresh must not wipe them) — cost if wrong: none.
+- Task 4: note: the duplicate-imdb check is a SELECT before the upsert, so two *different* TMDB titles sharing one imdb_id cached at the same instant can still hit the UNIQUE constraint; same-title concurrency is handled by ON CONFLICT. Left for the final review.
+- Task 4: RED: ImportError cannot import name 'repository' (= Expected's ModuleNotFoundError). Migration applied with `npx supabase db reset` on real Supabase.
+Task 4: complete (commits 98f6c11..HEAD, tests: npm run api:test:integration → 9 passed; npm run api:test → 49 passed; npm run api:lint → All checks passed)
