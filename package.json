@@ -9,9 +9,17 @@
     "api:test:integration": "uv --directory api run pytest tests/integration -m integration",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
-    "db:reset": "supabase db reset"
+    "db:reset": "supabase db reset",
+    "web:dev": "npm --workspace web run dev",
+    "web:test": "npm --workspace web run test",
+    "web:lint": "npm --workspace web run lint",
+    "web:typecheck": "npm --workspace web run typecheck",
+    "web:build": "npm --workspace web run build"
   },
   "devDependencies": {
     "supabase": "^2.122.0"
-  }
+  },
+  "workspaces": [
+    "web"
+  ]
 }

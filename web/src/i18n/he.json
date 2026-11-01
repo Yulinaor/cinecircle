@@ -1,0 +1,18 @@
+{
+  "app": { "name": "CineCircle" },
+  "nav": {
+    "home": "בית",
+    "discover": "גלו",
+    "post": "פרסום",
+    "wishlist": "רשימת צפייה",
+    "profile": "פרופיל"
+  },
+  "language": { "switchTo": "English", "label": "שינוי שפה" },
+  "placeholder": { "comingSoon": "בקרוב" },
+  "api": {
+    "checking": "בודק חיבור…",
+    "connected": "מחובר",
+    "waking": "מעיר את השרת…",
+    "offline": "השרת לא זמין"
+  }
+}
