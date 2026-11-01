@@ -1,0 +1,30 @@
+{
+  "name": "cinecircle",
+  "private": true,
+  "description": "CineCircle: private, follow-based movie and TV recommendations",
+  "scripts": {
+    "api:dev": "uv --directory api run uvicorn cinecircle_api.main:create_app --factory --reload --port 8000",
+    "api:test": "uv --directory api run pytest tests/unit",
+    "api:lint": "uv --directory api run ruff check . && uv --directory api run ruff format --check .",
+    "api:test:integration": "uv --directory api run pytest tests/integration -m integration",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "web:dev": "npm --workspace web run dev",
+    "web:test": "npm --workspace web run test",
+    "web:lint": "npm --workspace web run lint",
+    "web:typecheck": "npm --workspace web run typecheck",
+    "web:build": "npm --workspace web run build",
+    "check": "npm run api:lint && npm run api:test && npm run web:lint && npm run web:typecheck && npm run web:test && npm run web:build",
+    "dev": "npm run db:start && echo \"Database is up. Now run 'npm run api:dev' and 'npm run web:dev' in two more terminals.\""
+  },
+  "devDependencies": {
+    "supabase": "^2.122.0"
+  },
+  "workspaces": [
+    "web"
+  ],
+  "engines": {
+    "node": ">=22"
+  }
+}

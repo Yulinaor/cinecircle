@@ -1,0 +1,18 @@
+{
+  "app": { "name": "CineCircle" },
+  "nav": {
+    "home": "Home",
+    "discover": "Discover",
+    "post": "Post",
+    "wishlist": "Wishlist",
+    "profile": "Profile"
+  },
+  "language": { "switchTo": "עברית", "label": "Change language" },
+  "placeholder": { "comingSoon": "Coming soon" },
+  "api": {
+    "checking": "Checking connection…",
+    "connected": "Connected",
+    "waking": "Waking up the server…",
+    "offline": "Server unavailable"
+  }
+}
