@@ -10,11 +10,13 @@ from decimal import Decimal
 
 import sqlalchemy as sa
 from sqlalchemy import Connection
+from sqlalchemy.exc import IntegrityError
 
 from cinecircle_api.catalog.parse import GenreRow, MediaType, OmdbRatings, TitleRecord
 
 log = logging.getLogger(__name__)
 
+_IMDB_UNIQUE = "titles_imdb_id_key"
 _TITLE_COLUMNS = (
     "id, tmdb_id, media_type, imdb_id, name_en, name_he, overview_en, overview_he, "
     "year_start, year_end, runtime_min, season_count, poster_path, imdb_rating, imdb_votes, "
@@ -166,31 +168,42 @@ def upsert_title(
     raw_omdb: dict | None,
     fetched_at: datetime,
 ) -> int:
-    title_id = conn.execute(
-        _UPSERT_TITLE,
-        {
-            "tmdb_id": record.tmdb_id,
-            "media_type": record.media_type,
-            "imdb_id": _free_imdb_id(conn, record),
-            "name_en": record.name_en,
-            "name_he": record.name_he,
-            "overview_en": record.overview_en,
-            "overview_he": record.overview_he,
-            "year_start": record.year_start,
-            "year_end": record.year_end,
-            "runtime_min": record.runtime_min,
-            "season_count": record.season_count,
-            "poster_path": record.poster_path,
-            "imdb_rating": ratings.imdb_rating,
-            "imdb_votes": ratings.imdb_votes,
-            "rt_score": ratings.rt_score,
-            "metacritic": ratings.metacritic,
-            "tmdb_rating": record.tmdb_rating,
-            "raw_tmdb": _json(record.raw_tmdb),
-            "raw_omdb": _json(raw_omdb),
-            "fetched_at": fetched_at,
-        },
-    ).scalar_one()
+    params = {
+        "tmdb_id": record.tmdb_id,
+        "media_type": record.media_type,
+        "imdb_id": _free_imdb_id(conn, record),
+        "name_en": record.name_en,
+        "name_he": record.name_he,
+        "overview_en": record.overview_en,
+        "overview_he": record.overview_he,
+        "year_start": record.year_start,
+        "year_end": record.year_end,
+        "runtime_min": record.runtime_min,
+        "season_count": record.season_count,
+        "poster_path": record.poster_path,
+        "imdb_rating": ratings.imdb_rating,
+        "imdb_votes": ratings.imdb_votes,
+        "rt_score": ratings.rt_score,
+        "metacritic": ratings.metacritic,
+        "tmdb_rating": record.tmdb_rating,
+        "raw_tmdb": _json(record.raw_tmdb),
+        "raw_omdb": _json(raw_omdb),
+        "fetched_at": fetched_at,
+    }
+    try:
+        # Savepoint: another title holding this imdb_id may commit between the check and here.
+        with conn.begin_nested():
+            title_id = conn.execute(_UPSERT_TITLE, params).scalar_one()
+    except IntegrityError as err:
+        if getattr(getattr(err.orig, "diag", None), "constraint_name", None) != _IMDB_UNIQUE:
+            raise
+        log.warning(
+            "imdb_id %s was taken concurrently; storing tmdb %s %s without it",
+            record.imdb_id,
+            record.media_type,
+            record.tmdb_id,
+        )
+        title_id = conn.execute(_UPSERT_TITLE, {**params, "imdb_id": None}).scalar_one()
 
     conn.execute(sa.text("DELETE FROM app.title_genres WHERE title_id = :id"), {"id": title_id})
     if record.genre_ids:

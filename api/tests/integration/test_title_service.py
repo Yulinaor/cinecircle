@@ -4,7 +4,7 @@ from decimal import Decimal
 import pytest
 
 from cinecircle_api.catalog.service import CatalogUnavailable, TitleNotFound, TitleService
-from tests.fakes import ODYSSEY_ID, SEVERANCE_ID, FakeOmdb, FakeTmdb
+from tests.fakes import NO_HEBREW_ID, ODYSSEY_ID, SEVERANCE_ID, FakeOmdb, FakeTmdb
 
 pytestmark = [pytest.mark.integration, pytest.mark.usefixtures("clean_catalog")]
 T0 = datetime(2026, 11, 1, 12, 0, tzinfo=UTC)
@@ -116,3 +116,23 @@ def test_get_unknown_id_raises_not_found(world):
 def test_no_keys_search_unavailable(engine):
     with pytest.raises(CatalogUnavailable):
         TitleService(engine, None, None).search("x", "all", "he")
+
+
+def test_tmdb_404_on_refresh_serves_cached_row(world):
+    service, tmdb, _, clock = world
+    first = service.get_by_tmdb(ODYSSEY_ID, "movie")
+    clock.advance(days=31)
+    tmdb.gone.add(ODYSSEY_ID)
+    cached = service.get(first.row.id)
+    assert tmdb.calls["title_details"] == 2
+    assert cached.stale is True and cached.row.id == first.row.id
+
+
+def test_omdb_unknown_title_is_not_retried_daily(world):
+    service, tmdb, omdb, clock = world
+    first = service.get_by_tmdb(NO_HEBREW_ID, "movie")  # FakeOmdb has no record for it
+    assert first.row.imdb_id is not None and first.row.imdb_rating is None
+    clock.advance(days=2)
+    again = service.get_by_tmdb(NO_HEBREW_ID, "movie")
+    assert (tmdb.calls["title_details"], omdb.calls) == (1, 1)
+    assert again.stale is False

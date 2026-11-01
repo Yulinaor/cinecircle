@@ -26,6 +26,8 @@ from cinecircle_api.catalog.tmdb_client import TmdbClient
 REFRESH_AFTER = timedelta(days=30)
 OMDB_RETRY_AFTER = timedelta(days=1)  # OMDb free tier: 1,000 calls/day
 _LANGUAGE = {"he": "he-IL", "en": "en-US"}
+# Stored as raw_omdb when OMDb has no record, so only real failures (NULL) are retried daily.
+OMDB_UNKNOWN = {"Response": "False"}
 
 
 class CatalogUnavailable(Exception):
@@ -100,6 +102,9 @@ class TitleService:
         try:
             record = parse_title(self._tmdb.title_details(tmdb_id, media_type), media_type)
         except ExternalNotFound:
+            # TMDB deletes/merges entries; a title we already hold stays readable (stale).
+            if cached is not None:
+                return CachedTitle(cached, stale=True)
             raise TitleNotFound from None
         except ExternalApiError:
             return self._unreachable(cached)
@@ -107,7 +112,8 @@ class TitleService:
         raw_omdb = None
         if record.imdb_id and self._omdb is not None:
             try:
-                raw_omdb = self._omdb.by_imdb_id(record.imdb_id)
+                # None = OMDb answered "no such title": a real answer, kept for 30 days.
+                raw_omdb = self._omdb.by_imdb_id(record.imdb_id) or OMDB_UNKNOWN
             except ExternalApiError:
                 raw_omdb = None  # ratings stay empty; retried after OMDB_RETRY_AFTER
 

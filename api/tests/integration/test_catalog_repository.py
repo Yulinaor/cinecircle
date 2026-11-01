@@ -130,3 +130,40 @@ def test_rls_authenticated_reads_but_cannot_write(engine):
         with pytest.raises(ProgrammingError) as info:
             conn.execute(sa.text("INSERT INTO app.genres (id, name_en) VALUES (1, 'x')"))
     assert isinstance(info.value.orig, psycopg.errors.InsufficientPrivilege)
+
+
+def test_concurrent_titles_sharing_imdb_id_do_not_fail(engine, monkeypatch):
+    import threading
+
+    record, raw_omdb = odyssey()
+    twin = dataclasses.replace(record, tmdb_id=record.tmdb_id + 1_000_000)
+    ratings = parse_omdb(raw_omdb)
+    with engine.begin() as conn:
+        repo.upsert_genres(conn, all_genres())
+    barrier = threading.Barrier(2, timeout=10)
+    checked = repo._free_imdb_id
+
+    def check_then_wait(conn, rec):
+        result = checked(conn, rec)
+        barrier.wait()  # both pass the check before either inserts
+        return result
+
+    monkeypatch.setattr(repo, "_free_imdb_id", check_then_wait)
+    errors: list[BaseException] = []
+
+    def store(rec):
+        try:
+            with engine.begin() as conn:
+                repo.upsert_title(conn, rec, ratings, raw_omdb, T0)
+        except BaseException as err:  # noqa: BLE001 - surfaced by the assert below
+            errors.append(err)
+
+    threads = [threading.Thread(target=store, args=(r,)) for r in (record, twin)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join(20)
+    assert errors == []
+    with engine.connect() as conn:
+        ids = conn.execute(sa.text("SELECT imdb_id FROM app.titles ORDER BY id")).scalars().all()
+    assert sorted(ids, key=str) == sorted([record.imdb_id, None], key=str)

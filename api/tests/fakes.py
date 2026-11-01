@@ -21,6 +21,7 @@ class FakeTmdb:
     def __init__(self) -> None:
         self.calls: Counter[str] = Counter()
         self.fail = False
+        self.gone: set[int] = set()  # ids TMDB has deleted or merged since
 
     def _call(self, name: str) -> None:
         self.calls[name] += 1
@@ -34,7 +35,7 @@ class FakeTmdb:
     def title_details(self, tmdb_id: int, media_type: str) -> dict:
         self._call("title_details")
         name = _DETAILS.get((media_type, tmdb_id))
-        if name is None:
+        if name is None or tmdb_id in self.gone:
             raise ExternalNotFound("tmdb", 404)
         return load(name)
 
