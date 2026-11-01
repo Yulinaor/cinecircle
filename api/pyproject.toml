@@ -5,6 +5,7 @@ description = "CineCircle backend API"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.162.0",
+    "httpx>=0.28.1",
     "psycopg[binary]>=3.3.6",
     "pydantic-settings>=2.16.2",
     "sqlalchemy>=2.1.6",
@@ -36,7 +37,6 @@ select = ["E", "F", "I", "B", "UP"]
 
 [dependency-groups]
 dev = [
-    "httpx>=0.28.1",
     "pytest>=9.2.0",
     "ruff>=0.17.3",
 ]

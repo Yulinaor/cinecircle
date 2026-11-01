@@ -14,3 +14,8 @@ Pre-flight:
 - Task 1: Ruling: TMDB_API_KEY is the v3 API key, not the `eyJ` v4 read token the session brief asked for — the plan's auth rule (Bearer for `eyJ…`, else `api_key=`) covers both and the v3 key answers 200 — cost if wrong: swap the value in api/.env.
 - Task 1: Ruling: catalog_spike.py no longer calls raise_for_status() and catches httpx.HTTPError at the entry point — an OMDb 401 traceback printed the request URL with `apikey=` to the session output (not to git or any file); errors now read `OMDb odyssey failed: HTTP 401` — cost if wrong: none.
 - Task 1: measure → P1 confirmed (0/200 disagreements); Hebrew overview 84% movies / 68% series; האודיסאה finds TMDB 1368337 at rank 1. record → 12 fixtures; ids odyssey=1368337, severance=95396, no_hebrew=791523.
+Task 1: complete (commits 0526fcf..298122c, tests: npm run api:test → 24 passed; npm run api:lint → All checks passed)
+- Task 2: Ruling: added private module `catalog/_http.py` (`get_json`, 5 s timeout, httpx errors → ExternalApiError `from None`) shared by both clients — not in the plan's file list; keeps the key-safe error mapping in one place — cost if wrong: inline it into the two clients.
+- Task 2: Ruling: every ExternalApiError is raised `from None`, including HTTP-status ones — the plan's test asserts `__suppress_context__ is True` for the OMDb 500 case too — cost if wrong: none.
+- Task 2: RED: ModuleNotFoundError cinecircle_api.catalog (matches Expected). GREEN after one fix (500 case lacked `from None`).
+Task 2: complete (commits 298122c..HEAD, tests: npm run api:test → 37 passed; npm run api:lint → All checks passed)

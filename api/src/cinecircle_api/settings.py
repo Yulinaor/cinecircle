@@ -20,6 +20,16 @@ class Settings(BaseSettings):
     app_env: Literal["local", "test", "production"] = Field(
         default="local", validation_alias="APP_ENV"
     )
+    # Backend-only catalogue keys; the app still starts without them (title endpoints answer 503).
+    tmdb_api_key: str | None = Field(default=None, validation_alias="TMDB_API_KEY")
+    omdb_api_key: str | None = Field(default=None, validation_alias="OMDB_API_KEY")
+
+    @field_validator("tmdb_api_key", "omdb_api_key", mode="before")
+    @classmethod
+    def _blank_key_is_none(cls, value: object) -> object:
+        if isinstance(value, str):
+            return value.strip() or None
+        return value
 
     @field_validator("cors_origins", mode="before")
     @classmethod

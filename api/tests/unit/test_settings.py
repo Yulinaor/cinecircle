@@ -30,6 +30,14 @@ def test_cors_origins_default(monkeypatch):
     assert Settings(_env_file=None).cors_origins == ["http://localhost:5173"]
 
 
+def test_external_keys_optional_and_blank_is_none(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://x@127.0.0.1:1/x")
+    monkeypatch.setenv("TMDB_API_KEY", "  ")
+    monkeypatch.delenv("OMDB_API_KEY", raising=False)
+    s = Settings(_env_file=None)
+    assert s.tmdb_api_key is None and s.omdb_api_key is None
+
+
 def test_cors_origins_strip_trailing_slash(monkeypatch):
     monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://x@127.0.0.1:1/x")
     monkeypatch.setenv("CORS_ORIGINS", "https://cinecircle.onrender.com/ , http://localhost:5173//")
