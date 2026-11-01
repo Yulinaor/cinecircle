@@ -1,0 +1,40 @@
+{
+  "Title": "The Odyssey",
+  "Year": "2026",
+  "Rated": "R",
+  "Released": "17 Jul 2026",
+  "Runtime": "172 min",
+  "Genre": "Action, Adventure, Fantasy",
+  "Director": "Christopher Nolan",
+  "Writer": "Christopher Nolan, Homer",
+  "Actors": "Matt Damon, Tom Holland, Anne Hathaway",
+  "Plot": "After the Trojan War, Odysseus faces a dangerous voyage back to Ithaca, meeting creatures like the Cyclops Polyphemus, Sirens, and Calypso along the way.",
+  "Language": "English, Greek",
+  "Country": "United Kingdom, United States, Canada, New Zealand, Iceland",
+  "Awards": "3 wins total",
+  "Poster": "https://m.media-amazon.com/images/M/MV5BNTcyNmJlZmQtNDUwYy00NDBjLTg1NGQtYTY2Y2UxMWM3NmI1XkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+  "Ratings": [
+    {
+      "Source": "Internet Movie Database",
+      "Value": "8.4/10"
+    },
+    {
+      "Source": "Rotten Tomatoes",
+      "Value": "94%"
+    },
+    {
+      "Source": "Metacritic",
+      "Value": "88/100"
+    }
+  ],
+  "Metascore": "88",
+  "imdbRating": "8.4",
+  "imdbVotes": "477,953",
+  "imdbID": "tt33764258",
+  "Type": "movie",
+  "DVD": "N/A",
+  "BoxOffice": "$588,976,965",
+  "Production": "N/A",
+  "Website": "N/A",
+  "Response": "True"
+}

@@ -10,7 +10,7 @@ from cinecircle_api.settings import Settings
 
 pytestmark = pytest.mark.integration
 URL = os.environ.get(
-    "DATABASE_URL", "postgresql+psycopg://postgres:postgres@127.0.0.1:54322/postgres"
+    "DATABASE_URL", "postgresql+psycopg://postgres:postgres@127.0.0.1:55322/postgres"
 )
 
 

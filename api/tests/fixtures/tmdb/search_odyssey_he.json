@@ -1,0 +1,74 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/bulFtfy3oBQtCnAMSi7g6DSSds3.jpg",
+      "id": 1368337,
+      "title": "האודיסאה",
+      "original_title": "The Odyssey",
+      "overview": "לאחר מלחמת טרויה, אודיסאוס עומד בפני מסע מסוכן בחזרה לאיתקה, כשהוא פוגש יצורים כמו הקיקלופ פוליפמוס, הסירנות, וקירקה לאורך המסע.",
+      "poster_path": "/4l6pRiOxpoF8JRVmhS5CKKVJlRj.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        12,
+        28,
+        14
+      ],
+      "popularity": 204.1463,
+      "release_date": "2026-07-15",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.016,
+      "vote_count": 4320
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/5vAEVCJpnNl1cns6X3REbssr9wp.jpg",
+      "id": 1691920,
+      "title": "האודיסאה",
+      "original_title": "Odyssey",
+      "overview": "עדי, נערה עקשנית ומבולגנת, מאחרת סדרתית, חוזרת מהעבודה עם משימה אחת: להשיג את הספר “האודיסאה” ליום ההולדת של אחותה הקטנה. אבל, רצף תקלות ופגישות לא צפויות דוחף אותה לאודיסאה סוערת משלה ברחובות העיר. בדרך היא מתמודדת עם אובדן שליטה, מפגש עם מערכת יחסים שהתפרקה והלחץ להספיק להגיע בזמן.",
+      "poster_path": "/mpCSRWIwiKNwtHC5fUoToaErmep.jpg",
+      "media_type": "movie",
+      "original_language": "he",
+      "genre_ids": [
+        10751
+      ],
+      "popularity": 0.9582,
+      "release_date": "2026-04-24",
+      "softcore": false,
+      "video": false,
+      "vote_average": 0.0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/wVRd4VjrkJ4WObvfjqUZhlmN3gT.jpg",
+      "id": 9687,
+      "name": "האודיסאה",
+      "original_name": "The Odyssey",
+      "overview": "עיבוד לאחד המיתוסים המכוננים של תרבות יוון. לאחר עשר שנות לוחמה על העיר טרויה, חוזר סוף סוף אודיסאוס לביתו. אבל האלים אינם מרחמים והופכים אותו לפיון במשחק האכזרי שלהם. המסע הביתה הופך לסיוט מתמשך שבו הוא נאלץ להמשיך להילחם על חייו מול יצורים מיצורים שונים, כשרק האלה אתנה עומדת לצדו. בינתיים אשתו הודפת את המחזרים שרוצים להשתלט על ממלכתו.",
+      "poster_path": "/wCiQ7XySqnz9X1REtDNZRGLfhpe.jpg",
+      "media_type": "tv",
+      "original_language": "en",
+      "genre_ids": [
+        10759,
+        10765,
+        18
+      ],
+      "popularity": 13.0541,
+      "first_air_date": "1997-05-18",
+      "softcore": false,
+      "vote_average": 7.3,
+      "vote_count": 901,
+      "origin_country": [
+        "US",
+        "GB"
+      ]
+    }
+  ],
+  "total_pages": 1,
+  "total_results": 3
+}
