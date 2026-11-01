@@ -1,0 +1,732 @@
+{
+  "adult": false,
+  "backdrop_path": "/ixgFmf1X59PUZam2qbAfskx2gQr.jpg",
+  "created_by": [
+    {
+      "id": 3442409,
+      "credit_id": "6217f14d0e597b00412768f1",
+      "name": "Dan Erickson",
+      "original_name": "Dan Erickson",
+      "gender": 2,
+      "profile_path": "/qzQ30V43kbVoMjJXRw6ydkicXEP.jpg"
+    }
+  ],
+  "episode_run_time": [],
+  "first_air_date": "2022-02-17",
+  "genres": [
+    {
+      "id": 18,
+      "name": "Drama"
+    },
+    {
+      "id": 9648,
+      "name": "Mystery"
+    },
+    {
+      "id": 10765,
+      "name": "Sci-Fi & Fantasy"
+    }
+  ],
+  "homepage": "https://tv.apple.com/show/umc.cmc.1srk2goyh2q2zdxcx605w8vtx",
+  "id": 95396,
+  "in_production": true,
+  "languages": [
+    "en"
+  ],
+  "last_air_date": "2025-03-20",
+  "last_episode_to_air": {
+    "id": 5469142,
+    "name": "Cold Harbor",
+    "overview": "Mark forms a shaky alliance in an all-or-nothing play, while the team makes a dangerous last stand.",
+    "vote_average": 8.6,
+    "vote_count": 126,
+    "air_date": "2025-03-20",
+    "episode_number": 10,
+    "episode_type": "finale",
+    "production_code": "210",
+    "runtime": 80,
+    "season_number": 2,
+    "show_id": 95396,
+    "still_path": "/gXUvGwpZxrpqMRouxM7yI28lgNa.jpg"
+  },
+  "name": "Severance",
+  "next_episode_to_air": null,
+  "networks": [
+    {
+      "id": 2552,
+      "logo_path": "/bngHRFi794mnMq34gfVcm9nDxN1.png",
+      "name": "Apple TV",
+      "origin_country": ""
+    }
+  ],
+  "number_of_episodes": 19,
+  "number_of_seasons": 3,
+  "origin_country": [
+    "US"
+  ],
+  "original_language": "en",
+  "original_name": "Severance",
+  "overview": "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives. When a mysterious colleague appears outside of work, it begins a journey to discover the truth about their jobs.",
+  "popularity": 56.7791,
+  "poster_path": "/pPHpeI2X1qEd1CS1SeyrdhZ4qnT.jpg",
+  "production_companies": [
+    {
+      "id": 100640,
+      "logo_path": "/5BR67T28TVm2UMH8GCRDftafsaJ.png",
+      "name": "Endeavor Content",
+      "origin_country": "US"
+    },
+    {
+      "id": 2932,
+      "logo_path": "/4uLKLjGivVg2YnAIhAn8k7ZuVFj.png",
+      "name": "Red Hour",
+      "origin_country": "US"
+    },
+    {
+      "id": 181874,
+      "logo_path": "/crrgXvLhDO9c57HYrbO4H58Vxmb.png",
+      "name": "Fifth Season",
+      "origin_country": "US"
+    },
+    {
+      "id": 254490,
+      "logo_path": null,
+      "name": "Animals & People",
+      "origin_country": "US"
+    },
+    {
+      "id": 166623,
+      "logo_path": "/rvmwTPf8K4tMFCSqzS4rKs9K0Eo.png",
+      "name": "Westward",
+      "origin_country": "US"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "US",
+      "name": "United States of America"
+    }
+  ],
+  "seasons": [
+    {
+      "air_date": "2021-12-15",
+      "episode_count": 1,
+      "id": 443382,
+      "name": "Specials",
+      "overview": "",
+      "poster_path": "/f3E2o8DbW9QSzu31yY3Q1av5JO7.jpg",
+      "season_number": 0,
+      "vote_average": 0.0
+    },
+    {
+      "air_date": "2022-02-17",
+      "episode_count": 9,
+      "id": 135726,
+      "name": "Season 1",
+      "overview": "At Lumon Industries, employees undergo \"severance,\" a procedure dividing their work and personal memories. Mark, a grieving team leader, begins to uncover the dark secrets of the company, forcing him and his coworkers to confront questions of identity, free will, and corporate control.",
+      "poster_path": "/lFf6LLrQjYldcZItzOkGmMMigP7.jpg",
+      "season_number": 1,
+      "vote_average": 8.4
+    },
+    {
+      "air_date": "2025-01-16",
+      "episode_count": 10,
+      "id": 401674,
+      "name": "Season 2",
+      "overview": "Mark and his friends learn the dire consequences of trifling with the severance barrier, leading them further down a path of woe.",
+      "poster_path": "/Rb7sga832Cyqvafd7CqOzbwdK4.jpg",
+      "season_number": 2,
+      "vote_average": 8.0
+    },
+    {
+      "air_date": null,
+      "episode_count": 0,
+      "id": 447475,
+      "name": "Season 3",
+      "overview": "",
+      "poster_path": null,
+      "season_number": 3,
+      "vote_average": 0.0
+    }
+  ],
+  "softcore": false,
+  "spoken_languages": [
+    {
+      "english_name": "English",
+      "iso_639_1": "en",
+      "name": "English"
+    }
+  ],
+  "status": "Returning Series",
+  "tagline": "There's more to work than life.",
+  "type": "Scripted",
+  "vote_average": 8.39,
+  "vote_count": 3088,
+  "external_ids": {
+    "imdb_id": "tt11280740",
+    "freebase_mid": null,
+    "freebase_id": null,
+    "tvdb_id": 371980,
+    "tvrage_id": null,
+    "wikidata_id": "Q101096725",
+    "facebook_id": null,
+    "instagram_id": null,
+    "twitter_id": null
+  },
+  "translations": {
+    "translations": [
+      {
+        "iso_3166_1": "US",
+        "iso_639_1": "en",
+        "name": "English",
+        "english_name": "English",
+        "data": {
+          "name": "",
+          "overview": "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives. When a mysterious colleague appears outside of work, it begins a journey to discover the truth about their jobs.",
+          "homepage": "",
+          "tagline": "There's more to work than life."
+        }
+      },
+      {
+        "iso_3166_1": "RU",
+        "iso_639_1": "ru",
+        "name": "Pусский",
+        "english_name": "Russian",
+        "data": {
+          "name": "Разделение",
+          "overview": "Руководство компании Lumon Industries придумало новый способ контролировать повседневную деятельность своих сотрудников — «процедуру разделения», отделяющую рабочие воспоминания от обычных. Марк соглашается на процедуру, но вскоре начинает сомневаться в правильности своего выбора.",
+          "homepage": "",
+          "tagline": "Работа больше, чем жизнь."
+        }
+      },
+      {
+        "iso_3166_1": "BR",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "name": "Ruptura",
+          "overview": "Mark lidera uma equipe de funcionários de escritório cujas memórias foram divididas cirurgicamente entre a vida no trabalho e a vida pessoal. Quando um colega de trabalho misterioso aparece fora do escritório, ele começa uma jornada para descobrir a verdade sobre seu trabalho.",
+          "homepage": "",
+          "tagline": "Viver para trabalhar."
+        }
+      },
+      {
+        "iso_3166_1": "HU",
+        "iso_639_1": "hu",
+        "name": "Magyar",
+        "english_name": "Hungarian",
+        "data": {
+          "name": "Különválás",
+          "overview": "Mark irodavezető egy olyan helyen, ahol a dolgozók munkahelyi és magánéleti emlékeit műtéti úton kettéválasztották. Amikor egy titokzatos kolléga felbukkan a munkahelyen kívül, elkezdődik egy utazás, amely feltárja az igazságot a munkájukkal kapcsolatban.",
+          "homepage": "",
+          "tagline": "A munka nem csupán az életről szól."
+        }
+      },
+      {
+        "iso_3166_1": "IT",
+        "iso_639_1": "it",
+        "name": "Italiano",
+        "english_name": "Italian",
+        "data": {
+          "name": "Scissione",
+          "overview": "Mark guida un team di impiegati la cui memoria è stata chirurgicamente scissa per dividere i ricordi della vita lavorativa da quelli della vita privata. Quando un misterioso collega compare fuori dalla Lumon Corporation, inizia un viaggio alla scoperta della verità riguardo al loro lavoro.",
+          "homepage": "",
+          "tagline": "Il lavoro nobilita l’uomo."
+        }
+      },
+      {
+        "iso_3166_1": "ES",
+        "iso_639_1": "es",
+        "name": "Español",
+        "english_name": "Spanish",
+        "data": {
+          "name": "Separación",
+          "overview": "Mark Scout dirige un equipo en Lumon Industries cuyos empleados se han sometido a un procedimiento quirúrgico que separa sus recuerdos entre trabajo y vida personal. Este arriesgado experimento de conciliación es puesto en tela de juicio cuando Mark se encuentra envuelto en un misterio que le obligará a confrontar la verdadera naturaleza de su trabajo... y de sí mismo.",
+          "homepage": "",
+          "tagline": "¿Trabajas para vivir o vives para trabajar?"
+        }
+      },
+      {
+        "iso_3166_1": "JP",
+        "iso_639_1": "ja",
+        "name": "日本語",
+        "english_name": "Japanese",
+        "data": {
+          "name": "セヴェランス",
+          "overview": "マークは、手術で仕事と私生活の記憶を分離された社員たちのチームを率いる。職場以外の場所で謎の同僚から接触を受けたことで、彼らの仕事に関わる真実が明らかになっていく。",
+          "homepage": "",
+          "tagline": "ワーク＞ライフ。"
+        }
+      },
+      {
+        "iso_3166_1": "KR",
+        "iso_639_1": "ko",
+        "name": "한국어/조선말",
+        "english_name": "Korean",
+        "data": {
+          "name": "'세브란스: 단절' - Severance",
+          "overview": "마크는 시술로 직장 생활과 사생활의 기억이 나뉜 사람들로 이루어진 부서의 팀장이다. 회사 밖에서 의문에 싸인 동료가 나타나면서 그들의 일에 대한 진실을 밝히는 여정이 시작된다.",
+          "homepage": "",
+          "tagline": "일보다 중요한 것은 없다."
+        }
+      },
+      {
+        "iso_3166_1": "DE",
+        "iso_639_1": "de",
+        "name": "Deutsch",
+        "english_name": "German",
+        "data": {
+          "name": "",
+          "overview": "Mark ist der Leiter eines Büroteams, dessen Mitglieder nach einem chirurgischen Eingriff ihre jeweiligen Erinnerungen an Arbeitswelt und Privatleben nicht mehr miteinander verknüpfen können. Als ein mysteriöser Kollege außerhalb der Arbeitswelt auftaucht, löst dies eine Suche nach den wahren Umständen ihres Jobs aus.",
+          "homepage": "",
+          "tagline": "Lebst du noch oder arbeitest du schon?"
+        }
+      },
+      {
+        "iso_3166_1": "GR",
+        "iso_639_1": "el",
+        "name": "ελληνικά",
+        "english_name": "Greek",
+        "data": {
+          "name": "Διαχωρισμός",
+          "overview": "Ο Μαρκ ηγείται μιας ομάδας υπαλλήλων των οποίων οι αναμνήσεις έχουν διαχωριστεί χειρουργικά σε αναμνήσεις δουλειάς και προσωπικής ζωής. Όταν ένας μυστηριώδης συνάδελφος εμφανίζεται εκτός δουλειάς, ξεκινά ένα ταξίδι για να ανακαλύψει την αλήθεια για τις δουλειές τους.",
+          "homepage": "",
+          "tagline": "Τι να την κάνεις τη ζωή όταν υπάρχει η δουλειά;"
+        }
+      },
+      {
+        "iso_3166_1": "IL",
+        "iso_639_1": "he",
+        "name": "עִבְרִית",
+        "english_name": "Hebrew",
+        "data": {
+          "name": "",
+          "overview": "מארק מנהל צוות של עובדי משרד שזיכרונם פוצל באופן כירורגי בין העבודה לבין חייהם האישיים. כאשר איש צוות מסתורי מופיע מחוץ לעבודה, מתחיל מסע לגילוי האמת על העבודה שלהם.",
+          "homepage": "",
+          "tagline": "עבודה זה יותר מהחיים."
+        }
+      },
+      {
+        "iso_3166_1": "FR",
+        "iso_639_1": "fr",
+        "name": "Français",
+        "english_name": "French",
+        "data": {
+          "name": "",
+          "overview": "Mark dirige une équipe d'employés de bureau dont les souvenirs ont été scindés chirurgicalement en fonction de leur vie professionnelle et de leur vie privée. L'irruption d'un mystérieux collègue en dehors du bureau enclenche une longue quête de vérité sur leur travail.",
+          "homepage": "",
+          "tagline": "Il n’y a pas que la vie dans le travail."
+        }
+      },
+      {
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "name": "",
+          "overview": "故事发生在一家名为卢蒙的超级大公司内，一种名为记忆分割术的全新技术正在公司内部进行实验，接受了手术的员工将进行人格分离手术，形成公司人格和日常人格，当踏进公司大门的那一刻，他们的日常人格就会陷入沉睡，身体由公司人格主导。相对的，在离开公司的那一刻，日常人格会重新接管身体，当然，这个人格不会记得任何在公司里发生的事情。\n\n马克（亚当·斯科特 Adam Scott 饰）、迪伦（扎克·切利 Zach Cherry 饰）和埃尔文（约翰·特托罗 John Turturro 饰）三人都接受了分离手术，这一天，他们所在的部门迎来了一位名叫海莉（布丽特·洛薇尔 Britt Lower 饰）的新同事，她身上的反叛气质打破了长久萦绕在这个部门，以及整个公司内的平静。",
+          "homepage": "",
+          "tagline": "工作，重于人生。"
+        }
+      },
+      {
+        "iso_3166_1": "SE",
+        "iso_639_1": "sv",
+        "name": "svenska",
+        "english_name": "Swedish",
+        "data": {
+          "name": "",
+          "overview": "Mark leder ett team av kontorsarbetare vars minnen har splittrats kirurgiskt mellan deras arbetsliv och privatliv. När en mystisk kollega dyker upp utanför arbetstid påbörjas en resa för att upptäcka sanningen om deras jobb.",
+          "homepage": "",
+          "tagline": "Jobbet är mer än bara livet."
+        }
+      },
+      {
+        "iso_3166_1": "MX",
+        "iso_639_1": "es",
+        "name": "Español",
+        "english_name": "Spanish",
+        "data": {
+          "name": "",
+          "overview": "Mark dirige un equipo de oficinistas, cuyas memorias fueron divididas quirúrgicamente entre sus vidas personales y laborales. Cuando un colega misterioso aparece fuera del trabajo, inicia un viaje por descubrir la verdad sobre sus empleos.",
+          "homepage": "",
+          "tagline": "¿Para qué vivir si puedes trabajar?"
+        }
+      },
+      {
+        "iso_3166_1": "PL",
+        "iso_639_1": "pl",
+        "name": "Polski",
+        "english_name": "Polish",
+        "data": {
+          "name": "Rozdzielenie",
+          "overview": "Mark zarządza zespołem pracowników, których wspomnienia związane z pracą i życiem osobistym zostały rozdzielone w wyniku zabiegu. Gdy po pracy zjawia się w jego życiu tajemniczy kolega, Mark zaczyna stopniowo odkrywać prawdę na temat ich zawodów.",
+          "homepage": "",
+          "tagline": "Praca to więcej niż tylko życie."
+        }
+      },
+      {
+        "iso_3166_1": "TW",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "name": "人生切割術",
+          "overview": "馬克帶領的辦公團隊成員全都接受手術，分割工作記憶與私人記憶。當一位神秘同事在辦公場所外現身，即開啟了一段探尋工作真相的旅程。",
+          "homepage": "",
+          "tagline": "生活誠可貴，工作價更高。"
+        }
+      },
+      {
+        "iso_3166_1": "CZ",
+        "iso_639_1": "cs",
+        "name": "Český",
+        "english_name": "Czech",
+        "data": {
+          "name": "Odloučení",
+          "overview": "Mark šéfuje týmu zaměstnanců, kterým byla chirurgicky oddělena pracovní a mimopracovní paměť. Po setkání s kolegou z práce v osobním životě se vydává na cestu k pravdě o jejich zaměstnání.",
+          "homepage": "",
+          "tagline": "Práce není jen život."
+        }
+      },
+      {
+        "iso_3166_1": "TR",
+        "iso_639_1": "tr",
+        "name": "Türkçe",
+        "english_name": "Turkish",
+        "data": {
+          "name": "",
+          "overview": "Mark, anıları cerrahi müdahaleyle iş ve özel hayat olarak ayrılmış bir ofis çalışanı ekibinin başındadır. Gizemli bir iş arkadaşı ona iş yeri dışında göründüğünde, yaptıkları iş hakkındaki gerçeği keşfetmek için bir yolculuk başlar.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "NL",
+        "iso_639_1": "nl",
+        "name": "Nederlands",
+        "english_name": "Dutch",
+        "data": {
+          "name": "",
+          "overview": "Mark leidt op zijn werk een team van mensen wier herinneringen operatief gescheiden zijn tussen hun werk- en privéleven. Als een mysterieuze collega buiten het werk om contact met hem zoekt, begint er een ontdekkingsreis naar de waarheid over hun banen.",
+          "homepage": "",
+          "tagline": "Werk is meer dan alleen leven."
+        }
+      },
+      {
+        "iso_3166_1": "TH",
+        "iso_639_1": "th",
+        "name": "ภาษาไทย",
+        "english_name": "Thai",
+        "data": {
+          "name": "",
+          "overview": "มาร์คเป็นหัวหน้าทีมพนักงานบริษัทซึ่งถูกผ่าตัดแยกโลกความทรงจำระหว่างโลกที่ทำงานและโลกส่วนตัว เมื่อเพื่อนร่วมงานปริศนาปรากฏตัวขึ้นนอกเวลางาน นั่นจึงเป็นจุดเริ่มต้นที่เขาจะค้นพบความจริงเกี่ยวกับงานของเขา",
+          "homepage": "",
+          "tagline": "เพราะชีวิตคือการทำงาน"
+        }
+      },
+      {
+        "iso_3166_1": "SA",
+        "iso_639_1": "ar",
+        "name": "العربية",
+        "english_name": "Arabic",
+        "data": {
+          "name": "",
+          "overview": "يقود \"مارك\" فريقاً من عمّال المكاتب الذين قُسّمت ذكرياتهم جراحياً بين أعمالهم وحيواتهم الشخصية. حين يظهر زميل غامض خارج العمل، تبدأ رحلة لاكتشاف حقيقة وظائفهم.",
+          "homepage": "",
+          "tagline": "الحياة تنتهي والعمل لا ينتهي."
+        }
+      },
+      {
+        "iso_3166_1": "IR",
+        "iso_639_1": "fa",
+        "name": "فارسی",
+        "english_name": "Persian",
+        "data": {
+          "name": "جداسازی",
+          "overview": "روایت صنایع لومن، شرکتی که به دنبال ایجاد تعادل میان کار و زندگی به سطح جدیدی است.\n\nسریالی اجتماعی و مهیج می‌باشد که توسط بن استیلر و آوف مک‌آردل ساخته شده است. مارک، رهبری تیمی از کارمندان اداری را بر عهده دارد که حافظه آنها بین شغل و زندگی شخصی شان از طریق جراحی تقسیم شده است. آنها زمانیکه با همکاری مرموز در خارج از محیط کاری مواجه می شوند، مسیری را برای کشف حقیقت درباره ماهیت واقعی شغلشان آغاز می کنند.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "UA",
+        "iso_639_1": "uk",
+        "name": "Український",
+        "english_name": "Ukrainian",
+        "data": {
+          "name": "Розрив",
+          "overview": "Марк керує командою офісних працівників, чиї спогади про особисте життя й роботу було розділено за допомогою хірургічного втручання. Коли загадковий колега з’являється за межами офісу, починається їхня подорож, мета якої — дізнатися правду про свою роботу.",
+          "homepage": "",
+          "tagline": "Робота — понад усе в житті."
+        }
+      },
+      {
+        "iso_3166_1": "LT",
+        "iso_639_1": "lt",
+        "name": "Lietuvių",
+        "english_name": "Lithuanian",
+        "data": {
+          "name": "Atskyrimas",
+          "overview": "Markas vadovauja biuro darbuotojų komandai, kurių prisiminimai chirurginiu būdu buvo padalinti į darbą ir asmeninį gyvenimą. Kai ne darbo aplinkoje pasirodo paslaptingas kolega, prasideda tiesos paieškos apie savo darbus.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "HK",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "name": "生活割離術",
+          "overview": "馬克領導的工作團隊曾接受手術把工作和私生活的記憶割離。因為一位神秘同事在公司以外出現，一趟探究工作真相的旅程隨即展開。",
+          "homepage": "",
+          "tagline": "生活放一邊，返工大過天。"
+        }
+      },
+      {
+        "iso_3166_1": "DK",
+        "iso_639_1": "da",
+        "name": "Dansk",
+        "english_name": "Danish",
+        "data": {
+          "name": "",
+          "overview": "Mark er leder af et team af kontoransatte, der ved hjælp af et indgreb har fået deres hukommelse opdelt mellem arbejde og privatliv. Da en gådefuld kollega dukker op uden for arbejdspladsen, går de i gang med at afdække sandheden om deres job.",
+          "homepage": "",
+          "tagline": "Husk at arbejde, mens du lever."
+        }
+      },
+      {
+        "iso_3166_1": "SG",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "name": "",
+          "overview": "马克领导着一个办公室里的团队，这些员工全都接受了外科手术，导致他们工作和生活中的记忆一分为二。当马克的一个神秘同事在工作之外出现时，他开启了一段探索工作真相的旅程。",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "VN",
+        "iso_639_1": "vi",
+        "name": "Tiếng Việt",
+        "english_name": "Vietnamese",
+        "data": {
+          "name": "Cắt Rời Ký Ức - Severance",
+          "overview": "Mark dẫn đầu một nhóm nhân viên văn phòng có ký ức được tách rời giữa công việc và cuộc sống riêng. Khi một đồng nghiệp bí ẩn xuất hiện ở phạm vi ngoài công việc, nó mở đầu cho một hành trình khám phá sự thật về công việc của họ.",
+          "homepage": "",
+          "tagline": "Công việc lo trước, cuộc sống để sau."
+        }
+      },
+      {
+        "iso_3166_1": "RS",
+        "iso_639_1": "sr",
+        "name": "Srpski",
+        "english_name": "Serbian",
+        "data": {
+          "name": "Раздвајање",
+          "overview": "Марк води тим запослених у компанији чија је свест јасно подељена на радну и ону - приватну. Када се појави мистериозни нови колега, долази да откривања праве истине о њиховом послу...",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "FI",
+        "iso_639_1": "fi",
+        "name": "suomi",
+        "english_name": "Finnish",
+        "data": {
+          "name": "Severance – Erotus",
+          "overview": "Mark johtaa toimistotyöntekijöiden tiimiä, jonka muistoista on kirurgisesti erotettu työelämä ja arkielämä. Kun salaperäinen kollega ilmestyy työajan ulkopuolella, alkaa matka selvittää totuus heidän työstään.",
+          "homepage": "",
+          "tagline": "Työ on elämää suurempaa."
+        }
+      },
+      {
+        "iso_3166_1": "BG",
+        "iso_639_1": "bg",
+        "name": "български език",
+        "english_name": "Bulgarian",
+        "data": {
+          "name": "",
+          "overview": "Марк ръководи екип от офис служители, чиито спомени са хирургически разделени между професионалния и личния им живот. Те започват пътешествие, за да разкрият истината за работното си място.",
+          "homepage": "",
+          "tagline": "Работата не е само живот."
+        }
+      },
+      {
+        "iso_3166_1": "SI",
+        "iso_639_1": "sl",
+        "name": "Slovenščina",
+        "english_name": "Slovenian",
+        "data": {
+          "name": "",
+          "overview": "Mark vodi ekipo pisarniških delavcev, ki imajo spomin kirurško razdeljen na službeno in osebno življenje. Ko se skrivnostni sodelavec pojavi zunaj službe, se začne iskanje resnice o njihovih službah.",
+          "homepage": "",
+          "tagline": "V službi smo si ljudje različni."
+        }
+      },
+      {
+        "iso_3166_1": "AE",
+        "iso_639_1": "ar",
+        "name": "العربية",
+        "english_name": "Arabic",
+        "data": {
+          "name": "",
+          "overview": "يقود \"مارك\" فريقاً من عمّال المكاتب الذين قُسّمت ذكرياتهم جراحياً بين أعمالهم وحيواتهم الشخصية. حين يظهر زميل غامض خارج العمل، تبدأ رحلة لاكتشاف حقيقة وظائفهم.",
+          "homepage": "",
+          "tagline": "الحياة تنتهي والعمل لا ينتهي."
+        }
+      },
+      {
+        "iso_3166_1": "CA",
+        "iso_639_1": "fr",
+        "name": "Français",
+        "english_name": "French",
+        "data": {
+          "name": "Dissociation",
+          "overview": "Mark dirige une équipe d'employés de bureau dont les souvenirs ont été scindés chirurgicalement en fonction de leur vie professionnelle et de leur vie privée. L'irruption d'un mystérieux collègue en dehors du bureau enclenche une longue quête de vérité sur leur travail.",
+          "homepage": "",
+          "tagline": "Il n’y a pas que la vie dans le travail."
+        }
+      },
+      {
+        "iso_3166_1": "IN",
+        "iso_639_1": "hi",
+        "name": "हिन्दी",
+        "english_name": "Hindi",
+        "data": {
+          "name": "सेवरन्स",
+          "overview": "मार्क ऐसे कर्मचारियों की एक टीम का नेतृत्व करता है जिनकी स्मृतियाँ शल्य चिकित्सा द्वारा उनके काम और व्यक्तिगत जीवन के बीच विभाजित की गई हैं। जब एक रहस्यमय सहयोगी काम के बाहर प्रकट होता है, तो उनकी नौकरियों के बारे में सच्चाई की खोज का एक सफ़र शुरू होता है।",
+          "homepage": "",
+          "tagline": "काम में ज़िंदगी के अलावा भी और चीज़ें हैं।"
+        }
+      },
+      {
+        "iso_3166_1": "ID",
+        "iso_639_1": "id",
+        "name": "Bahasa indonesia",
+        "english_name": "Indonesian",
+        "data": {
+          "name": "",
+          "overview": "Mark memimpin sekelompok pekerja kantoran yang ingatan terkait pekerjaan dan kehidupan pribadinya telah dipisahkan melalui bedah. Ketika sosok kolega misterius muncul di luar kantor, perjalanan untuk mengungkap kebenaran soal pekerjaan mereka pun dimulai.",
+          "homepage": "",
+          "tagline": "Jangan biarkan hidup mengganggu kerja."
+        }
+      },
+      {
+        "iso_3166_1": "NO",
+        "iso_639_1": "no",
+        "name": "Norsk",
+        "english_name": "Norwegian",
+        "data": {
+          "name": "",
+          "overview": "Mark leder et team av kontorarbeidere hvis minner har blitt kirurgisk delt mellom jobb og privatliv. Når en mystisk kollega dukker opp utenfor jobben, starter en reise for å finne ut sannheten om jobbene deres.",
+          "homepage": "",
+          "tagline": "Man jobber så lenge man lever."
+        }
+      },
+      {
+        "iso_3166_1": "PT",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "name": "Separação",
+          "overview": "Mark lidera uma equipa de funcionários de escritório cujas memórias foram cirurgicamente divididas entre os seus empregos e as suas vidas pessoais. Quando um misterioso colega aparece fora do trabalho, inicia uma jornada para descobrir a verdade sobre os seus empregos.",
+          "homepage": "",
+          "tagline": "Somos pessoas diferentes no trabalho."
+        }
+      },
+      {
+        "iso_3166_1": "SK",
+        "iso_639_1": "sk",
+        "name": "Slovenčina",
+        "english_name": "Slovak",
+        "data": {
+          "name": "Oddelenie",
+          "overview": "Mark vedie tím pracovníkov, ktorí si nechali chirurgicky oddeliť spomienky na pracovný a osobný život. Keď sa však mimo práce objaví tajomný kolega, začne sa ich cesta za objavením pravdy o svojej práci.",
+          "homepage": "",
+          "tagline": "Zmyslom práce nie je život."
+        }
+      },
+      {
+        "iso_3166_1": "EE",
+        "iso_639_1": "et",
+        "name": "Eesti",
+        "english_name": "Estonian",
+        "data": {
+          "name": "",
+          "overview": "Mark juhib kontoritöötajate meeskonda kelle mälestused on kirurgiliselt jagatud töö ja isikliku elu vahel. Kui väljaspool tööd ilmub välja salapärane kolleeg, alustab ta teekonda et avastada tõde nende töökoha kohta.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "RO",
+        "iso_639_1": "ro",
+        "name": "Română",
+        "english_name": "Romanian",
+        "data": {
+          "name": "",
+          "overview": "Mark conduce o echipă de angajați ale căror amintiri au fost separate chirurgical între viața profesională și cea personală. Apariția misterioasă a unui coleg în afara serviciului îl determină să pornească în căutarea adevărului despre locul lor de muncă.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "HR",
+        "iso_639_1": "hr",
+        "name": "Hrvatski",
+        "english_name": "Croatian",
+        "data": {
+          "name": "",
+          "overview": "",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "GE",
+        "iso_639_1": "ka",
+        "name": "ქართული",
+        "english_name": "Georgian",
+        "data": {
+          "name": "გაყოფა",
+          "overview": "",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "LV",
+        "iso_639_1": "lv",
+        "name": "Latviešu",
+        "english_name": "Latvian",
+        "data": {
+          "name": "Nodalīšana",
+          "overview": "Marks vada biroja darbinieku komandu, kuru atmiņas ir ķirurģiski nodalītas starp darba un privāto dzīvi. Kad ārpus darba vides parādās kāds noslēpumains kolēģis, aizsākas ceļš, lai atklātu patiesību par viņu darbu.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "PK",
+        "iso_639_1": "ur",
+        "name": "اردو",
+        "english_name": "Urdu",
+        "data": {
+          "name": "سیورینس",
+          "overview": "مارک ملازمین کی ایک ایسی ٹیم کی قیادت کرتا ہے جن کی یادداشتوں کو جراحی کے ذریعے ان کی پیشہ ورانہ اور ذاتی زندگیوں کے درمیان تقسیم کر دیا گیا ہے۔ جب کام کی جگہ کے باہر ایک پراسرار ساتھی کا سامنا ہوتا ہے، تو ان کی ملازمتوں سے جڑی حقیقت کو بے نقاب کرنے کا سفر شروع ہوتا ہے۔",
+          "homepage": "",
+          "tagline": "ہم سب دوہری زندگیاں گزارتے ہیں۔"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,890 @@
+{
+  "adult": false,
+  "backdrop_path": "/bulFtfy3oBQtCnAMSi7g6DSSds3.jpg",
+  "belongs_to_collection": null,
+  "budget": 250000000,
+  "genres": [
+    {
+      "id": 12,
+      "name": "Adventure"
+    },
+    {
+      "id": 28,
+      "name": "Action"
+    },
+    {
+      "id": 14,
+      "name": "Fantasy"
+    }
+  ],
+  "homepage": "https://www.universalpictures.com/movies/the-odyssey",
+  "id": 1368337,
+  "imdb_id": "tt33764258",
+  "origin_country": [
+    "GB",
+    "US"
+  ],
+  "original_language": "en",
+  "original_title": "The Odyssey",
+  "overview": "Odysseus, the legendary King of Ithaca, embarks on a long and perilous journey home following the Trojan War. Throughout his voyage, he is forced to confront the whims of gods, mythological monsters, and trials that stretch both his cunning and his humanity to the breaking point.",
+  "popularity": 204.1463,
+  "poster_path": "/5rhTDKUhPYvpdQIijFIs5VoWsON.jpg",
+  "production_companies": [
+    {
+      "id": 33,
+      "logo_path": "/8lvHyhjr8oUKOOy2dKXoALWKdp0.png",
+      "name": "Universal Pictures",
+      "origin_country": "US"
+    },
+    {
+      "id": 9996,
+      "logo_path": "/3tvBqYsBhxWeHlu62SIJ1el93O7.png",
+      "name": "Syncopy",
+      "origin_country": "GB"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "GB",
+      "name": "United Kingdom"
+    },
+    {
+      "iso_3166_1": "US",
+      "name": "United States of America"
+    }
+  ],
+  "release_date": "2026-07-15",
+  "revenue": 1796113523,
+  "runtime": 173,
+  "softcore": false,
+  "spoken_languages": [
+    {
+      "english_name": "English",
+      "iso_639_1": "en",
+      "name": "English"
+    }
+  ],
+  "status": "Released",
+  "tagline": "Defy the gods.",
+  "title": "The Odyssey",
+  "video": false,
+  "vote_average": 8.016,
+  "vote_count": 4320,
+  "external_ids": {
+    "imdb_id": "tt33764258",
+    "wikidata_id": "Q131547207",
+    "facebook_id": "OdysseyMovie",
+    "instagram_id": "theodysseymovie",
+    "twitter_id": "odysseymovie"
+  },
+  "translations": {
+    "translations": [
+      {
+        "iso_3166_1": "US",
+        "iso_639_1": "en",
+        "name": "English",
+        "english_name": "English",
+        "data": {
+          "homepage": "https://www.universalpictures.com/movies/the-odyssey",
+          "overview": "Odysseus, the legendary King of Ithaca, embarks on a long and perilous journey home following the Trojan War. Throughout his voyage, he is forced to confront the whims of gods, mythological monsters, and trials that stretch both his cunning and his humanity to the breaking point.",
+          "runtime": 173,
+          "tagline": "Defy the gods.",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "PT",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "homepage": "",
+          "overview": "Após o fim da Guerra de Troia, Ulisses, o lendário rei de Ítaca, embarca numa longa e perigosa viagem de regresso a casa. Durante dez anos de provações, enfrenta a fúria dos deuses e cruza-se com figuras míticas como o ciclope Polifemo, as sereias e a feiticeira Circe. Determinado a sobreviver, tenta voltar para junto da esposa, Penélope, e do filho, Telémaco, e recuperar o seu reino.",
+          "runtime": 0,
+          "tagline": "Desafia os deuses.",
+          "title": "A Odisseia"
+        }
+      },
+      {
+        "iso_3166_1": "KR",
+        "iso_639_1": "ko",
+        "name": "한국어/조선말",
+        "english_name": "Korean",
+        "data": {
+          "homepage": "",
+          "overview": "10년간 이어진 트로이 전쟁을 승리로 이끈 영웅 '오디세우스'는 왕의 부재를 틈타 침탈과 권력 다툼이 벌어진 왕국에서 그를 기다리고 있는 아내 '페넬로페'와 아들 '텔레마코스'에게 돌아가기 위한 여정에 나선다. 그러나 신들의 분노를 산 그의 귀환 앞에는 거대한 폭풍과 괴물들, 그리고 거스를 수 없는 운명의 시련이 기다리고 있는데…",
+          "runtime": 173,
+          "tagline": "신에 맞서다",
+          "title": "오디세이"
+        }
+      },
+      {
+        "iso_3166_1": "FR",
+        "iso_639_1": "fr",
+        "name": "Français",
+        "english_name": "French",
+        "data": {
+          "homepage": "",
+          "overview": "Vingt ans après son départ pour la guerre de Troie, le roi Ulysse rentre enfin à Ithaque, mais son voyage est parsemé d'aventures et d'épreuves.",
+          "runtime": 0,
+          "tagline": "Défiez les dieux.",
+          "title": "L'Odyssée"
+        }
+      },
+      {
+        "iso_3166_1": "DE",
+        "iso_639_1": "de",
+        "name": "Deutsch",
+        "english_name": "German",
+        "data": {
+          "homepage": "https://www.upig.de/micro/die-odyssee",
+          "overview": "Folgt Odysseus, dem legendären griechischen König von Ithaka, auf seiner langen und gefährlichen Heimreise nach dem Trojanischen Krieg und schildert seine Begegnungen mit mythischen Wesen wie dem Zyklopen Polyphem, den Sirenen und der Hexengöttin Circe, während er versucht, wieder mit seiner Frau Penelope zusammenzukommen.",
+          "runtime": 172,
+          "tagline": "Trotze den Göttern.",
+          "title": "Die Odyssee"
+        }
+      },
+      {
+        "iso_3166_1": "VN",
+        "iso_639_1": "vi",
+        "name": "Tiếng Việt",
+        "english_name": "Vietnamese",
+        "data": {
+          "homepage": "",
+          "overview": "Câu chuyện theo chân Odysseus trong hành trình kéo dài 10 năm trở về nhà sau cuộc chiến thành Troy, nơi ông phải đối mặt với các vị thần, quái vật và vô vàn thử thách, đồng thời nỗ lực đoàn tụ với vợ và giành lại vương quốc của mình.",
+          "runtime": 173,
+          "tagline": "Thách thức thần linh.",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "ES",
+        "iso_639_1": "es",
+        "name": "Español",
+        "english_name": "Spanish",
+        "data": {
+          "homepage": "",
+          "overview": "Tras la caída de Troya, el legendario rey de Ítaca, Odiseo a.k.a. Ulises, emprende un largo y peligroso viaje para regresar junto a su esposa Penélope y su hijo Telémaco. En el camino deberá enfrentarse a criaturas mitológicas, dioses caprichosos y pruebas que pondrán a prueba su ingenio, su resistencia y su humanidad. Mientras tanto, en Ítaca, el futuro de su reino pende de un hilo ante la creciente amenaza de quienes creen que jamás volverá.",
+          "runtime": 173,
+          "tagline": "Desafía a los dioses.",
+          "title": "La Odisea"
+        }
+      },
+      {
+        "iso_3166_1": "RU",
+        "iso_639_1": "ru",
+        "name": "Pусский",
+        "english_name": "Russian",
+        "data": {
+          "homepage": "",
+          "overview": "После Троянской войны Одиссей, царь Итаки, во главе небольшого войска возвращается домой к своей жене Пенелопе. На своём пути Одиссей сталкивается со множеством испытаний, встречает циклопов, сирен и великанов-людоедов.",
+          "runtime": 0,
+          "tagline": "«Бросьте вызов богам»",
+          "title": "Одиссея"
+        }
+      },
+      {
+        "iso_3166_1": "BR",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "homepage": "https://odisseiafilme.com.br/",
+          "overview": "Acompanhe o rei grego Odisseu em sua perigosa jornada de 20 anos para voltar a Ítaca após a Guerra de Troia, enfrentando monstros e deuses enquanto sua esposa Penélope resiste em seu reino.",
+          "runtime": 172,
+          "tagline": "Desafie os deuses.",
+          "title": "A Odisseia"
+        }
+      },
+      {
+        "iso_3166_1": "TR",
+        "iso_639_1": "tr",
+        "name": "Türkçe",
+        "english_name": "Turkish",
+        "data": {
+          "homepage": "",
+          "overview": "İthaka'nın efsanevi kralı Odysseus, Truva Savaşı'nın ardından evine dönmek üzere uzun ve tehlikeli bir yolculuğa çıkar. Yolculuğu boyunca tanrıların keyfi istekleriyle, mitolojik canavarlarla ve insanlığını kırılma noktasına kadar zorlayan çetin sınavlarla yüzleşmek zorunda kalır.",
+          "runtime": 0,
+          "tagline": "Tanrılara meydan oku.",
+          "title": "Odyssey"
+        }
+      },
+      {
+        "iso_3166_1": "TW",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "https://www.universalpictures.tw/micro/odyssey",
+          "overview": "講述奧德修斯在特洛伊戰爭後歷經艱險返鄉，途中遭遇獨眼巨人、女妖與女巫，最終與妻子重逢的傳奇旅程。",
+          "runtime": 173,
+          "tagline": "",
+          "title": "奧德賽"
+        }
+      },
+      {
+        "iso_3166_1": "UA",
+        "iso_639_1": "uk",
+        "name": "Український",
+        "english_name": "Ukrainian",
+        "data": {
+          "homepage": "",
+          "overview": "Екранізація однойменного епічного твору Гомера, яка описує небезпечну подорож Одіссея додому після Троянської війни, демонструючи його зустрічі з Поліфемом, Сиренами та Цирцеєю і завершуючись возз’єднанням із дружиною Пенелопою.",
+          "runtime": 0,
+          "tagline": "Виклик Богам",
+          "title": "Одіссея"
+        }
+      },
+      {
+        "iso_3166_1": "SE",
+        "iso_639_1": "sv",
+        "name": "svenska",
+        "english_name": "Swedish",
+        "data": {
+          "homepage": "",
+          "overview": "I en adaption av Homeros episka epos får vi följa Odysseus, den legendariske kungen av Ithaka, på hans långa och farofyllda resa hem efter det trojanska kriget. Under sin färd ställs han inför gudars nycker, mytologiska monstrum och prövningar som tänjer både hans list och hans mänsklighet till bristningsgränsen.",
+          "runtime": 0,
+          "tagline": "Trotsa gudarna.",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "改编自荷马史诗《奥德赛》。特洛伊战争结束后，伊萨卡国王奥德修斯历经艰险、踏上漫长归乡之旅。",
+          "runtime": 173,
+          "tagline": "违抗神明，逆天而行。",
+          "title": "奥德赛"
+        }
+      },
+      {
+        "iso_3166_1": "MX",
+        "iso_639_1": "es",
+        "name": "Español",
+        "english_name": "Spanish",
+        "data": {
+          "homepage": "",
+          "overview": "Odiseo, el legendario rey de Ítaca, emprende un largo y peligroso viaje de regreso a casa tras la guerra de Troya. A lo largo de su travesía, se ve obligado a enfrentarse a los caprichos de los dioses, a monstruos mitológicos y a pruebas que ponen a prueba su astucia y su humanidad hasta el límite.",
+          "runtime": 173,
+          "tagline": "Desafiar a los dioses.",
+          "title": "La Odisea"
+        }
+      },
+      {
+        "iso_3166_1": "PL",
+        "iso_639_1": "pl",
+        "name": "Polski",
+        "english_name": "Polish",
+        "data": {
+          "homepage": "",
+          "overview": "Odyseusz, legendarny grecki król Itaki, po wojnie trojańskiej wyrusza w długą i niebezpieczną podróż do domu, opisując swoje spotkania z mitycznymi istotami, takimi jak cyklop Polifem, syreny i czarownica-bogini Circe.",
+          "runtime": 0,
+          "tagline": "Rzuć wyzwanie bogom.",
+          "title": "Odyseja"
+        }
+      },
+      {
+        "iso_3166_1": "IT",
+        "iso_639_1": "it",
+        "name": "Italiano",
+        "english_name": "Italian",
+        "data": {
+          "homepage": "https://www.universalpictures.it/micro/odyssey",
+          "overview": "Ogni leggenda ha un prezzo. Ogni ritorno richiede un sacrificio. Mentre il mare diventa il suo più grande nemico, Ulisse affronta un cammino fatto di illusioni, battaglie e prove impossibili. Un'epica odissea che mette alla prova il coraggio di un uomo contro il volere degli dèi.",
+          "runtime": 173,
+          "tagline": "Ogni leggenda ha un inizio. Ogni eroe trova la sua strada.",
+          "title": "Odissea"
+        }
+      },
+      {
+        "iso_3166_1": "BG",
+        "iso_639_1": "bg",
+        "name": "български език",
+        "english_name": "Bulgarian",
+        "data": {
+          "homepage": "",
+          "overview": "Одисей, легендарният цар на Итака, поема на дълго и опасно пътешествие към дома след края на Троянската война. По време на своето странстване той е принуден да се изправи срещу прищевките на боговете, митологични чудовища и изпитания, които изпитват до краен предел както неговата хитрост, така и човечността му.",
+          "runtime": 0,
+          "tagline": "Опълчи се на боговете",
+          "title": "Одисея"
+        }
+      },
+      {
+        "iso_3166_1": "TH",
+        "iso_639_1": "th",
+        "name": "ภาษาไทย",
+        "english_name": "Thai",
+        "data": {
+          "homepage": "",
+          "overview": "เรื่องราวที่ดัดแปลงมาจากบทกวีมหากาพย์ชื่อเดียวกันของ โฮเมอร์ ติดตามเรื่องราวของ โอดิสเซียส​ ในการเดินทางกลับบ้านที่แสนอันตราย หลังจากสงครามโทรจัน เปิดเผยให้เห็นถึงการเผชิญหน้าของเขากับ โพลีฟีมัส, เหล่าไซเรน, เซอร์ซี และสิ้นสุดด้วยการกลับมาพบกับ เพเนโลพี ภรรยาของเขาอีกครั้ง",
+          "runtime": 0,
+          "tagline": "",
+          "title": "มหากาพย์โอดิสซี"
+        }
+      },
+      {
+        "iso_3166_1": "IL",
+        "iso_639_1": "he",
+        "name": "עִבְרִית",
+        "english_name": "Hebrew",
+        "data": {
+          "homepage": "http://odysseymovie.co.il",
+          "overview": "לאחר מלחמת טרויה, אודיסאוס עומד בפני מסע מסוכן בחזרה לאיתקה, כשהוא פוגש יצורים כמו הקיקלופ פוליפמוס, הסירנות, וקירקה לאורך המסע.",
+          "runtime": 0,
+          "tagline": "המרו את פי האלים.",
+          "title": "האודיסאה"
+        }
+      },
+      {
+        "iso_3166_1": "GE",
+        "iso_639_1": "ka",
+        "name": "ქართული",
+        "english_name": "Georgian",
+        "data": {
+          "homepage": "",
+          "overview": "ოდისევსი, ითაკას ლეგენდარული ბერძენი მეფე, ტროას ომის შემდეგ სახლში დაბრუნების ხანგრძლივ და სახიფათო მოგზაურობას იწყებს, სადაც აღწერს ისეთ მითიურ არსებებთან შეხვედრებს, როგორებიც არიან ციკლოპი პოლიფემოსი, სირენები და ჯადოქარი ქალღმერთი კირკე...",
+          "runtime": 0,
+          "tagline": "",
+          "title": "ოდისეა"
+        }
+      },
+      {
+        "iso_3166_1": "HR",
+        "iso_639_1": "hr",
+        "name": "Hrvatski",
+        "english_name": "Croatian",
+        "data": {
+          "homepage": "",
+          "overview": "Adaptacija istoimenog Homerovog epa prati Odiseja na njegovom opasnom putovanju kući nakon Trojanskog rata, prikazujući njegove susrete s Polifemom, Sirenama, Kirkom, a završava ponovnim susretom sa suprugom Penelopom.",
+          "runtime": 0,
+          "tagline": "Prkosi bogovima",
+          "title": "Odiseja"
+        }
+      },
+      {
+        "iso_3166_1": "HU",
+        "iso_639_1": "hu",
+        "name": "Magyar",
+        "english_name": "Hungarian",
+        "data": {
+          "homepage": "",
+          "overview": "Odüsszeusz, Ithaka legendás görög királya a trójai háború után hosszú és veszélyes útra indul hazafelé. Útközben olyan mitikus lényekkel találkozik mint a küklopsz, Polüphémosz, a szirének és a boszorkányistennő, Kirké.  Christopher Nolan következő filmje, az Odüsszeia egy mitikus akcióeposz, melyet számos helyszínen forgattak IMAX® technológiával.",
+          "runtime": 0,
+          "tagline": "Dacolj az istenekkel.",
+          "title": "Odüsszeia"
+        }
+      },
+      {
+        "iso_3166_1": "SA",
+        "iso_639_1": "ar",
+        "name": "العربية",
+        "english_name": "Arabic",
+        "data": {
+          "homepage": "",
+          "overview": "يتتبع الفيلم رحلة أوديسيوس، الملك الأسطوري لـ \"إيثاكا\"، في عودته الطويلة والخطرة إلى وطنه بعد انتهاء حرب طروادة. تستغرق رحلته عشر سنوات، وخلالها يواجه أوديسيوس العديد من التحديات والمخاطر والمخلوقات الأسطورية",
+          "runtime": 0,
+          "tagline": "تحدَّ الآلهة.",
+          "title": "الأوديسة"
+        }
+      },
+      {
+        "iso_3166_1": "IR",
+        "iso_639_1": "fa",
+        "name": "فارسی",
+        "english_name": "Persian",
+        "data": {
+          "homepage": "",
+          "overview": "این فیلم یک اقتباس حماسی و اکشن از شعر حماسی معروف هومر (Odyssey) به حساب می‌آید که داستان سفر طولانی و پرماجرای اودیسئوس (پادشاه ایتاکا) رو بعد از جنگ تروآ روایت می‌کند. او با موجودات اساطیری مثل سایکلوپس (پولیفموس)، سیرن‌ها و سیرسه روبرو شده و سعی می‌کند به خانه و همسرش پنه‌لوپه برگردد.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "اودیسه"
+        }
+      },
+      {
+        "iso_3166_1": "HK",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "改編自荷馬同名史詩，講述奧德修斯在特洛伊戰爭後的危險歸途，展示他與獨眼巨人波利斐摩斯、海妖、西西裏女巫的遭遇，最後與妻子佩涅洛佩團聚。",
+          "runtime": 0,
+          "tagline": "",
+          "title": "奧德賽"
+        }
+      },
+      {
+        "iso_3166_1": "CA",
+        "iso_639_1": "fr",
+        "name": "Français",
+        "english_name": "French",
+        "data": {
+          "homepage": "https://www.lodysseelefilm.ca",
+          "overview": "Ulysse, le légendaire roi grec d'Ithaque, entreprend un périlleux voyage de retour après la guerre de Troie. Son parcours sera marqué par des rencontres avec des êtres mythiques tels que le cyclope Polyphème, les Sirènes et la déesse-sorcière Circé, jusqu’à ses retrouvailles tant attendues avec son épouse, Pénélope.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "L'Odyssée"
+        }
+      },
+      {
+        "iso_3166_1": "GR",
+        "iso_639_1": "el",
+        "name": "ελληνικά",
+        "english_name": "Greek",
+        "data": {
+          "homepage": "",
+          "overview": "Ο Οδυσσέας, ο θρυλικός βασιλιάς της Ιθάκης, ξεκινά ένα μακρύ και επικίνδυνο ταξίδι για την πατρίδα του μετά τον Τρωικό Πόλεμο. Κατά τη διάρκεια του ταξιδιού του, αναγκάζεται να αντιμετωπίσει τα καπρίτσια των θεών, μυθολογικά τέρατα, καθώς και δοκιμασίες που δοκιμάζουν τόσο την πονηριά όσο και την ανθρωπιά του μέχρι το οριακό τους σημείο.",
+          "runtime": 0,
+          "tagline": "Αψηφώντας τους θεούς.",
+          "title": "Η Οδύσσεια"
+        }
+      },
+      {
+        "iso_3166_1": "LT",
+        "iso_639_1": "lt",
+        "name": "Lietuvių",
+        "english_name": "Lithuanian",
+        "data": {
+          "homepage": "",
+          "overview": "Po Trojos karo Odisėjas leidžiasi į dešimtmetį trunkančią ir pavojingą kelionę namo į Itaką. Jį persekioja dievai, gundo sirenos, laukia susidūrimas su vienakiu milžinu Polifemu, o kelią namo temdo magijos kerai. Tuo metu namuose jo žmona Penelopė ir sūnus Telemachas kovoja su negailestingu laiku, nežinia ir sostą užgrobti siekiančiais piršliais. Odisėjas privalo įveikti ne tik jūrų ir dievų išbandymus, bet ir savo paties silpnumą, kad susigrąžintų šeimą, garbę ir karalystę.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Odisėja"
+        }
+      },
+      {
+        "iso_3166_1": "RO",
+        "iso_639_1": "ro",
+        "name": "Română",
+        "english_name": "Romanian",
+        "data": {
+          "homepage": "",
+          "overview": "Povestea lui Odysseus în călătoria sa periculoasă spre casă după Războiul Troian, prezentând întâlnirile sale cu Polyphemus, Sirenele, Circe și terminând cu reîntâlnirea cu soția sa, Penelope.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Odiseea"
+        }
+      },
+      {
+        "iso_3166_1": "ID",
+        "iso_639_1": "id",
+        "name": "Bahasa indonesia",
+        "english_name": "Indonesian",
+        "data": {
+          "homepage": "",
+          "overview": "Odysseus, raja legendaris Yunani dari Ithaca, memulai perjalanan panjang dan berbahaya untuk pulang setelah Perang Troya, yang mengisahkan perjumpaannya dengan makhluk-makhluk mitologis seperti Cyclops Polyphemus, para Siren, dan penyihir-dewi Circe.",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "EE",
+        "iso_639_1": "et",
+        "name": "Eesti",
+        "english_name": "Estonian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Odüsseia"
+        }
+      },
+      {
+        "iso_3166_1": "AZ",
+        "iso_639_1": "az",
+        "name": "Azərbaycan",
+        "english_name": "Azerbaijani",
+        "data": {
+          "homepage": "",
+          "overview": "Troya müharibəsindən sonra İtaka kralı Odissey kiçik bir qoşunun başında həyat yoldaşı Penelopanın yanına, evinə qayıtmaq üçün yola çıxır. Bu uzun səfər boyunca Odissey saysız-hesabsız sınaqlarla üzləşir, sikloplarla, sirenlərlə və nəhəng adamyeyənlərlə qarşılaşır.",
+          "runtime": 180,
+          "tagline": "",
+          "title": "Odisseya"
+        }
+      },
+      {
+        "iso_3166_1": "JP",
+        "iso_639_1": "ja",
+        "name": "日本語",
+        "english_name": "Japanese",
+        "data": {
+          "homepage": "",
+          "overview": "トロイア戦争の終結後、イタケーの伝説的な王オデュッセウスは、故郷への長く危険に満ちた帰還の旅に出る。その航海の途上、彼は神々の気まぐれや神話の怪物たち、そして自身の知略と人間性の双方を極限まで試す過酷な試練に立ち向かうことを余儀なくされる――。",
+          "runtime": 0,
+          "tagline": "",
+          "title": "オデュッセイア"
+        }
+      },
+      {
+        "iso_3166_1": "SI",
+        "iso_639_1": "sl",
+        "name": "Slovenščina",
+        "english_name": "Slovenian",
+        "data": {
+          "homepage": "",
+          "overview": "Epski spektakel Christopherja Nolana prinaša sodobno upodobitev Homerjevega epa. Po padcu Troje se kralj Odisej poda na nevarno pot proti domovini Itaki. Zaradi zamere bogovom njegovo vračanje traja desetletje, polno mitoloških grozot - od spopada s Kiklopom do petja Siren. Medtem ko se doma Penelopa brani vztrajnih snubcev, mora Odisej premagati lastne slabosti in se soočiti z usodo.",
+          "runtime": 180,
+          "tagline": "Kljubuj bogovom",
+          "title": "Odiseja"
+        }
+      },
+      {
+        "iso_3166_1": "CZ",
+        "iso_639_1": "cs",
+        "name": "Český",
+        "english_name": "Czech",
+        "data": {
+          "homepage": "",
+          "overview": "Odysseus  byl král řeckého ostrova Ithaka, který dle legend a básníka Homéra vymyslel slavného Trójského koně, jenž výraznou měrou pomohl obelstít obránce Tróji a ukončit tak vyčerpávající dobývání tohoto města. Po skončení bojů netouží Odysseus po ničem jiném než vrátit se domů, za manželkou Pénelopé a synem Télemachem. Svými odvážnými činy však dle pověstí rozhněval bohy a ti se mu rozhodli návrat co nejvíc zkomplikovat. I proto se slovo „odysea“ stalo synonymem pro cestu plnou překážek, které poutníka odvádějí od jeho cíle, místo toho, aby ho k němu přibližovaly. Zatímco Odysseus vzdoruje bohům, obrům, svůdné kouzelnici Kirké a dalším nebezpečím, jeho žena Pénelopé vzdoruje mužům, kteří chtějí uchvátit ji a s ní celé ithacké království.",
+          "runtime": 172,
+          "tagline": "Vzepřít se bohům",
+          "title": "Odyssea"
+        }
+      },
+      {
+        "iso_3166_1": "SK",
+        "iso_639_1": "sk",
+        "name": "Slovenčina",
+        "english_name": "Slovak",
+        "data": {
+          "homepage": "",
+          "overview": "Filmové spracovanie starogréckej epickej básne „Odysea“, ktorú napísal Homér a ktorá rozpráva príbeh ithackého kráľa Odysea (Matt Damon), vracajúceho sa domov po trójskej vojne. Počas svojej desaťročnej púte sa stretáva s množstvom mýtických bytostí a nebezpečných prekážok, aby sa mohol znovu stretnúť so svojou manželkou Penelopé.",
+          "runtime": 172,
+          "tagline": "",
+          "title": "Odysea"
+        }
+      },
+      {
+        "iso_3166_1": "LV",
+        "iso_639_1": "lv",
+        "name": "Latviešu",
+        "english_name": "Latvian",
+        "data": {
+          "homepage": "",
+          "overview": "Pēc Trojas kara Odisejs, Itakas valdnieks dodas mājās pie savas sievas Pēnelopes. Viņa ceļš mājup būs ilgs un pārbaudījumiem bagāts.",
+          "runtime": 172,
+          "tagline": "",
+          "title": "Odiseja"
+        }
+      },
+      {
+        "iso_3166_1": "BY",
+        "iso_639_1": "be",
+        "name": "беларуская мова",
+        "english_name": "Belarusian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Адысея"
+        }
+      },
+      {
+        "iso_3166_1": "BD",
+        "iso_639_1": "bn",
+        "name": "বাংলা",
+        "english_name": "Bengali",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "দ্য ওডিসি"
+        }
+      },
+      {
+        "iso_3166_1": "IN",
+        "iso_639_1": "hi",
+        "name": "हिन्दी",
+        "english_name": "Hindi",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "द ओडिसी"
+        }
+      },
+      {
+        "iso_3166_1": "KZ",
+        "iso_639_1": "kk",
+        "name": "қазақ",
+        "english_name": "Kazakh",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Одиссея"
+        }
+      },
+      {
+        "iso_3166_1": "RS",
+        "iso_639_1": "sr",
+        "name": "Srpski",
+        "english_name": "Serbian",
+        "data": {
+          "homepage": "",
+          "overview": "Одисеј, легендарни краљ Итаке, креће на дуго и опасно путовање кући након Тројанског рата. Током свог путовања, приморан је да се суочи са хировима богова, митолошким чудовиштима и искушењима која истежу и његову лукавост и његову човечност до тачке пуцања.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Одисеја"
+        }
+      },
+      {
+        "iso_3166_1": "IN",
+        "iso_639_1": "te",
+        "name": "తెలుగు",
+        "english_name": "Telugu",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "ది ఒడిస్సీ"
+        }
+      },
+      {
+        "iso_3166_1": "PK",
+        "iso_639_1": "ur",
+        "name": "اردو",
+        "english_name": "Urdu",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "دی اوڈیسی"
+        }
+      },
+      {
+        "iso_3166_1": "AM",
+        "iso_639_1": "hy",
+        "name": "",
+        "english_name": "Armenian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Ոդիսևս"
+        }
+      },
+      {
+        "iso_3166_1": "MK",
+        "iso_639_1": "mk",
+        "name": "",
+        "english_name": "Macedonian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Одисеја"
+        }
+      },
+      {
+        "iso_3166_1": "MN",
+        "iso_639_1": "mn",
+        "name": "",
+        "english_name": "Mongolian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Одиссэй"
+        }
+      },
+      {
+        "iso_3166_1": "NL",
+        "iso_639_1": "nl",
+        "name": "Nederlands",
+        "english_name": "Dutch",
+        "data": {
+          "homepage": "",
+          "overview": "Odysseus, de legendarische koning van Ithaca, begint na de Trojaanse Oorlog aan een lange en gevaarlijke reis naar huis. Tijdens zijn tocht krijgt hij te maken met de grillen van goden, mythologische monsters en beproevingen die zowel zijn sluwheid als zijn menselijkheid tot het uiterste op de proef stellen.",
+          "runtime": 173,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "AE",
+        "iso_639_1": "ar",
+        "name": "العربية",
+        "english_name": "Arabic",
+        "data": {
+          "homepage": "",
+          "overview": "يتتبع الفيلم رحلة أوديسيوس، الملك الأسطوري لـ \"إيثاكا\"، في عودته الطويلة والخطرة إلى وطنه بعد انتهاء حرب طروادة. تستغرق رحلته عشر سنوات، وخلالها يواجه أوديسيوس العديد من التحديات والمخاطر والمخلوقات الأسطورية",
+          "runtime": 0,
+          "tagline": "تحدَّ الآلهة.",
+          "title": "الأوديسة"
+        }
+      },
+      {
+        "iso_3166_1": "ES",
+        "iso_639_1": "ca",
+        "name": "Català",
+        "english_name": "Catalan",
+        "data": {
+          "homepage": "",
+          "overview": "Una epopeia mitològica que segueix la història d'Odisseu i el seu llarg viatge a casa, de deu anys de durada, després de la guerra de Troia.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "L'Odissea"
+        }
+      },
+      {
+        "iso_3166_1": "LK",
+        "iso_639_1": "si",
+        "name": "සිංහල",
+        "english_name": "Sinhalese",
+        "data": {
+          "homepage": "",
+          "overview": "ට්‍රෝජන් යුද්ධයෙන් පසු, ඉතිකාහි සුප්‍රකට රජු වන ඔඩිසියස් සිය මව්බිම බලා දිගු මෙන්ම අන්තරායකර ගමනක් ආරම්භ කරයි. මෙම සංචාරය පුරාම ඔහුට දෙවිවරුන්ගේ විවිධ බලපෑම්වලට, මිථ්‍යා කථා පිටුපස සිටින බියකරු සත්ත්වයන්ට මෙන්ම ඔහුගේ ප්‍රඥාව සහ මනුෂ්‍යත්වය දැඩි ලෙස පරීක්ෂාවට ලක් කෙරෙන අභියෝග රැසකට මුහුණ දීමට සිදුවෙයි.",
+          "runtime": 172,
+          "tagline": "දෙවිවරුන්ට අභියෝග කරන්න",
+          "title": "වීර චාරිකාව"
+        }
+      },
+      {
+        "iso_3166_1": "AL",
+        "iso_639_1": "sq",
+        "name": "shqip",
+        "english_name": "Albanian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "EE",
+        "iso_639_1": "ee",
+        "name": "Èʋegbe",
+        "english_name": "Ewe",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "UZ",
+        "iso_639_1": "uz",
+        "name": "ozbek",
+        "english_name": "Uzbek",
+        "data": {
+          "homepage": "",
+          "overview": "Troya urushidan so‘ng Odissey Itakaga qaytishda xavfli safarga duch keladi va yo‘l-yo‘lakay Polifem (tsiklop), Sirenlar hamda Kalipso kabi mavjudotlarga duch keladi.",
+          "runtime": 173,
+          "tagline": "",
+          "title": "Odisseya"
+        }
+      },
+      {
+        "iso_3166_1": "NO",
+        "iso_639_1": "no",
+        "name": "Norsk",
+        "english_name": "Norwegian",
+        "data": {
+          "homepage": "",
+          "overview": "Odysseus, den legendariske kongen av Ithaca, legger ut på en lang og farefull reise hjem etter den trojanske krig. Underveis blir han tvunget til å møte gudenes luner, mytologiske monstre og prøvelser som tøyer både hans list og hans menneskelighet til bristepunktet.",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "AS",
+        "iso_639_1": "as",
+        "name": "অসমীয়া",
+        "english_name": "Assamese",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "দ্য অডিচি"
+        }
+      },
+      {
+        "iso_3166_1": "KS",
+        "iso_639_1": "ks",
+        "name": "",
+        "english_name": "Kashmiri",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "دی اوڈیسی"
+        }
+      },
+      {
+        "iso_3166_1": "LO",
+        "iso_639_1": "lo",
+        "name": "",
+        "english_name": "Lao",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "ມະຫາກາບໂອດິສຊີ"
+        }
+      },
+      {
+        "iso_3166_1": "SG",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "改编自荷马同名史诗，讲述奥德修斯在特洛伊战争后的危险归途，展示他与独眼巨人波利斐摩斯、海妖、西西里女巫的遭遇，最后与妻子佩涅洛佩团聚。",
+          "runtime": 0,
+          "tagline": "",
+          "title": "奥德赛"
+        }
+      },
+      {
+        "iso_3166_1": "DK",
+        "iso_639_1": "da",
+        "name": "Dansk",
+        "english_name": "Danish",
+        "data": {
+          "homepage": "",
+          "overview": "Odysseus, den legendariske konge af Ithaka, begiver sig ud på en lang og farefuld rejse hjem efter den trojanske krig. Gennem hele sin rejse bliver han tvunget til at konfrontere gudernes luner, mytologiske monstre og prøvelser, der sætter både hans list og hans menneskelighed på prøve til bristepunktet.",
+          "runtime": 173,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "IN",
+        "iso_639_1": "ta",
+        "name": "தமிழ்",
+        "english_name": "Tamil",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "தி ஒடிசி"
+        }
+      }
+    ]
+  }
+}

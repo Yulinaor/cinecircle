@@ -1,0 +1,541 @@
+{
+  "adult": false,
+  "backdrop_path": "/sl5NJ1vtyhP9Vr88bB4blULsJYp.jpg",
+  "belongs_to_collection": null,
+  "budget": 100000000,
+  "genres": [
+    {
+      "id": 16,
+      "name": "Animation"
+    },
+    {
+      "id": 12,
+      "name": "Adventure"
+    },
+    {
+      "id": 14,
+      "name": "Fantasy"
+    }
+  ],
+  "homepage": "https://wildwoodmovie.com",
+  "id": 791523,
+  "imdb_id": "tt2056785",
+  "origin_country": [
+    "US"
+  ],
+  "original_language": "en",
+  "original_title": "Wildwood",
+  "overview": "Prue and her classmate Curtis are drawn into a magical forest filled with enchanted creatures, loyal allies, and formidable adversaries as they embark on a desperate quest to rescue Prue's abducted baby brother from a murder of crows led by a mysterious woman named Alexandra.",
+  "popularity": 1453.32,
+  "poster_path": "/snFM00mpNAfUzUtkdEW0uDEvXA0.jpg",
+  "production_companies": [
+    {
+      "id": 11537,
+      "logo_path": "/AgCkAk8EpUG9fTmK6mWcaJA2Zwh.png",
+      "name": "LAIKA",
+      "origin_country": "US"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "US",
+      "name": "United States of America"
+    }
+  ],
+  "release_date": "2026-10-19",
+  "revenue": 28752518,
+  "runtime": 132,
+  "softcore": false,
+  "spoken_languages": [
+    {
+      "english_name": "English",
+      "iso_639_1": "en",
+      "name": "English"
+    }
+  ],
+  "status": "Released",
+  "tagline": "How far would you go for those you love?",
+  "title": "Wildwood",
+  "video": false,
+  "vote_average": 8.674,
+  "vote_count": 129,
+  "external_ids": {
+    "imdb_id": "tt2056785",
+    "wikidata_id": "Q123058740",
+    "facebook_id": null,
+    "instagram_id": null,
+    "twitter_id": null
+  },
+  "translations": {
+    "translations": [
+      {
+        "iso_3166_1": "US",
+        "iso_639_1": "en",
+        "name": "English",
+        "english_name": "English",
+        "data": {
+          "homepage": "https://wildwoodmovie.com",
+          "overview": "Prue and her classmate Curtis are drawn into a magical forest filled with enchanted creatures, loyal allies, and formidable adversaries as they embark on a desperate quest to rescue Prue's abducted baby brother from a murder of crows led by a mysterious woman named Alexandra.",
+          "runtime": 132,
+          "tagline": "How far would you go for those you love?",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "KR",
+        "iso_639_1": "ko",
+        "name": "한국어/조선말",
+        "english_name": "Korean",
+        "data": {
+          "homepage": "",
+          "overview": "포틀랜드에 사는 당찬 소녀 프루 매킬은 어느 날 갑자기 날아든 까마귀 떼가 갓난 남동생 맥을 낚아채 하늘 너머로 사라지는 믿기 힘든 광경을 목격한다. 까마귀들이 향한 곳은 도시의 경계 너머에 펼쳐진 마법의 숲, 누구도 건널 수 없다고 알려져 '건널 수 없는 황야'로 불리는 금단의 땅이다. 동생을 되찾겠다는 일념 하나로 숲에 뛰어든 프루의 뒤를 어설프지만 의리만큼은 누구보다 굳은 같은 반 친구 커티스가 따라나선다. 그러나 울창한 나무들 너머에는 말하는 동물들과 무법자 산적들, 그리고 슬픔과 야망에 사로잡힌 권력자들이 뒤얽혀 살아가는 거대한 세계가 숨겨져 있었다. 숲의 균형을 뒤흔드는 거대한 싸움 한가운데로 휘말려 들어간 두 아이는 과연 맥을 무사히 집으로 데려올 수 있을까?",
+          "runtime": 0,
+          "tagline": "아무도 건너지 못한 숲 너머로, 동생을 되찾으러 간다",
+          "title": "와일드우드"
+        }
+      },
+      {
+        "iso_3166_1": "ES",
+        "iso_639_1": "es",
+        "name": "Español",
+        "english_name": "Spanish",
+        "data": {
+          "homepage": "",
+          "overview": "Prue y su compañero de clase Curtis se ven arrastrados a un bosque mágico poblado por criaturas encantadas, aliados leales y adversarios formidables, mientras emprenden una misión desesperada para rescatar al hermano bebé de Prue —secuestrado por una bandada de cuervos liderada por una misteriosa mujer llamada Alexandra—.",
+          "runtime": 132,
+          "tagline": "¿Hasta dónde llegarías por quienes amas?.",
+          "title": "Wildwood: El Bosque Salvaje"
+        }
+      },
+      {
+        "iso_3166_1": "JP",
+        "iso_639_1": "ja",
+        "name": "日本語",
+        "english_name": "Japanese",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "RU",
+        "iso_639_1": "ru",
+        "name": "Pусский",
+        "english_name": "Russian",
+        "data": {
+          "homepage": "",
+          "overview": "Девочка Прю живёт в городе Портленд, пока однажды стая загадочных воронов не похищает её младшего брата Мака и не уносит его в запретный лес, скрывающийся за пределами города. Не желая оставлять брата в опасности, Прю вместе со своим лучшим другом Кёртисом отправляется в таинственную Пустошь - волшебный мир, населённый говорящими животными, необычными существами и могущественными силами. Пробираясь через неизведанные земли, друзья сталкиваются с опасными противниками и раскрывают секреты, скрытые в глубине леса. Чтобы спасти Мака, Прю предстоит проявить смелость, преодолеть собственные страхи и противостоять загадочной Александре, стоящей за похищением. Но вскоре девочка понимает, что от её путешествия зависит не только судьба семьи, но и будущее всего волшебного мира.",
+          "runtime": 132,
+          "tagline": "«Лес зовёт»",
+          "title": "Ведьмин лес"
+        }
+      },
+      {
+        "iso_3166_1": "MX",
+        "iso_639_1": "es",
+        "name": "Español",
+        "english_name": "Spanish",
+        "data": {
+          "homepage": "https://www.imagemfilmeslatam.com/micrositio/el-bosque-salvaje-wildwood",
+          "overview": "Después de que su hermano bebé es secuestrado por una parvada de cuervos, la decidida adolescente Prue McKeel y su compañero Curtis Mehlberg inician una desesperada misión de rescate hacia el Bosque Impasable, un bosque encantado oculto justo más allá de Portland, Oregón.",
+          "runtime": 132,
+          "tagline": "¿Hasta dónde llegarías por tus seres queridos?.",
+          "title": "Wildwood: El bosque salvaje"
+        }
+      },
+      {
+        "iso_3166_1": "BR",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "homepage": "https://www.imagemfilmes.com.br/filme/o-bosque-selvagem",
+          "overview": "A determinada adolescente Prue McKeel embarca em uma missão desesperada de resgate depois que seu irmão caçula é sequestrado por um bando de corvos. Acompanhada por seu colega de classe desajeitado, mas leal, Curtis Mehlberg, Prue navega por um mundo habitado por animais falantes, bandidos e figuras poderosas movidas pela dor e pela ambição. À medida que a dupla é arrastada para um conflito que ameaça o equilíbrio da própria floresta, Prue precisa descobrir uma força e uma crença que jamais soube que possuía.",
+          "runtime": 130,
+          "tagline": "",
+          "title": "O Bosque Selvagem"
+        }
+      },
+      {
+        "iso_3166_1": "UA",
+        "iso_639_1": "uk",
+        "name": "Український",
+        "english_name": "Ukrainian",
+        "data": {
+          "homepage": "",
+          "overview": "У центрі історії — Прю МакКіл та її однокласник Кертіс Мелберг, які вирушають у небезпечну подорож до прихованого магічного лісу неподалік Портленда. Їхня мета — врятувати немовля Мака, брата Прю, якого викрали ворони під проводом загадкової жінки на ім’я Александра.",
+          "runtime": 0,
+          "tagline": "На що ти готовий заради тих, кого любиш?",
+          "title": "Диволіс"
+        }
+      },
+      {
+        "iso_3166_1": "IT",
+        "iso_639_1": "it",
+        "name": "Italiano",
+        "english_name": "Italian",
+        "data": {
+          "homepage": "https://notoriouspictures.it/movie/wildwood-segreti-del-mondo-proibito/",
+          "overview": "Wildwood, nei dintorni di Portland, è un posto da cui tenersi lontani e che dovrebbe rimanere nascosto a tutti. Prue McKeel, tuttavia, è costretta a raggiungerlo dopo che il fratellino Mac è stato rapito da uno stormo di corvi e trasportato nei meandri della foresta. Insieme allo sfortunato compagno di classe Curtis, Prue corre a salvare Mac da un pericolo che sembra uscito dalle pagine di una favola.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Wildwood - I segreti del bosco proibito"
+        }
+      },
+      {
+        "iso_3166_1": "VN",
+        "iso_639_1": "vi",
+        "name": "Tiếng Việt",
+        "english_name": "Vietnamese",
+        "data": {
+          "homepage": "",
+          "overview": "Hành trình tuyệt vọng của một cô bé nhằm cứu em trai sơ sinh mở ra một cuộc phiêu lưu kỳ ảo đầy hiểm nguy trong khu rừng cấm, nơi có những sinh vật huyền bí, đồng minh đáng mến và kẻ thù đáng gờm, với số phận của cả một vương quốc bí ẩn đang bị đe dọa.",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "TR",
+        "iso_639_1": "tr",
+        "name": "Türkçe",
+        "english_name": "Turkish",
+        "data": {
+          "homepage": "",
+          "overview": "Coraline'i yaratan ellerden... Prue McKeel, küçük erkek kardeşi bir karga sürüsü tarafından kaçırıldıktan sonra Oregon'un hemen ötesindeki gizli ve büyülü vahşi ormanda umutsuz bir arama çalışması başlatır. Talihsiz ama sadık sınıf arkadaşı Curtis'in de katılımıyla Prue; konuşan hayvanların, haydutların, keder ve hırsla hareket eden güçlü figürlerin dünyasında yol alır. İkili, ormanın dengesini tehdit eden bir çatışmaya sürüklenirken güç ve inancı keşfetmek zorundadırlar.",
+          "runtime": 0,
+          "tagline": "Sevginiz için ne kadar uzağa gidebilirsiniz?",
+          "title": "Vahşi Orman"
+        }
+      },
+      {
+        "iso_3166_1": "RS",
+        "iso_639_1": "sr",
+        "name": "Srpski",
+        "english_name": "Serbian",
+        "data": {
+          "homepage": "",
+          "overview": "Након што јој је беби брат отет од стране убице врана, тврдоглава тинејџерка Пру Мекил покреће очајничку спасилачку мисију у Непроходну дивљину, зачарану шуму скривену одмах иза Портланда у Орегону. Удружена са својим несрећним, али лојалним другом из разреда Кертисом Мелбергом, Пру се креће кроз свет животиња које говоре, разбојника и моћних фигура вођених тугом и амбицијом. Док се пар увлачи у сукоб који прети равнотежи саме шуме, Пру мора да открије снагу и веру за које никада није знала да поседује.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Вајлдвуд"
+        }
+      },
+      {
+        "iso_3166_1": "NL",
+        "iso_639_1": "nl",
+        "name": "Nederlands",
+        "english_name": "Dutch",
+        "data": {
+          "homepage": "",
+          "overview": "Prue en haar klasgenoot Curtis worden meegesleurd in een verboden magisch bos vol betoverde wezens, trouwe bondgenoten en geduchte tegenstanders, terwijl ze aan een wanhopige missie beginnen om Prue's ontvoerde babybroertje, Mac, te redden van de kraaien onder leiding van een mysterieuze vrouw genaamd Alexandra.",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "HU",
+        "iso_639_1": "hu",
+        "name": "Magyar",
+        "english_name": "Hungarian",
+        "data": {
+          "homepage": "",
+          "overview": "Prue és osztálytársa, Curtis egy tiltott, varázslatos erdőbe téved, amelyet elbűvölt lények, hűséges szövetségesek és félelmetes ellenfelek népesítenek be. Kétségbeesett küldetésre indulnak, hogy kiszabadítsák Prue elrabolt kisöccsét, Macet a varjak fogságából, akiket egy Alexandra nevű, titokzatos nő vezet. (Csillag Lajos)",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "普鲁和同班同学柯蒂斯误入一片禁忌魔法森林，林中遍布魔法生灵、忠心伙伴与强大劲敌。二人踏上一场凶险万分的营救之旅，要从神秘女子亚历山德拉统领的鸦群手中，救出被掳走的婴儿弟弟麦克。",
+          "runtime": 0,
+          "tagline": "",
+          "title": "荒野丛林"
+        }
+      },
+      {
+        "iso_3166_1": "FR",
+        "iso_639_1": "fr",
+        "name": "Français",
+        "english_name": "French",
+        "data": {
+          "homepage": "",
+          "overview": "Prue, une jeune fille courageuse, part à la recherche de son petit frère, enlevé et retenu dans la forêt interdite peuplée de créatures enchantées, d’alliés inattendus et d’adversaires redoutables. Ce qui débute comme une quête intime se transforme rapidement en une aventure spectaculaire aux enjeux colossaux, et c’est le destin de tout un monde caché qui dépend désormais de ses choix.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Wildwood : La prophétie de la forêt"
+        }
+      },
+      {
+        "iso_3166_1": "PT",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "homepage": "",
+          "overview": "Prue e o seu colega de turma Curtis são atraídos para uma floresta mágica proibida, repleta de criaturas encantadas, aliados leais e adversários formidáveis, enquanto embarcam numa missão desesperada para salvar o irmãozinho de Prue, Mac, que foi raptado pelos corvos liderados por uma mulher misteriosa chamada Alexandra.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Floresta Mágica"
+        }
+      },
+      {
+        "iso_3166_1": "DE",
+        "iso_639_1": "de",
+        "name": "Deutsch",
+        "english_name": "German",
+        "data": {
+          "homepage": "",
+          "overview": "Nachdem ihr kleiner Bruder von einem Schwarm Krähen entführt worden ist, begibt sich die 12-jährige Prue auf eine abenteuerliche Rettungsmission in die „Undurchdringliche Wildnis“ – einen verzauberten Wald, der sich am Rande von Portland, Oregon, verbirgt. Gemeinsam mit ihrem tollpatschigen Mitschüler Curtis betritt sie eine Welt voller sprechender Tiere, Magie und uralter Mächte. Als die beiden in einen Konflikt geraten, der das Gleichgewicht des Waldes bedroht, entdeckt Prue eine innere Stärke, von der sie niemals geahnt hätte, dass sie in ihr steckt. Wenn sie ihren Bruder retten und das Schicksal von Wildwood verändern will, muss sie alles aufs Spiel setzen.",
+          "runtime": 139,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "BG",
+        "iso_639_1": "bg",
+        "name": "български език",
+        "english_name": "Bulgarian",
+        "data": {
+          "homepage": "",
+          "overview": "Приключенията на Прю Маккийл, докато тя тръгва към горите извън Портланд, за да намери отвлечения си брат.",
+          "runtime": 139,
+          "tagline": "",
+          "title": "Дивата гора"
+        }
+      },
+      {
+        "iso_3166_1": "PL",
+        "iso_639_1": "pl",
+        "name": "Polski",
+        "english_name": "Polish",
+        "data": {
+          "homepage": "",
+          "overview": "Nastoletnia Prue wyrusza do magicznego lasu, by odnaleźć porwanego brata i odkryć świat, o którego istnieniu nie miała pojęcia.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Kroniki lasu. Wildwood"
+        }
+      },
+      {
+        "iso_3166_1": "IR",
+        "iso_639_1": "fa",
+        "name": "فارسی",
+        "english_name": "Persian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "وایلدوود"
+        }
+      },
+      {
+        "iso_3166_1": "IL",
+        "iso_639_1": "he",
+        "name": "עִבְרִית",
+        "english_name": "Hebrew",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "יער פרא"
+        }
+      },
+      {
+        "iso_3166_1": "CA",
+        "iso_639_1": "fr",
+        "name": "Français",
+        "english_name": "French",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Wildwood: La contrée maléfique"
+        }
+      },
+      {
+        "iso_3166_1": "HR",
+        "iso_639_1": "hr",
+        "name": "Hrvatski",
+        "english_name": "Croatian",
+        "data": {
+          "homepage": "",
+          "overview": "Nakon što njezin mlađi brat bude otet od strane skupine vrana, Prue i njezin školski kolega Curtis nailaze na tajni svijet usred nasilnih previranja - svijet pun ratobornih stvorenja, miroljubivih mistika i moćnih figura s mračnim namjerama. A ono što započinje kao spasilačka misija postaje nešto mnogo veće dok se njih dvoje nađu u borbi za samu slobodu ove divljine - divljine koju mještani zovu Wildwood.",
+          "runtime": 0,
+          "tagline": "Iza granice poznatog čeka je svijet kakav još nije vidjela.",
+          "title": "Wildwood: Tajna zabranjene šume"
+        }
+      },
+      {
+        "iso_3166_1": "CZ",
+        "iso_639_1": "cs",
+        "name": "Český",
+        "english_name": "Czech",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Wildwood: Tajemství zakázaného lesa"
+        }
+      },
+      {
+        "iso_3166_1": "SI",
+        "iso_639_1": "sl",
+        "name": "Slovenščina",
+        "english_name": "Slovenian",
+        "data": {
+          "homepage": "",
+          "overview": "Ročno izdelana animirana pustolovščina po uspešnem romanu Colina Meloya, v kateri vsak kader oživi z močjo človeške domišljije. Ko jata vran ugrabi njenega mlajšega brata, se pogumna Prue in njen zvesti prijatelj Curtis podata na nevarno iskanje skozi začarani gozd, poln nenavadnih bitij, temačnih skrivnosti in mogočnih sovražnikov. Da bi rešila brata in zaščitila Wildwood, bo morala Prue v sebi najti moč, za katero sploh ni vedela, da jo ima.",
+          "runtime": 0,
+          "tagline": "Zgodba o pogumu, žrtvovanju in čudodelni moči ljubezni.",
+          "title": "Wildwood: Skrivnosti prepovedanega gozda"
+        }
+      },
+      {
+        "iso_3166_1": "LV",
+        "iso_639_1": "lv",
+        "name": "Latviešu",
+        "english_name": "Latvian",
+        "data": {
+          "homepage": "",
+          "overview": "Kad vārnu bars nolaupa viņas mazo brālīti, spītīgā pusaudze Prū kopā ar klasesbiedru Kērtisu dodas izmisīgā glābšanas misijā uz apburtu mežu, kur mīt runājoši dzīvnieki, laupītāji un varenas būtnes.",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "SE",
+        "iso_639_1": "sv",
+        "name": "svenska",
+        "english_name": "Swedish",
+        "data": {
+          "homepage": "",
+          "overview": "När hennes lillebror rövas bort av en flock kråkor ger sig den envisa tonåringen Prue McKeel ut på ett desperat räddningsuppdrag i den ogenomträngliga vildmarken – en förtrollad skog som döljer sig strax utanför Portland i Oregon. Vid sin sida har hon sin klantige men lojale klasskamrat Curtis Mehlberg, och tillsammans tar de sig genom en värld fylld av talande djur, banditer och mäktiga gestalter.",
+          "runtime": 131,
+          "tagline": "Hur långt skulle du gå för dem du älskar?",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "ES",
+        "iso_639_1": "ca",
+        "name": "Català",
+        "english_name": "Catalan",
+        "data": {
+          "homepage": "",
+          "overview": "La Prue, una nena valenta, emprèn la recerca del seu germà petit, segrestat i retingut al bosc prohibit, habitat per criatures encantades, aliats inesperats i adversaris temibles. El que comença com una cerca personal esdevé aviat una aventura espectacular de proporcions colossals, en què el destí de tot un món ocult depèn ara de les seves decisions.",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "TW",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "本片改編自美國搖滾樂團The Decemberists的主唱Colin Meloy所寫同名兒童奇幻小說。在一個位於波特蘭市郊外的名為懷爾德伍德的魔法世界，女孩Prue（佩頓·伊麗莎白·李Peyton Elizabeth Lee 配音）的弟弟被一群烏鴉綁架，帶進了森林深處。 Prue和倒楣的同學Curtis（雅各布·特倫布萊Jacob Tremblay 配音）一起去帶弟弟回來，因此踏進了從未有人涉足的神秘之地，Prue發現自己處於童話故事的中心，遇到了會說話的奇怪動物、流氓強盜和心懷黑暗意圖的強大人物。",
+          "runtime": 0,
+          "tagline": "",
+          "title": "荒野叢林"
+        }
+      },
+      {
+        "iso_3166_1": "GE",
+        "iso_639_1": "ka",
+        "name": "ქართული",
+        "english_name": "Georgian",
+        "data": {
+          "homepage": "",
+          "overview": "მას შემდეგ, რაც მისი პატარა ძმა ყვავების მიერ გაიტაცეს, ჯიუტი მოზარდი პრიუ მაკკილი სასოწარკვეთილ სამაშველო მისიას იწყებს ორეგონის შტატის, პორტლენდის მახლობლად დამალულ მოჯადოებულ ტყეში. უბედურ, მაგრამ ერთგულ თანაკლასელთან ერთად, პრიუ ყველაფერს რისკავს, როდესაც ის ბანდიტების, მოლაპარაკე ცხოველებისა და მწუხარებითა და ამბიციებით ამოძრავებული ძლიერი ფიგურების სამყაროში მოგზაურობს.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "ვილდვუდი"
+        }
+      },
+      {
+        "iso_3166_1": "BE",
+        "iso_639_1": "nl",
+        "name": "Nederlands",
+        "english_name": "Dutch",
+        "data": {
+          "homepage": "",
+          "overview": "Nadat haar broertje is ontvoerd door een zwerm kraaien, begint de 12-jarige Prue aan een avontuurlijke reddingsmissie naar de Impenetrable Wilds: een betoverd bos verborgen aan de rand van Portland, Oregon. Samen met haar onhandige klasgenoot Curtis betreedt ze een wereld vol pratende dieren, magie en eeuwenoude krachten. Wanneer de twee in conflict komen dat de balans van het bos bedreigt, ontdekt Prue een innerlijke kracht waarvan ze niet wist dat ze die in zich had. Als ze haar broer wil redden en het lot van Wildwood wil veranderen, moet ze alles riskeren.",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "SK",
+        "iso_639_1": "sk",
+        "name": "Slovenčina",
+        "english_name": "Slovak",
+        "data": {
+          "homepage": "",
+          "overview": "Prue a jej spolužiak Curtis sú vtiahnutí do magického lesa plného začarovaných stvorení, verných spojencov a hrozivých protivníkov, keď sa vydávajú na zúfalú výpravu za záchranou Prueinho uneseného malého brata pred vraždou, ktorú vedie záhadná žena menom Alexandra.",
+          "runtime": 0,
+          "tagline": "Ako ďaleko by si zašiel pre tých, ktorých miluješ?",
+          "title": "Wildwood: tajomstvo zakázaného lesa"
+        }
+      },
+      {
+        "iso_3166_1": "FI",
+        "iso_639_1": "fi",
+        "name": "suomi",
+        "english_name": "Finnish",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Sysimetsä"
+        }
+      },
+      {
+        "iso_3166_1": "SA",
+        "iso_639_1": "ar",
+        "name": "العربية",
+        "english_name": "Arabic",
+        "data": {
+          "homepage": "",
+          "overview": "حين تختطف أسراب الغربان شقيقها الرضيع، تندفع مراهقة عنيدة مع زميلها إلى غابة سحرية خفية على أطراف بورتلاند، ليجدا نفسيهما وسط حرب أهلية تتأجج بين جيش من الذئاب البرية وعصابة من الخارجين عن القانون.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "وايلدوود"
+        }
+      },
+      {
+        "iso_3166_1": "AE",
+        "iso_639_1": "ar",
+        "name": "العربية",
+        "english_name": "Arabic",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "وايلدوود"
+        }
+      }
+    ]
+  }
+}

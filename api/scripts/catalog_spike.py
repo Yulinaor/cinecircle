@@ -57,9 +57,15 @@ class Tmdb:
 
                 time.sleep(2 * (attempt + 1))
                 continue
-            r.raise_for_status()
+            check(r, f"TMDB {path}")
             return r.json()
         raise RuntimeError(f"TMDB {path}: still rate limited")
+
+
+def check(r: httpx.Response, what: str) -> None:
+    # Not raise_for_status(): its message holds the URL, and the URL can hold a key.
+    if r.is_error:
+        sys.exit(f"{what} failed: HTTP {r.status_code}")
 
 
 def pct(n: int, total: int) -> str:
@@ -225,7 +231,7 @@ def record() -> None:
     }
     for name, imdb_id in imdb_ids.items():
         r = omdb.get(OMDB, params={"i": imdb_id, "apikey": omdb_key})
-        r.raise_for_status()
+        check(r, f"OMDb {name}")
         dump(f"omdb/{name}", r.json(), keys)
     print(
         f"TMDB ids used: odyssey={odyssey['id']} severance={SEVERANCE_TV_ID} "
@@ -237,4 +243,8 @@ if __name__ == "__main__":
     commands = {"measure": measure, "record": record}
     if len(sys.argv) != 2 or sys.argv[1] not in commands:
         sys.exit("usage: catalog_spike.py {measure,record}")
-    commands[sys.argv[1]]()
+    try:
+        commands[sys.argv[1]]()
+    except httpx.HTTPError as err:
+        # The default traceback would print the request URL, which can hold a key.
+        sys.exit(f"network error: {type(err).__name__}")

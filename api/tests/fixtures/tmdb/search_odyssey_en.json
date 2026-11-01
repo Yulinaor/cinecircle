@@ -1,0 +1,440 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/bulFtfy3oBQtCnAMSi7g6DSSds3.jpg",
+      "id": 1368337,
+      "title": "The Odyssey",
+      "original_title": "The Odyssey",
+      "overview": "Odysseus, the legendary King of Ithaca, embarks on a long and perilous journey home following the Trojan War. Throughout his voyage, he is forced to confront the whims of gods, mythological monsters, and trials that stretch both his cunning and his humanity to the breaking point.",
+      "poster_path": "/5rhTDKUhPYvpdQIijFIs5VoWsON.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        12,
+        28,
+        14
+      ],
+      "popularity": 204.1463,
+      "release_date": "2026-07-15",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.016,
+      "vote_count": 4320
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/wVRd4VjrkJ4WObvfjqUZhlmN3gT.jpg",
+      "id": 9687,
+      "name": "The Odyssey",
+      "original_name": "The Odyssey",
+      "overview": "Warrior Odysseus leaves his idyllic life in the kingdom of Ithaca to fight in the Trojan War. Following victory, he now must endure a lengthy, decade-long return journey, and with all his wits, overcome deadly monsters, powerful forces of nature, seductive enchantresses, and even journey into the bowels of the Underworld.",
+      "poster_path": "/wCiQ7XySqnz9X1REtDNZRGLfhpe.jpg",
+      "media_type": "tv",
+      "original_language": "en",
+      "genre_ids": [
+        10759,
+        10765,
+        18
+      ],
+      "popularity": 13.0541,
+      "first_air_date": "1997-05-18",
+      "softcore": false,
+      "vote_average": 7.3,
+      "vote_count": 901,
+      "origin_country": [
+        "US",
+        "GB"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/mPy1xSASQ9NYWJdAGx2C2sOsnNw.jpg",
+      "id": 1698863,
+      "title": "The Odyssey",
+      "original_title": "The Odyssey",
+      "overview": "Based on the Ancient Greek epic. After ten years of war, King Odysseus sets sail for Ithaca, eager to reunite with his beloved. But his journey home is far more treacherous than the battlefield, as he must face deadly monsters and vengeful gods to survive.",
+      "poster_path": "/b0z3ViIC5AkbJoqxmTpqyjgmoJs.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        12,
+        14,
+        28
+      ],
+      "popularity": 14.8551,
+      "release_date": "2026-07-03",
+      "softcore": false,
+      "video": false,
+      "vote_average": 3.9,
+      "vote_count": 757
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/2m4MtdIuOr7G1ZCWw9GXDghnmzv.jpg",
+      "id": 11121,
+      "name": "The Odyssey",
+      "original_name": "The Odyssey",
+      "overview": "The Odyssey is a Canadian-produced half-hour adventure-fantasy television series for children, originally broadcast 1992-94 on CBC Television. It starred Illya Woloshyn as Jay Ziegler, Ashleigh Aston Moore as Donna/Alpha, Tony Sampson as Keith/Flash, Andrea Nemeth as Medea/Sierra Jones, Mark Hildreth as Finger, Ryan Reynolds as Macro, Janet Hodgkinson as Val Ziegler, and Devon Sawa as Yudo.",
+      "poster_path": "/ixeOYFcCj6YjKrliC13pxGFNTK2.jpg",
+      "media_type": "tv",
+      "original_language": "en",
+      "genre_ids": [
+        10751,
+        10765
+      ],
+      "popularity": 8.2117,
+      "first_air_date": "1992-03-09",
+      "softcore": false,
+      "vote_average": 7.2,
+      "vote_count": 16,
+      "origin_country": [
+        "CA"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/ndbch3UDR1tdxkJ9PVBBbh1sZHe.jpg",
+      "id": 19401,
+      "name": "The Odyssey",
+      "original_name": "Odissea",
+      "overview": "Odysseus' journey, told in Homer's Iliad and Odyssey. After fighting in the Trojan War, Odysseus spends years trying to return home to Itaka.",
+      "poster_path": "/4iBgeghJz97TjQK9CUPyD8kz8K3.jpg",
+      "media_type": "tv",
+      "original_language": "it",
+      "genre_ids": [
+        18,
+        10759,
+        10765,
+        10768
+      ],
+      "popularity": 8.0858,
+      "first_air_date": "1968-03-24",
+      "softcore": false,
+      "vote_average": 8.4,
+      "vote_count": 22,
+      "origin_country": [
+        "IT"
+      ]
+    },
+    {
+      "adult": false,
+      "id": 5802081,
+      "name": "The Human Odyssey",
+      "original_name": "The Human Odyssey",
+      "media_type": "person",
+      "popularity": 0.25,
+      "gender": 0,
+      "known_for_department": "Costume & Make-Up",
+      "profile_path": null,
+      "known_for": []
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/fvzLL73L2WeQZ7n20sOtk3Mjv5J.jpg",
+      "id": 332794,
+      "title": "The Odyssey",
+      "original_title": "L'Odyssée",
+      "overview": "The aquatic adventure of the highly influential and fearlessly ambitious pioneer, innovator, filmmaker, researcher, and conservationist, Jacques-Yves Cousteau, covers roughly thirty years of an inarguably rich in achievements life.",
+      "poster_path": "/myZ39CT2bMX40lqkh1D64qn3fJE.jpg",
+      "media_type": "movie",
+      "original_language": "fr",
+      "genre_ids": [
+        12,
+        18
+      ],
+      "popularity": 2.894,
+      "release_date": "2016-10-12",
+      "softcore": false,
+      "video": false,
+      "vote_average": 6.6,
+      "vote_count": 442
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/89JveOkoRosmdSSu9ocJw4RnBr2.jpg",
+      "id": 49338,
+      "name": "The Jacques Cousteau Odyssey",
+      "original_name": "The Jacques Cousteau Odyssey",
+      "overview": "The Jacques Cousteau Odyssey includes all 12 episodes of the 1978 television series featuring the research adventures of Cousteau, a celebrated documentarian and public conscience of mankind's stewardship of our oceans. Alongside his son Philippe Cousteau, Jacques's adventures begin with an ambitious expedition (on Cousteau's famous Calypso ship and a seaplane called the Catalina) following the course of the Nile River from Central Africa to the Mediterranean.",
+      "poster_path": "/f9h3d6W6VBMxpKv9STGMLy9QU2x.jpg",
+      "media_type": "tv",
+      "original_language": "fr",
+      "genre_ids": [
+        99
+      ],
+      "popularity": 2.2885,
+      "first_air_date": "1979-12-09",
+      "softcore": false,
+      "vote_average": 8.4,
+      "vote_count": 9,
+      "origin_country": [
+        "US"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/5ZV8kYvo5LfFmTtNGI3wJ2W6lGC.jpg",
+      "id": 45571,
+      "name": "The Story of Film: An Odyssey",
+      "original_name": "The Story of Film: An Odyssey",
+      "overview": "A worldwide guided tour of the greatest movies ever made and the story of international cinema through the history of cinematic innovation.",
+      "poster_path": "/g0TCWFNIFHO8u2yy1hboUDIhD6n.jpg",
+      "media_type": "tv",
+      "original_language": "en",
+      "genre_ids": [
+        99
+      ],
+      "popularity": 6.0726,
+      "first_air_date": "2011-09-03",
+      "softcore": false,
+      "vote_average": 7.7,
+      "vote_count": 69,
+      "origin_country": [
+        "GB"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/nupUnikSRPqfPDW18WVKd0wwC2z.jpg",
+      "id": 2873,
+      "name": "The Eagle: A Crime Odyssey",
+      "original_name": "Ørnen: En Krimi Odyssè",
+      "overview": "The Eagle: A Crime Odyssey is a Danish police procedural television series produced by Danmarks Radio, created and written by Peter Thorsboe and Mai Brostrøm. The series debuted on 10 October 2004 in Denmark. It won an International Emmy Award from the International Academy of Television Arts &amp; Sciences for best non-American television drama series in 2005. There were three seasons; the second season premiered in Denmark on 9 October 2005 and the third on 8 October 2006. The last episode originally aired in Denmark on 26 November 2006. The series was filmed on location in various parts of northern Europe, from Berlin and Copenhagen to Oslo and other locations including Iceland.\n\nThe series has enjoyed particular success in Australia, where it airs on SBS and is available on DVD with English subtitles.",
+      "poster_path": "/b4Xe8WyV0pGPZWgbJ9jUV4iFLa5.jpg",
+      "media_type": "tv",
+      "original_language": "da",
+      "genre_ids": [
+        80,
+        18
+      ],
+      "popularity": 11.8429,
+      "first_air_date": "2004-10-10",
+      "softcore": false,
+      "vote_average": 6.8,
+      "vote_count": 13,
+      "origin_country": [
+        "DK"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/n1HNe7rEvC7hew7mdqh9eVBzGzG.jpg",
+      "id": 6300,
+      "name": "Space Odyssey: Voyage to the Planets",
+      "original_name": "Space Odyssey: Voyage to the Planets",
+      "overview": "Imagine crashing through the acid storms of Venus, taking a space walk in the magnificent rings of Saturn, or collecting samples on the disintegrating surface of an unstable comet. Seen through the eyes of five astronauts on a six-year mission to the new frontiers that make up our solar system, it reveals the spectacle - and the dangers - they face when landing on and exploring the exotic worlds of our neighbouring planets.",
+      "poster_path": "/9vPFmAuVtO7dj7WhuD3OPbPJSCU.jpg",
+      "media_type": "tv",
+      "original_language": "en",
+      "genre_ids": [
+        99
+      ],
+      "popularity": 3.7773,
+      "first_air_date": "2004-11-09",
+      "softcore": false,
+      "vote_average": 7.2,
+      "vote_count": 18,
+      "origin_country": [
+        "GB"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/e2Mkm8eK9IyRSwaDCg6eaeQnr9M.jpg",
+      "id": 113094,
+      "title": "Ultraman Tiga: The Final Odyssey",
+      "original_title": "ウルトラマンティガ THE FINAL ODYSSEY",
+      "overview": "Ultraman Tiga: The Final Oddysey was sort of an epilogue of the Ultraman Tiga series. Just when we thought that the world is safe, it's under attack again! A TPC excursion (including GUTS' Captain Megumi Iruma) headed to an old ruins and unintentionally woke up three evil ancient giants whom Daigo, later on, has visions of. What's so haunting about his visions is that they're not only three but four evil giants, including Ultraman Tiga in a very dark physique and a very evil aura. After a series of visions, Daigo was able to meet the three evils who beat him up and left the Black Spark Lens to him. Later on, the ultimate battle begins in the ancient ruins. Daigo as Ultraman Tiga, who is supposed to be the warrior of light, must use his powers, however dark, in order to defeat the three evils.",
+      "poster_path": "/papDk5x8wmkamSpEm70Ssc6SqQG.jpg",
+      "media_type": "movie",
+      "original_language": "ja",
+      "genre_ids": [
+        28,
+        12,
+        10751,
+        14,
+        878
+      ],
+      "popularity": 2.0563,
+      "release_date": "2000-03-08",
+      "softcore": false,
+      "video": false,
+      "vote_average": 6.8,
+      "vote_count": 29
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/t4CJaw3hC04VxqsCm9RCX9VGTgp.jpg",
+      "id": 1756234,
+      "title": "The Odyssey",
+      "original_title": "The Odyssey",
+      "overview": "After being falsely accused of treason by a jealous king, the legendary warrior Alexander is exiled to a forbidden monster filled realm and tasked with an impossible challenge: slay three ancient Titans or die trying. Armed with a mystical medallion, a legendary sword, and the help of unlikely allies, Alexander embarks on an epic quest to save the woman he loves, reclaim his honor, and prevent a tyrant from seizing his kingdom.",
+      "poster_path": "/5cgEwgV878aqjTxbEApfeGRNvxl.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        14,
+        28,
+        53
+      ],
+      "popularity": 1.1205,
+      "release_date": "2026-07-14",
+      "softcore": false,
+      "video": false,
+      "vote_average": 1.0,
+      "vote_count": 1
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/wIT5GVBDYClG3PLpx7OkjLJq3co.jpg",
+      "id": 493416,
+      "title": "Troy: The Odyssey",
+      "original_title": "Troy: The Odyssey",
+      "overview": "In 1174 B.C., following the Trojan War, Greek warrior Odysseus makes the perilous ten-year journey home, including encounters with the Cyclops, Sirens, and Circe, while his wife Penelope fends off a mass of suitors who have overrun Ithica.",
+      "poster_path": "/pi7FMvj6qeZ95b3RBn2Bl0WquIO.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        12,
+        28,
+        14
+      ],
+      "popularity": 1.9656,
+      "release_date": "2017-10-15",
+      "softcore": false,
+      "video": false,
+      "vote_average": 3.8,
+      "vote_count": 33
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/oVylR5gqp3c91inrVkqbr2zUmEU.jpg",
+      "id": 219197,
+      "title": "The Odyssey",
+      "original_title": "The Odyssey",
+      "overview": "After the Trojan War a legendary hero Odysseus makes his valiant voyage at sea, trying to reach the shores of his beloved home. While he and his crew are protected by the goddess Athena, the sea god Poseidon is avenging the harm done to his son, the giant Cyclops, by inflicting such wrathful enemies as Circe and Scylla upon the men.",
+      "poster_path": "/a4O1xbjaJfWjspCeXM6EheeWBiw.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        16,
+        36,
+        12,
+        14,
+        9648,
+        28
+      ],
+      "popularity": 1.496,
+      "release_date": "1991-04-08",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.7,
+      "vote_count": 3
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/qa23TB7N18vjIR75rWKNgxbAS3.jpg",
+      "id": 239450,
+      "title": "The Wire Odyssey",
+      "original_title": "The Wire Odyssey",
+      "overview": "A retrospective documentary of the first four seasons of the acclaimed series The Wire.",
+      "poster_path": "/uJHr4F6lJvEKT2oMjEwgtG5sryy.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        99
+      ],
+      "popularity": 0.885,
+      "release_date": "2007-12-20",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.1,
+      "vote_count": 5
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/1QzlIDLv7KImgCS001Im6eA3XQH.jpg",
+      "id": 42853,
+      "title": "The Odyssey",
+      "original_title": "Odissea",
+      "overview": "After fighting in the Trojan War, Odysseus spends years trying to return home to Ithaca. [Theatrical version of the 1968 mini-series.]",
+      "poster_path": "/sXvc5x6Xw1nHNdrmU4K1MlFxfss.jpg",
+      "media_type": "movie",
+      "original_language": "it",
+      "genre_ids": [
+        12,
+        18,
+        14,
+        10752
+      ],
+      "popularity": 1.3185,
+      "release_date": "1969-08-13",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.6,
+      "vote_count": 33
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "id": 824196,
+      "title": "The Odyssey",
+      "original_title": "The Odyssey",
+      "overview": "Zoom class finally gets interesting for 13-year-old Kiki when she discovers that her computer screen doubles as a portal into her crush's bedroom. A reflection on young queer love, the fantasies we create in our heads, and the lengths we go to feel connected during isolation, this kids comedy short is sure to put a smile on your face.",
+      "poster_path": "/pbqVKuQPyY5ZMISylqyHt5yGbza.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [],
+      "popularity": 1.4816,
+      "release_date": "2021-03-12",
+      "softcore": false,
+      "video": false,
+      "vote_average": 0.0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/ilyYc1rLvk8BX8PmgKZ4zoL2KAi.jpg",
+      "id": 1716056,
+      "title": "The Odyssey: The Real Story",
+      "original_title": "The Odyssey: The Real Story",
+      "overview": "After the fall of Troy, warrior-king Odysseus begins a perilous voyage home, only to be thrown into a decade of wandering across a world ruled by gods and monsters. He outwits cyclopes, resists enchantresses, and descends into the realm of the dead, while his family fights to survive in his absence.",
+      "poster_path": "/pncYfQjN9HjbXhFtwbCjgII1APj.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        99
+      ],
+      "popularity": 1.8836,
+      "release_date": "2026-06-29",
+      "softcore": false,
+      "video": false,
+      "vote_average": 0.0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "id": 721810,
+      "title": "The Odyssey",
+      "original_title": "The Odyssey",
+      "overview": "Hackney-born Kapadia combines epic aerial images and the voices of Londoners to chart the city's turbulent yet inspiring journey from 2005 to the 2012 Olympics.",
+      "poster_path": "/2DmABLyYVnRIe0UWFSVKhKeI5P5.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        99
+      ],
+      "popularity": 1.0559,
+      "release_date": "2012-06-24",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.0,
+      "vote_count": 2
+    }
+  ],
+  "total_pages": 10,
+  "total_results": 197
+}
