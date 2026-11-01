@@ -45,3 +45,8 @@ Final review: fresh reviewer (fable model) — Ready to merge: with fixes; 0 Cri
 - Final: minor (deferred): tsconfig.node.json lacks strict.
 - Final: minor (deferred): unknown URLs show Home without an active tab.
 - Final: minor (deferred): README should warn first db:start downloads several GB, and that postgres:// URLs are rejected.
+Post-review polish (2026-11-01), each verified before → after:
+- fixed: CORS_ORIGINS trailing "/" — test_cors_origins_strip_trailing_slash RED→GREEN, api 11/11.
+- fixed: VITE_API_URL empty/trailing "/" — resolveApiUrl tests (4) RED→GREEN, web 63/63.
+- fixed: Vite strictPort — before: second server moved to 5174; after: exits "Port 5173 is already in use". Config, verified by behaviour.
+- fixed: pytest addopts "-m 'not integration'" — before: bare pytest collected 2 integration tests; after: 0; `npm run api:test:integration` still 2/2.

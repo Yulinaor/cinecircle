@@ -21,6 +21,8 @@ packages = ["src/cinecircle_api"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = ["integration: needs local Supabase Postgres"]
+# Plain `pytest` (and IDE runs) skip DB tests; `-m integration` overrides this.
+addopts = "-m 'not integration'"
 # Starlette suggests a renamed httpx package; keep the well-known httpx for now.
 filterwarnings = ["ignore:Using `httpx` with `starlette.testclient` is deprecated"]
 

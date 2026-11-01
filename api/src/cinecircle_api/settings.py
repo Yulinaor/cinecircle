@@ -25,7 +25,11 @@ class Settings(BaseSettings):
     @classmethod
     def _split_origins(cls, value: object) -> object:
         if isinstance(value, str):
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
+            value = value.split(",")
+        if isinstance(value, list):
+            # Browsers send Origin with no trailing slash; dashboard-copied URLs often have one.
+            origins = (str(origin).strip().rstrip("/") for origin in value)
+            return [origin for origin in origins if origin]
         return value
 
 

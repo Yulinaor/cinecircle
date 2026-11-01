@@ -28,3 +28,12 @@ def test_cors_origins_default(monkeypatch):
     monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://x@127.0.0.1:1/x")
     monkeypatch.delenv("CORS_ORIGINS", raising=False)
     assert Settings(_env_file=None).cors_origins == ["http://localhost:5173"]
+
+
+def test_cors_origins_strip_trailing_slash(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://x@127.0.0.1:1/x")
+    monkeypatch.setenv("CORS_ORIGINS", "https://cinecircle.onrender.com/ , http://localhost:5173//")
+    assert Settings(_env_file=None).cors_origins == [
+        "https://cinecircle.onrender.com",
+        "http://localhost:5173",
+    ]
