@@ -1,0 +1,10 @@
+{
+  "name": "cinecircle",
+  "private": true,
+  "description": "CineCircle: private, follow-based movie and TV recommendations",
+  "scripts": {
+    "api:dev": "uv --directory api run uvicorn cinecircle_api.main:create_app --factory --reload --port 8000",
+    "api:test": "uv --directory api run pytest tests/unit",
+    "api:lint": "uv --directory api run ruff check . && uv --directory api run ruff format --check ."
+  }
+}
