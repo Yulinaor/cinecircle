@@ -34,7 +34,7 @@ Copy the example environment files:
 | `api/.env.example` | `api/.env` |
 | `web/.env.example` | `web/.env` |
 
-The defaults point at the local database (port 54322) and the local API (port 8000).
+The defaults point at the local database (port 55322) and the local API (port 8000).
 
 ## Run locally
 
