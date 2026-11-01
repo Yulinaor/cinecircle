@@ -1,0 +1,163 @@
+from datetime import UTC, datetime
+from decimal import Decimal
+
+import pytest
+from fastapi.testclient import TestClient
+
+from cinecircle_api.catalog.parse import GenreRow, SearchResult
+from cinecircle_api.catalog.repository import SeasonRow, TitleRow
+from cinecircle_api.catalog.service import CachedTitle, CatalogUnavailable, TitleNotFound
+from cinecircle_api.main import create_app
+from cinecircle_api.settings import Settings
+
+DEAD = "postgresql+psycopg://postgres:postgres@127.0.0.1:1/postgres"
+
+
+def make_row(**overrides) -> TitleRow:
+    fields = dict(
+        id=7,
+        tmdb_id=1368337,
+        media_type="movie",
+        imdb_id="tt33764258",
+        name_en="The Odyssey",
+        name_he="האודיסאה",
+        overview_en="Plot",
+        overview_he="עלילה",
+        year_start=2026,
+        year_end=None,
+        runtime_min=172,
+        season_count=None,
+        poster_path="/p.jpg",
+        imdb_rating=Decimal("8.4"),
+        imdb_votes=477953,
+        rt_score=94,
+        metacritic=88,
+        tmdb_rating=Decimal("7.9"),
+        raw_tmdb={},
+        raw_omdb={},
+        fetched_at=datetime(2026, 11, 1, tzinfo=UTC),
+        genres=(GenreRow(18, "Drama", "דרמה"), GenreRow(12, "Adventure", None)),
+        seasons=(),
+    )
+    fields.update(overrides)
+    return TitleRow(**fields)
+
+
+class StubService:
+    def __init__(self) -> None:
+        self.seen: list[tuple] = []
+        self.row = make_row()
+        self.error: Exception | None = None
+
+    def search(self, query, type_filter, lang):
+        self.seen.append((query, type_filter, lang))
+        if self.error:
+            raise self.error
+        return [SearchResult(1368337, "movie", "The Odyssey", 2026, None)]
+
+    def get(self, title_id):
+        if self.error:
+            raise self.error
+        return CachedTitle(self.row, stale=False)
+
+    def get_by_tmdb(self, tmdb_id, media_type):
+        return self.get(0)
+
+
+@pytest.fixture
+def stub():
+    return StubService()
+
+
+@pytest.fixture
+def client(stub):
+    app = create_app(Settings(database_url=DEAD, _env_file=None))
+    app.state.title_service = stub
+    return TestClient(app)
+
+
+def test_search_rejects_blank_and_long_queries(client):
+    assert client.get("/titles/search", params={"q": "   "}).status_code == 422
+    assert client.get("/titles/search", params={"q": "x" * 101}).status_code == 422
+    assert client.get("/titles/search", params={"q": "x" * 100}).status_code == 200
+
+
+def test_search_passes_type_and_lang(client, stub):
+    r = client.get("/titles/search", params={"q": " האודיסאה ", "type": "series", "lang": "en"})
+    assert r.status_code == 200
+    assert stub.seen == [("האודיסאה", "series", "en")]
+    assert r.json() == {
+        "results": [
+            {
+                "tmdb_id": 1368337,
+                "media_type": "movie",
+                "name": "The Odyssey",
+                "year": 2026,
+                "poster_url": None,
+            }
+        ]
+    }
+
+
+def test_search_defaults_to_all_and_hebrew(client, stub):
+    client.get("/titles/search", params={"q": "x"})
+    assert stub.seen == [("x", "all", "he")]
+
+
+def test_detail_404_and_503(client, stub):
+    stub.error = TitleNotFound()
+    r = client.get("/titles/7")
+    assert (r.status_code, r.json()) == (404, {"detail": "not_found"})
+    stub.error = CatalogUnavailable()
+    r = client.get("/titles/tmdb/movie/1")
+    assert (r.status_code, r.json()) == (503, {"detail": "catalog_unavailable"})
+    r = client.get("/titles/search", params={"q": "x"})
+    assert (r.status_code, r.json()) == (503, {"detail": "catalog_unavailable"})
+
+
+def test_detail_hebrew_fallback_labelled(client, stub):
+    stub.row = make_row(overview_he=None)
+    body = client.get("/titles/7", params={"lang": "he"}).json()
+    assert (body["overview"], body["overview_lang"]) == ("Plot", "en")
+    assert (body["name"], body["name_lang"]) == ("האודיסאה", "he")
+    assert body["genres"] == [{"id": 18, "name": "דרמה"}, {"id": 12, "name": "Adventure"}]
+
+
+def test_detail_shape(client, stub):
+    stub.row = make_row(
+        media_type="series",
+        seasons=(SeasonRow(1, "Season 1", None, "Intro", None, None, None, 9),),
+    )
+    body = client.get("/titles/7", params={"lang": "en"}).json()
+    assert body["ratings"] == {
+        "imdb": {"rating": 8.4, "votes": 477953},
+        "rotten_tomatoes": 94,
+        "metacritic": 88,
+        "tmdb": 7.9,
+    }
+    assert body["seasons"] == [
+        {
+            "season_number": 1,
+            "name": "Season 1",
+            "overview": "Intro",
+            "air_date": None,
+            "episode_count": 9,
+            "poster_url": None,
+        }
+    ]
+    assert body["stale"] is False and body["id"] == 7 and body["name_lang"] == "en"
+
+
+def test_poster_url_built_and_null_safe(client, stub):
+    body = client.get("/titles/7").json()
+    assert body["poster_url"] == "https://image.tmdb.org/t/p/w342/p.jpg"
+    stub.row = make_row(poster_path=None, imdb_rating=None)
+    body = client.get("/titles/7").json()
+    assert body["poster_url"] is None and body["ratings"]["imdb"] is None
+
+
+def test_titles_503_without_keys():
+    client = TestClient(create_app(Settings(database_url=DEAD, _env_file=None)))
+    r = client.get("/titles/search", params={"q": "x"})
+    assert (r.status_code, r.json()) == (503, {"detail": "catalog_unavailable"})
+    assert client.get("/live").status_code == 200

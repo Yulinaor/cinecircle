@@ -1,3 +1,5 @@
+import logging
+
 import httpx
 import pytest
 
@@ -100,3 +102,12 @@ def test_omdb_sends_imdb_id_and_key():
     assert OmdbClient(KEY, http).by_imdb_id("tt1234567")["Title"] == "The Odyssey"
     assert seen[0].url.params["i"] == "tt1234567"
     assert seen[0].url.params["apikey"] == KEY
+
+
+def test_logs_never_contain_key(caplog):
+
+    caplog.set_level(logging.DEBUG)
+    _, http = recording(body=load("omdb/odyssey"))
+    OmdbClient(KEY, http).by_imdb_id("tt1234567")
+    assert caplog.records and all(KEY not in r.getMessage() for r in caplog.records)
+    assert logging.getLogger("httpx").level == logging.WARNING

@@ -9,7 +9,7 @@ CineCircle is a private, follow-based app for movie and TV recommendations.
 
 The interface is in Hebrew (right-to-left) and English.
 
-> **Status:** Phase 0 (foundations). The app shell, API and database are wired together; product features start in Phase 1. See the [roadmap](docs/spec/04-roadmap-and-learning-track.md).
+> **Status:** Phase 1 (catalogue). The API searches TMDB in Hebrew or English and serves cached title details with IMDb, Rotten Tomatoes and Metacritic ratings. See the [roadmap](docs/spec/04-roadmap-and-learning-track.md).
 
 ## Prerequisites
 
@@ -35,6 +35,21 @@ Copy the example environment files:
 | `web/.env.example` | `web/.env` |
 
 The defaults point at the local database (port 55322) and the local API (port 8000).
+
+The local Supabase ports are 553xx (API 55321, database 55322, Studio 55323), so CineCircle can run next to another local Supabase project on the default 543xx ports. `DATABASE_URL` must start with `postgresql+psycopg://`; a plain `postgres://` URL is rejected.
+
+The first `npm run db:start` downloads several GB of Docker images; later starts take seconds.
+
+### Catalogue API keys (TMDB and OMDb)
+
+Title search and details need two free keys. They go **only** in `api/.env` (git-ignored); never commit them and never put them in `web/`.
+
+| Variable | Where to get it |
+|---|---|
+| `TMDB_API_KEY` | [themoviedb.org](https://www.themoviedb.org/settings/api) → Settings → API → request a **Developer** key (personal, non-commercial). Either the v4 "API Read Access Token" (starts with `eyJ`) or the v3 "API Key" works. |
+| `OMDB_API_KEY` | [omdbapi.com/apikey.aspx](https://www.omdbapi.com/apikey.aspx) → FREE (1,000 calls/day). Click the activation link in the email before using it. |
+
+Without keys the API still starts and `/health` works; the `/titles` endpoints answer `503 catalog_unavailable`. Tests never need keys: they run on recorded responses in `api/tests/fixtures/`.
 
 ## Run locally
 

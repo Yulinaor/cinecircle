@@ -20,6 +20,9 @@ def engine() -> sa.Engine:
 
 @pytest.fixture
 def clean_catalog(engine):
+    # Before too: a manual `npm run api:dev` session leaves cached titles behind.
+    with engine.begin() as conn:
+        conn.execute(_TRUNCATE)
     yield
     with engine.begin() as conn:
         conn.execute(_TRUNCATE)
