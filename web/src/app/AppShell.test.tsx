@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { initI18n, LOCALE_STORAGE_KEY, setLocale } from '../i18n'
+import { findPhysicalUtilities } from '../test/rtl'
 import { AppShell } from './AppShell'
 
 function renderShell() {
@@ -47,15 +48,14 @@ describe('AppShell', () => {
   })
 
   it('source never uses physical left/right utilities', () => {
-    const sources = import.meta.glob<string>(['../**/*.tsx', '!../**/*.test.tsx'], {
-      query: '?raw',
-      import: 'default',
-      eager: true,
-    })
+    const sources = import.meta.glob<string>(
+      ['../**/*.{ts,tsx,css}', '../../index.html', '!../**/*.test.*', '!../test/**'],
+      { query: '?raw', import: 'default', eager: true },
+    )
     const files = Object.keys(sources)
-    expect(files.length).toBeGreaterThan(0)
-    const offenders = files.filter((f) =>
-      /\b(ml|mr|pl|pr|left|right)-\d|text-(left|right)\b/.test(sources[f]),
+    expect(files).toEqual(expect.arrayContaining(['../theme/tokens.css', '../../index.html']))
+    const offenders = files.flatMap((f) =>
+      findPhysicalUtilities(sources[f]).map((cls) => `${f}: ${cls}`),
     )
     expect(offenders).toEqual([])
   })

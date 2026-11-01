@@ -418,7 +418,7 @@ git commit -m "feat: bilingual web shell with Hebrew RTL default and 5-tab navig
 | `connected` | Any parsed response (200 or 503) |
 | `offline` | The request throws, or no answer by `OFFLINE_AFTER_MS` (abort the request) |
 
-    While `offline`, it retries every `RETRY_EVERY_MS` (state stays `offline` until a retry succeeds) and cleans up its timers on unmount. A degraded DB is still `connected`; DB detail is for `/health` consumers, not the header.
+    While `offline`, it retries every `RETRY_EVERY_MS` (state stays `offline` until a retry succeeds). While `connected`, it re-checks every `RECHECK_EVERY_MS = 60000` so the header notices when the server stops (amended after final review). It cleans up its timers on unmount. A degraded DB is still `connected`; DB detail is for `/health` consumers, not the header.
   - `<ApiStatus />` renders a dot plus `t("api.<status>")` inside `role="status"`.
 
 - [ ] **Step 1: Write the failing tests**

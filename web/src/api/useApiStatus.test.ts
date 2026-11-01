@@ -1,7 +1,13 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { HealthResponse } from './client'
-import { OFFLINE_AFTER_MS, RETRY_EVERY_MS, useApiStatus, WAKING_AFTER_MS } from './useApiStatus'
+import {
+  OFFLINE_AFTER_MS,
+  RECHECK_EVERY_MS,
+  RETRY_EVERY_MS,
+  useApiStatus,
+  WAKING_AFTER_MS,
+} from './useApiStatus'
 
 const OK: HealthResponse = { status: 'ok', db: 'ok' }
 
@@ -65,6 +71,28 @@ describe('useApiStatus', () => {
     await advance(OFFLINE_AFTER_MS)
     expect(result.current).toBe('offline')
     expect(signals[0]?.aborted).toBe(true)
+  })
+
+  it('re-checks while connected and goes offline when the API dies', async () => {
+    const fetchHealth = vi
+      .fn()
+      .mockResolvedValueOnce(OK)
+      .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    const { result } = renderHook(() => useApiStatus(fetchHealth))
+    await advance(0)
+    expect(result.current).toBe('connected')
+    await advance(RECHECK_EVERY_MS)
+    expect(result.current).toBe('offline')
+    expect(fetchHealth).toHaveBeenCalledTimes(2)
+  })
+
+  it('stays connected when a re-check succeeds', async () => {
+    const fetchHealth = vi.fn().mockResolvedValue(OK)
+    const { result } = renderHook(() => useApiStatus(fetchHealth))
+    await advance(0)
+    await advance(RECHECK_EVERY_MS)
+    expect(result.current).toBe('connected')
+    expect(fetchHealth).toHaveBeenCalledTimes(2)
   })
 
   it('stops its timers when unmounted', async () => {

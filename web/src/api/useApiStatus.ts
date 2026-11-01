@@ -9,6 +9,8 @@ export const WAKING_AFTER_MS = 3000
 export const OFFLINE_AFTER_MS = 60000
 /** While offline, try again this often. */
 export const RETRY_EVERY_MS = 15000
+/** While connected, check again this often so the header notices when the server stops. */
+export const RECHECK_EVERY_MS = 60000
 
 export function useApiStatus(
   fetchHealth: (signal?: AbortSignal) => Promise<HealthResponse> = getHealth,
@@ -58,6 +60,7 @@ export function useApiStatus(
           if (settled || cancelled) return
           settle()
           setStatus('connected')
+          later(attempt, RECHECK_EVERY_MS)
         },
         () => {
           if (settled || cancelled) return
