@@ -30,3 +30,8 @@ Task 3: complete (commits c3bfc5b..HEAD, tests: npm run api:test → 49 passed; 
 - Task 4: note: the duplicate-imdb check is a SELECT before the upsert, so two *different* TMDB titles sharing one imdb_id cached at the same instant can still hit the UNIQUE constraint; same-title concurrency is handled by ON CONFLICT. Left for the final review.
 - Task 4: RED: ImportError cannot import name 'repository' (= Expected's ModuleNotFoundError). Migration applied with `npx supabase db reset` on real Supabase.
 Task 4: complete (commits 98f6c11..HEAD, tests: npm run api:test:integration → 9 passed; npm run api:test → 49 passed; npm run api:lint → All checks passed)
+- Task 5: Ruling: a genre-list failure during a fetch is treated like a TMDB failure (stale row if cached, else CatalogUnavailable) — `title_genres.genre_id` has an FK, so the title cannot be stored without its genres — cost if wrong: none.
+- Task 5: Ruling: OMDb answering `Response: False` (title unknown to OMDb) stores `raw_omdb` NULL, so such titles are re-asked once a day per plan's rule (OmdbClient returns None for both "unknown" and the fake's misses) — cost if wrong: ~1 OMDb call/day per such title viewed.
+- Task 5: Ruling: test fakes take fixed TMDB ids (`tests/fakes.py`: ODYSSEY_ID, SEVERANCE_ID, NO_HEBREW_ID); an unknown id raises ExternalNotFound — cost if wrong: none.
+- Task 5: RED: ModuleNotFoundError cinecircle_api.catalog.service (matches Expected).
+Task 5: complete (commits c649b78..HEAD, tests: npm run api:test:integration → 20 passed; npm run api:test → 49 passed; npm run api:lint → All checks passed)
