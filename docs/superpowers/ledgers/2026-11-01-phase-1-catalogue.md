@@ -19,3 +19,9 @@ Task 1: complete (commits 0526fcf..298122c, tests: npm run api:test → 24 passe
 - Task 2: Ruling: every ExternalApiError is raised `from None`, including HTTP-status ones — the plan's test asserts `__suppress_context__ is True` for the OMDb 500 case too — cost if wrong: none.
 - Task 2: RED: ModuleNotFoundError cinecircle_api.catalog (matches Expected). GREEN after one fix (500 case lacked `from None`).
 Task 2: complete (commits 298122c..HEAD, tests: npm run api:test → 37 passed; npm run api:lint → All checks passed)
+- Task 3: Ruling: movie `runtime` 0 → `runtime_min` None — TMDB sends 0 for "unknown" (the 2026 Odyssey's he translation has runtime 0); showing "0 min" would be wrong — cost if wrong: none.
+- Task 3: Ruling: `pick_text(he, en, "en")` with English missing returns the Hebrew text labelled "he" (symmetric fallback; the plan only fixed the he→en direction) — cost if wrong: an en-locale user sees Hebrew text, labelled.
+- Task 3: Ruling: `name_en` falls back to `original_title`/`original_name` when the en-US title is empty (column is NOT NULL) — cost if wrong: none.
+- Task 3: Ruling: added `test_parse_omdb_from_fixtures` (Odyssey 8.4/477953/94/88; Severance IMDb only) to pin the real fixture shapes — cost if wrong: none.
+- Task 3: RED: ModuleNotFoundError cinecircle_api.catalog.parse (matches Expected).
+Task 3: complete (commits c3bfc5b..HEAD, tests: npm run api:test → 49 passed; npm run api:lint → All checks passed)
