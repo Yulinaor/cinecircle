@@ -36,6 +36,8 @@ def clean_catalog(engine):
 # ===== People (Gal = owner, Dana = approved follower, Noa = stranger, Ron = pending) =====
 
 GAL_BIO = "gal-bio-sentinel"
+GAL_SHARED_OPINION = "gal-shared-opinion-sentinel"
+GAL_PRIVATE_OPINION = "gal-private-opinion-sentinel"
 TEST_EMAIL_DOMAIN = "test.cinecircle.local"
 
 
@@ -121,3 +123,69 @@ def people(engine) -> Iterator[dict[str, TestUser]]:
     yield users
     with engine.begin() as conn:
         conn.execute(_DELETE_TEST_USERS)  # cascades to profiles, follows, notifications
+
+
+# ===== Gal's content (shared post, private rating, wishlist, genre pref, event) =====
+
+
+@dataclass(frozen=True)
+class GalContent:
+    shared_post_id: int
+    private_post_id: int
+    title_ids: tuple[int, int]
+
+
+_INSERT_TITLE = sa.text(
+    "INSERT INTO app.titles (tmdb_id, media_type, name_en, raw_tmdb)"
+    " VALUES (:tmdb_id, 'movie', :name, '{}') RETURNING id"
+)
+_INSERT_POST = sa.text(
+    "INSERT INTO app.posts (author_id, title_id, rating, opinion, is_shared)"
+    " VALUES (:author, :title, :rating, :opinion, :shared) RETURNING id"
+)
+
+
+@pytest.fixture
+def gal_content(people, clean_catalog, engine) -> GalContent:
+    """Rows owned by Gal, inserted as postgres (no RLS). `people` cleanup cascades to them."""
+    with engine.begin() as conn:
+        first, second = (
+            conn.scalar(_INSERT_TITLE, {"tmdb_id": n, "name": f"Title {n}"}) for n in (1, 2)
+        )
+        shared = conn.scalar(
+            _INSERT_POST,
+            {
+                "author": GAL.id,
+                "title": first,
+                "rating": 9.0,
+                "opinion": GAL_SHARED_OPINION,
+                "shared": True,
+            },
+        )
+        private = conn.scalar(
+            _INSERT_POST,
+            {
+                "author": GAL.id,
+                "title": second,
+                "rating": 4.5,
+                "opinion": GAL_PRIVATE_OPINION,
+                "shared": False,
+            },
+        )
+        conn.execute(
+            sa.text(
+                "INSERT INTO app.wishlist_items (owner_id, title_id, source)"
+                " VALUES (:gal, :title, 'discover')"
+            ),
+            {"gal": GAL.id, "title": second},
+        )
+        conn.execute(sa.text("INSERT INTO app.genres (id, name_en) VALUES (28, 'Action')"))
+        conn.execute(
+            sa.text("INSERT INTO app.user_genre_prefs (user_id, genre_id) VALUES (:gal, 28)"),
+            {"gal": GAL.id},
+        )
+        conn.execute(
+            sa.text("INSERT INTO app.events (user_id, event_type) VALUES (:gal, 'post_created')"),
+            {"gal": GAL.id},
+        )
+    return GalContent(shared_post_id=shared, private_post_id=private, title_ids=(first, second))
