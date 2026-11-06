@@ -163,10 +163,28 @@ def test_patch_without_profile_409(api):
 @pytest.mark.usefixtures("clean_catalog")
 def test_people_endpoints_require_profile(api):
     client = api("fresh")
-    # Later tasks add POST /follows/{username} and /notifications to this list.
-    for path in ("/users/search?q=ga", "/users/gal", "/users/gal/posts"):
+    expected = (409, {"detail": "profile_required"})
+    for path in (
+        "/users/search?q=ga",
+        "/users/gal",
+        "/users/gal/posts",
+        "/me/followers",
+        "/me/following",
+        "/me/follow-requests",
+        "/notifications",
+    ):
         r = client.get(path)
-        assert (r.status_code, r.json()) == (409, {"detail": "profile_required"}), path
+        assert (r.status_code, r.json()) == expected, path
+    for method, path in (
+        ("POST", "/follows/gal"),
+        ("DELETE", "/follows/gal"),
+        ("POST", "/follow-requests/gal/accept"),
+        ("DELETE", "/follow-requests/gal"),
+        ("DELETE", "/followers/gal"),
+        ("POST", "/notifications/read"),
+    ):
+        r = client.request(method, path)
+        assert (r.status_code, r.json()) == expected, (method, path)
     assert client.get("/titles/search", params={"q": "האודיסאה"}).status_code == 200
 
 

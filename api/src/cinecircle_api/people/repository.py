@@ -13,7 +13,7 @@ from sqlalchemy import Connection
 from sqlalchemy.exc import IntegrityError
 
 from cinecircle_api.catalog.parse import Locale, MediaType
-from cinecircle_api.people.models import FollowState, MyProfile
+from cinecircle_api.people.models import FollowState, MyProfile, UserCard
 
 _PROFILE_PKEY = "profiles_pkey"
 _USERNAME_UNIQUE = "profiles_username_key"
@@ -42,6 +42,14 @@ class CardRow:
     display_name: str
     avatar_url: str | None
     follow_state: FollowState
+
+    def card(self) -> UserCard:
+        return UserCard(
+            username=self.username,
+            display_name=self.display_name,
+            avatar_url=self.avatar_url,
+            follow_state=self.follow_state,
+        )
 
 
 @dataclass(frozen=True)
@@ -129,15 +137,18 @@ def update_my_profile(
 
 # ===== Other people ==============================================================================
 
-_CARD_SELECT = (
-    "SELECT p.id, p.username, p.display_name, p.avatar_url,"
+# Pieces of a card query, shared with the follow and notification lists: they all join onto
+# `p` (the person on the card) and read `follow_state` from the viewer's own row towards `p`.
+CARD_COLUMNS = (
+    "p.id, p.username, p.display_name, p.avatar_url,"
     " CASE WHEN p.id = auth.uid() THEN 'self'"
     "      WHEN f.status = 'accepted' THEN 'following'"
     "      WHEN f.status = 'pending' THEN 'requested'"
     "      ELSE 'none' END AS follow_state"
-    " FROM app.profiles p"
-    " LEFT JOIN app.follows f ON f.follower_id = auth.uid() AND f.followee_id = p.id"
 )
+CARD_JOIN_FOLLOW = " LEFT JOIN app.follows f ON f.follower_id = auth.uid() AND f.followee_id = p.id"
+CARD_FROM = " FROM app.profiles p" + CARD_JOIN_FOLLOW
+_CARD_SELECT = "SELECT " + CARD_COLUMNS + CARD_FROM
 # Raw strings: the SQL escape character is one backslash.
 _SEARCH = sa.text(
     _CARD_SELECT

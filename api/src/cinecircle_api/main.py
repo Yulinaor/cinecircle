@@ -15,7 +15,7 @@ from cinecircle_api.catalog.omdb_client import OmdbClient
 from cinecircle_api.catalog.service import TitleService
 from cinecircle_api.catalog.tmdb_client import TmdbClient
 from cinecircle_api.db import make_engine
-from cinecircle_api.routes import health, me, titles, users
+from cinecircle_api.routes import follows, health, me, notifications, titles, users
 from cinecircle_api.settings import Settings, get_settings
 
 
@@ -80,4 +80,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(titles.router, dependencies=[Depends(current_claims)])
     app.include_router(me.router, dependencies=[Depends(current_claims)])
     app.include_router(users.router, dependencies=[Depends(current_claims)])
+    app.include_router(follows.router, dependencies=[Depends(current_claims)])
+    app.include_router(notifications.router, dependencies=[Depends(current_claims)])
     return app
