@@ -19,6 +19,8 @@ export function useMe(): UseQueryResult<Me> {
     staleTime: Infinity,
     queryFn: async ({ signal }) => {
       const me = await api<Me>('/me', { signal })
+      // The user may have changed (cancelled via the cache reset) while this was in flight.
+      if (signal.aborted) return me
       if (me.profile && me.profile.locale !== currentLocale()) await setLocale(me.profile.locale)
       return me
     },

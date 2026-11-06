@@ -23,10 +23,11 @@ export function renderApp(ui: ReactElement, { auth, api, route = '/' }: RenderAp
     signOut: vi.fn(async () => {}),
     ...auth,
   }
+  let current = value
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   const wrap = (children: ReactNode) => (
     <QueryClientProvider client={client}>
-      <AuthContext.Provider value={value}>
+      <AuthContext.Provider value={current}>
         <ApiOverrideContext.Provider value={api ?? null}>
           <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
         </ApiOverrideContext.Provider>
@@ -37,6 +38,10 @@ export function renderApp(ui: ReactElement, { auth, api, route = '/' }: RenderAp
   return {
     ...result,
     auth: value,
-    rerender: (next: ReactElement) => result.rerender(wrap(next)),
+    /** Optionally swaps the auth state (e.g. another user, or signed out) for the re-render. */
+    rerender: (next: ReactElement, nextAuth?: Partial<AuthState>) => {
+      if (nextAuth) current = { ...value, ...nextAuth }
+      result.rerender(wrap(next))
+    },
   }
 }

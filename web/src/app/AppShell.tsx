@@ -1,7 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { useUserScopedCache } from '../api/useUserScopedCache'
 import { useAuth } from '../auth/AuthProvider'
 import { SignInPage } from '../auth/SignInPage'
 import { OnboardingPage } from '../me/OnboardingPage'
@@ -12,19 +12,16 @@ import { AppRoutes } from './routes'
 
 export function AppShell({ status }: { status?: ReactNode }) {
   const { t } = useTranslation()
-  const { status: authStatus, signOut } = useAuth()
-  const client = useQueryClient()
-  // Cached account data must never outlive the session that fetched it.
-  useEffect(() => {
-    if (authStatus === 'signed_out') client.clear()
-  }, [authStatus, client])
+  const { status: authStatus, session, signOut } = useAuth()
+  // Cached account data must never outlive the user that fetched it (also for A -> B switches).
+  const cacheReady = useUserScopedCache(session?.user.id ?? null)
   return (
     <div className="flex h-full flex-col">
       <header className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
         <span className="text-xl font-extrabold tracking-tight">{t('app.name')}</span>
         <div className="flex items-center gap-3">
           {status}
-          {authStatus === 'signed_in' && <SettingsLink />}
+          {authStatus === 'signed_in' && cacheReady && <SettingsLink />}
           <LanguageToggle />
           {authStatus === 'signed_in' && (
             <button
@@ -43,7 +40,7 @@ export function AppShell({ status }: { status?: ReactNode }) {
           <SignInPage />
         </main>
       )}
-      {authStatus === 'signed_in' && <SignedInBody />}
+      {authStatus === 'signed_in' && (cacheReady ? <SignedInBody /> : <Loading />)}
     </div>
   )
 }
