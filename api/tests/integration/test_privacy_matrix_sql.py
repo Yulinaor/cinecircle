@@ -32,6 +32,7 @@ SEES = {  # R5 row -> viewers who can see Gal's item
     "shared_posts": {"gal", "dana"},
     "private_ratings": {"gal"},
     "follow_lists": {"gal"},
+    "following_list": {"gal"},
     "wishlist": {"gal"},
     "my_stats": {"gal"},
     "notifications": {"gal"},
@@ -46,6 +47,10 @@ PROBES = {  # SQL run as the viewer; True when Gal's item is visible
     "follow_lists": (
         "SELECT count(*) > 0 FROM app.follows"
         " WHERE followee_id = :gal AND follower_id <> auth.uid()"
+    ),
+    "following_list": (
+        "SELECT count(*) > 0 FROM app.follows"
+        " WHERE follower_id = :gal AND followee_id <> auth.uid()"
     ),
     "wishlist": "SELECT count(*) > 0 FROM app.wishlist_items WHERE owner_id = :gal",
     "my_stats": "SELECT count(*) = 2 FROM app.posts WHERE author_id = :gal",  # whole history
@@ -98,32 +103,22 @@ POST_COLS = {
     "contains_spoilers",
     "is_shared",
 }
-GRANTS = {  # table: (insert whole table?, insert columns, update columns, delete)
+GRANTS = {  # table: (insert columns, update columns, delete); never a whole-table INSERT/UPDATE
     "posts": (
-        False,
         POST_COLS,
         {"rating", "opinion", "contains_spoilers", "is_shared", "updated_at"},
         True,
     ),
     "wishlist_items": (
-        True,
-        {
-            "owner_id",
-            "title_id",
-            "source",
-            "source_post_id",
-            "status",
-            "fit_at_save",
-            "added_at",
-            "watched_at",
-        },
+        # no added_at (server clock) and no watched_at (set later, by UPDATE)
+        {"owner_id", "title_id", "source", "source_post_id", "status", "fit_at_save"},
         {"status", "watched_at"},
         True,
     ),
-    "user_genre_prefs": (True, {"user_id", "genre_id"}, set(), True),
+    "user_genre_prefs": ({"user_id", "genre_id"}, set(), True),
     "events": (
-        True,
-        {"id", "user_id", "event_type", "title_id", "post_id", "props", "created_at"},
+        # no id (would run ahead of events_id_seq) and no created_at (server clock)
+        {"user_id", "event_type", "title_id", "post_id", "props"},
         set(),
         False,
     ),
@@ -132,7 +127,7 @@ GRANTS = {  # table: (insert whole table?, insert columns, update columns, delet
 
 @pytest.mark.parametrize("table", CONTENT_TABLES)
 def test_authenticated_grants_are_exact(engine, table):
-    insert_whole, insert_cols, update_cols, delete = GRANTS[table]
+    insert_cols, update_cols, delete = GRANTS[table]
     with engine.connect() as conn:
 
         def columns_with(priv: str) -> set[str]:
@@ -158,11 +153,12 @@ def test_authenticated_grants_are_exact(engine, table):
         assert table_priv("SELECT") is True
         assert columns_with("INSERT") == insert_cols
         assert columns_with("UPDATE") == update_cols
-        assert table_priv("INSERT") is insert_whole
+        assert table_priv("INSERT") is False  # only the columns above
         assert table_priv("UPDATE") is False  # never the whole table: only the columns above
         assert table_priv("DELETE") is delete
         assert table_priv("TRUNCATE, REFERENCES, TRIGGER") is False
-        assert table_priv("SELECT, INSERT, UPDATE, DELETE", role="service_role") is True
+        for priv in ("SELECT", "INSERT", "UPDATE", "DELETE"):  # one at a time: a list means ANY
+            assert table_priv(priv, role="service_role") is True, priv
 
 
 @pytest.mark.parametrize("seq", ["posts_id_seq", "events_id_seq"])
@@ -254,6 +250,33 @@ def test_events_are_append_only(people, gal_content, engine):
         with as_user(engine, gal) as conn, pytest.raises(ProgrammingError) as exc:
             run(conn, sql)
         assert_permission_denied(exc, "events")
+
+
+@pytest.mark.parametrize(
+    ("table", "sql"),
+    [
+        ("events", "INSERT INTO app.events (user_id, event_type, id) VALUES (:a, 'x', 999999)"),
+        (
+            "events",
+            "INSERT INTO app.events (user_id, event_type, created_at)"
+            " VALUES (:a, 'x', now() - interval '1 year')",
+        ),
+        (
+            "wishlist_items",
+            "INSERT INTO app.wishlist_items (owner_id, title_id, source, added_at)"
+            " VALUES (:a, :t, 'search', now() - interval '1 year')",
+        ),
+        (
+            "wishlist_items",
+            "INSERT INTO app.wishlist_items (owner_id, title_id, source, watched_at)"
+            " VALUES (:a, :t, 'search', now())",
+        ),
+    ],
+)
+def test_server_owned_insert_columns_are_denied(table, sql, people, gal_content, engine):
+    with as_user(engine, people["dana"]) as conn, pytest.raises(ProgrammingError) as exc:
+        run(conn, sql, a=people["dana"].id, t=gal_content.title_ids[0])
+    assert_permission_denied(exc, table)
 
 
 def test_post_ownership_and_timestamps_are_not_writable(people, gal_content, engine):

@@ -84,11 +84,14 @@ GRANT INSERT (author_id, title_id, season_number, rating, opinion, contains_spoi
     ON app.posts TO authenticated;
 GRANT UPDATE (rating, opinion, contains_spoilers, is_shared, updated_at) ON app.posts TO authenticated;
 GRANT DELETE ON app.posts TO authenticated;
-GRANT INSERT ON app.wishlist_items TO authenticated;
+GRANT INSERT (owner_id, title_id, source, source_post_id, status, fit_at_save)
+    ON app.wishlist_items TO authenticated;
 GRANT UPDATE (status, watched_at) ON app.wishlist_items TO authenticated;
 GRANT DELETE ON app.wishlist_items TO authenticated;
-GRANT INSERT, DELETE ON app.user_genre_prefs TO authenticated;
-GRANT INSERT ON app.events TO authenticated;
+GRANT INSERT (user_id, genre_id) ON app.user_genre_prefs TO authenticated;
+GRANT DELETE ON app.user_genre_prefs TO authenticated;
+-- events: no id (would run ahead of events_id_seq) and no created_at (the log's clock is the server's)
+GRANT INSERT (user_id, event_type, title_id, post_id, props) ON app.events TO authenticated;
 GRANT USAGE ON SEQUENCE app.posts_id_seq, app.events_id_seq TO authenticated;
 
 GRANT ALL ON app.posts, app.wishlist_items, app.user_genre_prefs, app.events TO service_role;

@@ -188,4 +188,17 @@ def gal_content(people, clean_catalog, engine) -> GalContent:
             sa.text("INSERT INTO app.events (user_id, event_type) VALUES (:gal, 'post_created')"),
             {"gal": GAL.id},
         )
+        # Gal follows Noa (accepted): gives Gal a "following" list. Insert then update, so the
+        # follows triggers run as in real use. Noa follows nobody, so she gains no access to Gal.
+        pair = {"gal": GAL.id, "noa": NOA.id}
+        conn.execute(
+            sa.text("INSERT INTO app.follows (follower_id, followee_id) VALUES (:gal, :noa)"), pair
+        )
+        conn.execute(
+            sa.text(
+                "UPDATE app.follows SET status = 'accepted'"
+                " WHERE follower_id = :gal AND followee_id = :noa"
+            ),
+            pair,
+        )
     return GalContent(shared_post_id=shared, private_post_id=private, title_ids=(first, second))
