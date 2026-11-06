@@ -148,7 +148,7 @@ export function SignInPage() {
           />
         </label>
         {error && (
-          <p role="alert" className="text-sm font-medium text-red-600">
+          <p role="alert" className="text-sm font-medium text-danger">
             {t(`auth.errors.${error}`)}
           </p>
         )}

@@ -34,5 +34,31 @@
       "weak_password": "That password is too weak. Choose a longer one.",
       "generic": "Something went wrong. Please try again."
     }
+  },
+  "common": {
+    "error": "Something went wrong. Please try again.",
+    "retry": "Try again"
+  },
+  "onboarding": {
+    "title": "Create your profile",
+    "username": "Username",
+    "usernameHint": "3 to 30 characters: lowercase English letters, digits, underscore and dot.",
+    "displayName": "Display name",
+    "language": "Language",
+    "submit": "Continue",
+    "errors": {
+      "username_taken": "That username is taken. Choose another.",
+      "username_reserved": "That username is reserved. Choose another.",
+      "username_invalid": "That username isn't valid. Use lowercase English letters, digits, underscore and dot (3 to 30 characters)."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "displayName": "Display name",
+    "bio": "About you",
+    "bioCount": "{{length}}/{{max}}",
+    "save": "Save",
+    "saved": "Saved",
+    "language": "Language"
   }
 }
