@@ -1,6 +1,7 @@
 import type { Session } from '@supabase/supabase-js'
 import { act, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ApiError } from '../api/client'
 import type { Me, MyProfile } from '../api/types'
 import type { ApiCall } from '../api/useApi'
 import { initI18n, setLocale } from '../i18n'
@@ -23,13 +24,19 @@ function me(id: string, profile: Partial<MyProfile>): Me {
   return { id, email: null, profile: { ...PROFILE, ...profile } }
 }
 
-/** GET /me answers are handed out by the test, one deferred promise per call. */
+/**
+ * GET /me answers are handed out by the test, one deferred promise per call; `calls` counts only
+ * those. Every other endpoint (the header bell's, say) answers 404 and isn't counted.
+ */
 function deferredApi() {
   const pending: Array<(value: Me) => void> = []
-  const fn = vi.fn(
-    () => new Promise<Me>((resolve) => pending.push(resolve)),
-  )
-  return { api: fn as unknown as ApiCall, calls: fn, resolve: (i: number, value: Me) => pending[i](value) }
+  const calls = vi.fn()
+  const fn = (path: string) => {
+    if (path !== '/me') return Promise.reject(new ApiError(404, 'not_found'))
+    calls()
+    return new Promise<Me>((resolve) => pending.push(resolve))
+  }
+  return { api: fn as unknown as ApiCall, calls, resolve: (i: number, value: Me) => pending[i](value) }
 }
 
 describe('per-user query cache', () => {

@@ -5,6 +5,7 @@ import { ApiError } from '../api/client'
 import { initI18n, LOCALE_STORAGE_KEY, setLocale } from '../i18n'
 import he from '../i18n/he.json'
 import { renderApp, type RenderAppOptions } from '../test/renderApp'
+import type { ApiCall } from '../api/useApi'
 import { fakeMeApi } from '../test/fakeMeApi'
 import { findPhysicalUtilities } from '../test/rtl'
 import { AppShell } from './AppShell'
@@ -66,6 +67,35 @@ describe('AppShell', () => {
     renderShell()
     await userEvent.click(await screen.findByRole('link', { name: he.settings.title }))
     expect(await screen.findByRole('heading', { name: he.settings.title })).toBeInTheDocument()
+  })
+
+  it('shows the notifications bell with the unread count in the header', async () => {
+    const me = fakeMeApi().api
+    const api = (async (path: string, init?: Parameters<ApiCall>[1]) =>
+      path === '/notifications' ? { items: [], unread_count: 4 } : me(path, init)) as ApiCall
+    renderShell({ api })
+    const bell = await screen.findByRole('link', {
+      name: he.notifications.bell.replace('{{unread}}', '4'),
+    })
+    expect(bell).toHaveAttribute('href', '/notifications')
+    expect(within(screen.getByRole('navigation')).queryByRole('link', { name: /התראות/ })).toBeNull()
+  })
+
+  it('has no bell before the account has a profile', async () => {
+    renderShell({ api: fakeMeApi(null).api })
+    await screen.findByRole('heading', { name: he.onboarding.title })
+    expect(screen.queryByRole('link', { name: /התראות/ })).not.toBeInTheDocument()
+  })
+
+  it('the profile tab links to connections, people and settings', async () => {
+    renderShell({ route: '/profile' })
+    expect(await screen.findByRole('link', { name: he.connections.title })).toHaveAttribute(
+      'href',
+      '/connections',
+    )
+    expect(screen.getByRole('link', { name: he.people.title })).toHaveAttribute('href', '/people')
+    const settings = screen.getAllByRole('link', { name: he.settings.title })
+    expect(settings.map((a) => a.getAttribute('href'))).toEqual(['/settings', '/settings'])
   })
 
   it('signs out from the header', async () => {

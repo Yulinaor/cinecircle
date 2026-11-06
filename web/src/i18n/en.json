@@ -60,5 +60,29 @@
     "save": "Save",
     "saved": "Saved",
     "language": "Language"
+  },
+  "follow": { "follow": "Follow", "requested": "Requested", "following": "Following" },
+  "people": {
+    "title": "People",
+    "search": "Search people",
+    "minChars": "Type at least 2 characters to search.",
+    "empty": "No people found."
+  },
+  "connections": {
+    "title": "Connections",
+    "requests": "Requests",
+    "followers": "Followers",
+    "following": "Following",
+    "accept": "Accept",
+    "decline": "Decline",
+    "remove": "Remove",
+    "empty": "No one here yet."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "bell": "Notifications, {{unread}} unread",
+    "followRequest": "{{name}} asked to follow you",
+    "followAccepted": "{{name}} accepted your request",
+    "empty": "No notifications yet."
   }
 }

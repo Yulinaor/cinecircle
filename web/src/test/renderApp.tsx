@@ -37,6 +37,7 @@ export function renderApp(ui: ReactElement, { auth, api, route = '/' }: RenderAp
   const result = render(wrap(ui))
   return {
     ...result,
+    client,
     auth: value,
     /** Optionally swaps the auth state (e.g. another user, or signed out) for the re-render. */
     rerender: (next: ReactElement, nextAuth?: Partial<AuthState>) => {

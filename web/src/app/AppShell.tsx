@@ -6,6 +6,7 @@ import { useAuth } from '../auth/AuthProvider'
 import { SignInPage } from '../auth/SignInPage'
 import { OnboardingPage } from '../me/OnboardingPage'
 import { useMe } from '../me/useMe'
+import { Bell } from '../notifications/Bell'
 import { BottomNav } from './BottomNav'
 import { LanguageToggle } from './LanguageToggle'
 import { AppRoutes } from './routes'
@@ -21,7 +22,7 @@ export function AppShell({ status }: { status?: ReactNode }) {
         <span className="text-xl font-extrabold tracking-tight">{t('app.name')}</span>
         <div className="flex items-center gap-3">
           {status}
-          {authStatus === 'signed_in' && cacheReady && <SettingsLink />}
+          {authStatus === 'signed_in' && cacheReady && <AccountLinks />}
           <LanguageToggle />
           {authStatus === 'signed_in' && (
             <button
@@ -56,18 +57,21 @@ function Loading() {
   )
 }
 
-/** Visible once the account has a profile; the page itself is also a route. */
-function SettingsLink() {
+/** Notifications and settings: visible once the account has a profile; each page is also a route. */
+function AccountLinks() {
   const { t } = useTranslation()
   const me = useMe()
   if (!me.data?.profile) return null
   return (
-    <Link
-      to="/settings"
-      className="flex min-h-11 items-center rounded-xl bg-bg px-3 text-sm font-semibold text-ink hover:bg-line"
-    >
-      {t('settings.title')}
-    </Link>
+    <>
+      <Bell />
+      <Link
+        to="/settings"
+        className="flex min-h-11 items-center rounded-xl bg-bg px-3 text-sm font-semibold text-ink hover:bg-line"
+      >
+        {t('settings.title')}
+      </Link>
+    </>
   )
 }
 
