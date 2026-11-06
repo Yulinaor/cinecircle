@@ -6,6 +6,9 @@ import he from '../i18n/he.json'
 import { renderApp } from '../test/renderApp'
 import { SignInPage } from './SignInPage'
 
+// delay: null skips the per-keystroke setTimeout(0), which is slow under parallel load.
+const typist = userEvent.setup({ delay: null })
+
 const mocks = vi.hoisted(() => ({
   client: null as unknown,
 }))
@@ -39,8 +42,8 @@ beforeEach(async () => {
 })
 
 async function fill(email = 'a@b.co', password = 'secret123') {
-  await userEvent.type(screen.getByLabelText(he.auth.email), email)
-  await userEvent.type(screen.getByLabelText(he.auth.password), password)
+  await typist.type(screen.getByLabelText(he.auth.email), email)
+  await typist.type(screen.getByLabelText(he.auth.password), password)
 }
 
 describe('SignInPage', () => {

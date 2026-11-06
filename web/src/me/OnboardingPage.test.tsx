@@ -10,6 +10,9 @@ import he from '../i18n/he.json'
 import { fakeMeApi, PROFILE } from '../test/fakeMeApi'
 import { FAKE_SESSION, renderApp } from '../test/renderApp'
 
+// delay: null skips the per-keystroke setTimeout(0), which is slow under parallel load.
+const typist = userEvent.setup({ delay: null })
+
 vi.mock('../auth/supabase', () => ({ supabase: null }))
 
 beforeEach(async () => {
@@ -19,10 +22,10 @@ beforeEach(async () => {
 })
 
 async function fillAndSubmit(username: string, displayName = 'Gal') {
-  await userEvent.type(await screen.findByLabelText(he.onboarding.username), username)
+  await typist.type(await screen.findByLabelText(he.onboarding.username), username)
   const name = screen.getByLabelText(he.onboarding.displayName)
   await userEvent.clear(name)
-  await userEvent.type(name, displayName)
+  await typist.type(name, displayName)
   await userEvent.click(screen.getByRole('button', { name: he.onboarding.submit }))
 }
 
@@ -105,8 +108,8 @@ describe('onboarding', () => {
     const group = await screen.findByRole('group', { name: he.onboarding.language })
     await userEvent.click(within(group).getByRole('button', { name: 'English' }))
     expect(document.documentElement.dir).toBe('ltr')
-    await userEvent.type(screen.getByLabelText(en.onboarding.username), 'gal_b')
-    await userEvent.type(screen.getByLabelText(en.onboarding.displayName), 'Gal')
+    await typist.type(screen.getByLabelText(en.onboarding.username), 'gal_b')
+    await typist.type(screen.getByLabelText(en.onboarding.displayName), 'Gal')
     await userEvent.click(screen.getByRole('button', { name: en.onboarding.submit }))
     await screen.findByRole('navigation')
     expect(fake.writes()[0][1]).toMatchObject({ body: { locale: 'en' } })

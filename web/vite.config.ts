@@ -10,5 +10,8 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // Cold first test + parallel workers on a busy machine can exceed the 5 s default; the
+    // Testing Library asyncUtilTimeout (3 s) still reports missing elements well before this.
+    testTimeout: 15000,
   },
 })
