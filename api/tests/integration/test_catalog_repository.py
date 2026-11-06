@@ -130,11 +130,29 @@ def test_update_omdb_touches_only_omdb_columns(engine):
     with engine.begin() as conn:
         repo.upsert_genres(conn, all_genres())
         title_id = repo.upsert_title(conn, record, parse_omdb(None), None, T0)
-        repo.update_omdb(conn, title_id, parse_omdb(raw_omdb), raw_omdb)
+        repo.update_omdb(conn, title_id, record.imdb_id, parse_omdb(raw_omdb), raw_omdb)
         row = repo.get_title(conn, title_id)
     assert row.imdb_rating == parse_omdb(raw_omdb).imdb_rating and row.raw_omdb == raw_omdb
     assert row.fetched_at == T0 and row.name_en == record.name_en
     assert {g.id for g in row.genres} == set(record.genre_ids)
+
+
+def test_update_omdb_is_a_noop_after_a_concurrent_refresh(engine):
+    record, raw_omdb = odyssey()
+    late = {**raw_omdb, "Title": "late answer"}
+    with engine.begin() as conn:
+        repo.upsert_genres(conn, all_genres())
+        title_id = repo.upsert_title(conn, record, parse_omdb(None), None, T0)
+        # A refresh stored a fresh OMDb answer while the retry was still waiting for OMDb.
+        repo.upsert_title(conn, record, parse_omdb(raw_omdb), raw_omdb, T0)
+        repo.update_omdb(conn, title_id, record.imdb_id, parse_omdb(late), late)
+        assert repo.get_title(conn, title_id).raw_omdb == raw_omdb
+        # ... or moved the row to another imdb_id.
+        moved = dataclasses.replace(record, imdb_id="tt0000001")
+        repo.upsert_title(conn, moved, parse_omdb(None), None, T0)
+        repo.update_omdb(conn, title_id, record.imdb_id, parse_omdb(late), late)
+        row = repo.get_title(conn, title_id)
+    assert row.imdb_id == "tt0000001" and row.raw_omdb is None
 
 
 def test_missing_genre_ids(engine):

@@ -109,7 +109,7 @@ class TitleService:
             return CachedTitle(row, stale=False)  # still unrated; asked again in a day
         self._omdb_tried.pop(row.id, None)
         with self._engine.begin() as conn:
-            repo.update_omdb(conn, row.id, parse_omdb(raw_omdb), raw_omdb)
+            repo.update_omdb(conn, row.id, row.imdb_id, parse_omdb(raw_omdb), raw_omdb)
             updated = repo.get_title(conn, row.id)
         assert updated is not None
         return CachedTitle(updated, stale=False)

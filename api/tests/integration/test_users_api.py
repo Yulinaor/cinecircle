@@ -63,6 +63,8 @@ def test_search_escapes_wildcards(api, engine):
     _add_user(engine, "a_b", "Underscore")
     _add_user(engine, "axb", "Wildcard Bait")
     _add_user(engine, "pct100", "100% Real")
+    _add_user(engine, "backslash", "back\\slash")  # display name with a literal backslash
+    _add_user(engine, "marks", "Marks")  # what "k\s" would match if "\s" meant "s"
     client = api("noa")
 
     def usernames(q: str) -> list[str]:
@@ -74,7 +76,10 @@ def test_search_escapes_wildcards(api, engine):
     assert usernames("__") == []
     assert usernames("a_b") == ["a_b"]
     assert usernames("0% R") == ["pct100"]  # a literal percent sign in a display name
-    assert usernames("\\\\") == []  # a backslash is literal too, not an escape character
+    assert usernames("\\\\") == []  # two backslashes: no display name has them
+    # The backslash is matched literally: found in back\slash, and "k\s" is not read as "ks".
+    assert usernames("k\\s") == ["backslash"]
+    assert usernames("k\\") == ["backslash"]  # a trailing backslash is not a dangling escape
 
 
 def test_search_matches_hebrew_display_name(api):

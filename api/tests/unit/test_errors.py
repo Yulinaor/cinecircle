@@ -28,6 +28,22 @@ def test_bad_path_param_is_404(path):
     assert (r.status_code, r.json()) == (404, {"detail": "not_found"})
 
 
+def test_unknown_path_is_404_not_found():
+    r = client().get("/users/gal/followers")  # signed in, no such route
+    assert (r.status_code, r.json()) == (404, {"detail": "not_found"})
+    r = TestClient(create_app(auth_settings(DEAD))).get("/nope")  # unknown paths need no sign-in
+    assert (r.status_code, r.json()) == (404, {"detail": "not_found"})
+
+
+def test_wrong_method_stays_405_and_other_http_errors_keep_their_detail():
+    r = client().post("/live")
+    assert r.status_code == 405
+    assert r.json() == {"detail": "Method Not Allowed"}
+    assert "allow" in r.headers
+    r = TestClient(create_app(auth_settings(DEAD))).get("/me")
+    assert (r.status_code, r.json()) == (401, {"detail": "not_authenticated"})
+
+
 def test_query_validation_stays_422():
     assert client().get("/titles/search", params={"q": ""}).status_code == 422
 

@@ -4,13 +4,14 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import { ApiStatus } from './app/ApiStatus'
 import { AppShell } from './app/AppShell'
+import { retryQuery } from './api/retry'
 import { AuthProvider } from './auth/AuthProvider'
 import { initI18n } from './i18n'
 import './theme/tokens.css'
 
 initI18n()
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: retryQuery } } })
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

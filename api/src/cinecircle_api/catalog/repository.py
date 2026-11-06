@@ -265,17 +265,23 @@ def upsert_title(
 
 
 def update_omdb(
-    conn: Connection, title_id: int, ratings: OmdbRatings, raw_omdb: dict | None
+    conn: Connection, title_id: int, imdb_id: str, ratings: OmdbRatings, raw_omdb: dict | None
 ) -> None:
-    """Store a late OMDb answer. fetched_at stays: it is the TMDB data's age."""
+    """Store a late OMDb answer for `imdb_id`. fetched_at stays: it is the TMDB data's age.
+
+    A no-op unless the row still has that imdb_id and no OMDb answer, so a refresh that landed
+    while OMDb was being asked is never overwritten by the older answer.
+    """
     conn.execute(
         sa.text(
             "UPDATE app.titles SET imdb_rating = :imdb_rating, imdb_votes = :imdb_votes, "
             "rt_score = :rt_score, metacritic = :metacritic, "
-            "raw_omdb = CAST(:raw_omdb AS jsonb) WHERE id = :id"
+            "raw_omdb = CAST(:raw_omdb AS jsonb) "
+            "WHERE id = :id AND imdb_id = :imdb_id AND raw_omdb IS NULL"
         ),
         {
             "id": title_id,
+            "imdb_id": imdb_id,
             "imdb_rating": ratings.imdb_rating,
             "imdb_votes": ratings.imdb_votes,
             "rt_score": ratings.rt_score,

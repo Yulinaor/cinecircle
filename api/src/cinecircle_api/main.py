@@ -4,11 +4,12 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, Request
-from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exception_handlers import http_exception_handler, request_validation_exception_handler
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import OperationalError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from cinecircle_api.auth import current_claims, make_verifier
 from cinecircle_api.catalog.omdb_client import OmdbClient
@@ -30,6 +31,13 @@ async def _validation_error(request: Request, exc: RequestValidationError) -> JS
     if errors and all(error["loc"][0] == "path" for error in errors):
         return JSONResponse({"detail": "not_found"}, status_code=404)
     return await request_validation_exception_handler(request, exc)
+
+
+async def _http_error(request: Request, exc: StarletteHTTPException) -> JSONResponse:
+    # Routing's own 404 says "Not Found"; every 404 the app raises says "not_found".
+    if exc.status_code == 404 and exc.detail == "Not Found":
+        return JSONResponse({"detail": "not_found"}, status_code=404)
+    return await http_exception_handler(request, exc)
 
 
 # NOTE: catalog/_http.py pins the "httpx" logger to WARNING because httpx logs every request URL
@@ -60,6 +68,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.add_exception_handler(OperationalError, _db_unavailable)
     app.add_exception_handler(RequestValidationError, _validation_error)
+    app.add_exception_handler(StarletteHTTPException, _http_error)
     app.state.settings = settings
     app.state.engine = make_engine(settings.database_url)
     # Without a key the client is None and the title endpoints answer 503; the app still starts.
