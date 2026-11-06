@@ -118,7 +118,7 @@ def _season(raw: dict) -> SeasonRecord:
         overview_en=_text(raw.get("overview")),
         poster_path=_text(raw.get("poster_path")),
         air_date=_date(raw.get("air_date")),
-        episode_count=raw.get("episode_count"),
+        episode_count=raw.get("episode_count") or None,  # 0 = unaired season, like runtime 0
     )
 
 

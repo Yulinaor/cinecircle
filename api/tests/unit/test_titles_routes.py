@@ -157,7 +157,9 @@ def test_poster_url_built_and_null_safe(client, stub):
     assert body["poster_url"] is None and body["ratings"]["imdb"] is None
 
 
-def test_titles_503_without_keys():
+def test_titles_503_without_keys(monkeypatch):
+    monkeypatch.delenv("TMDB_API_KEY", raising=False)
+    monkeypatch.delenv("OMDB_API_KEY", raising=False)
     client = TestClient(create_app(auth_settings(DEAD)), headers=SIGNED_IN)
     r = client.get("/titles/search", params={"q": "x"})
     assert (r.status_code, r.json()) == (503, {"detail": "catalog_unavailable"})

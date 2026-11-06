@@ -32,6 +32,9 @@ async def _validation_error(request: Request, exc: RequestValidationError) -> JS
     return await request_validation_exception_handler(request, exc)
 
 
+# NOTE: catalog/_http.py pins the "httpx" logger to WARNING because httpx logs every request URL
+# at INFO and OMDb's URL carries the API key. Any logging config added here (dictConfig,
+# basicConfig(force=True), ...) must keep that pin, or the key reaches the logs.
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
     tmdb = TmdbClient(settings.tmdb_api_key) if settings.tmdb_api_key else None

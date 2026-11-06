@@ -31,6 +31,9 @@ def get_json(
     if response.is_error:
         raise ExternalApiError(source, response.status_code) from None
     try:
-        return response.json()
+        body = response.json()
     except ValueError:
         raise ExternalApiError(source, response.status_code) from None
+    if not isinstance(body, dict):  # callers read it with .get
+        raise ExternalApiError(source, response.status_code)
+    return body

@@ -56,6 +56,10 @@ class TitleService:
         self._tmdb = tmdb
         self._omdb = omdb
         self._now = now
+        # When OMDb was last asked about a title whose ratings are still missing. There is no
+        # column for it (fetched_at is the TMDB data's age), so this lives in memory: it caps
+        # retries at one a day per process and is simply forgotten on restart.
+        self._omdb_tried: dict[int, datetime] = {}
 
     def search(self, query: str, type_filter: TypeFilter, lang: Locale) -> list[SearchResult]:
         if self._tmdb is None:
@@ -71,23 +75,53 @@ class TitleService:
             row = repo.get_title(conn, title_id)
         if row is None:
             raise TitleNotFound
-        if self._is_fresh(row):
-            return CachedTitle(row, stale=False)
-        return self._refresh(row.tmdb_id, row.media_type, row)
+        return self._serve(row)
 
     def get_by_tmdb(self, tmdb_id: int, media_type: MediaType) -> CachedTitle:
         with self._engine.connect() as conn:
             row = repo.get_title_by_tmdb(conn, tmdb_id, media_type)
-        if row is not None and self._is_fresh(row):
-            return CachedTitle(row, stale=False)
-        return self._refresh(tmdb_id, media_type, row)
+        if row is None:
+            return self._refresh(tmdb_id, media_type, None)
+        return self._serve(row)
 
-    def _is_fresh(self, row: repo.TitleRow) -> bool:
-        age = self._now() - row.fetched_at
-        if age >= REFRESH_AFTER:
+    def _serve(self, row: repo.TitleRow) -> CachedTitle:
+        now = self._now()
+        if now - row.fetched_at >= REFRESH_AFTER:
+            return self._refresh(row.tmdb_id, row.media_type, row)
+        if self._omdb_retry_due(row, now):
+            return self._retry_omdb(row)
+        return CachedTitle(row, stale=False)
+
+    def _omdb_retry_due(self, row: repo.TitleRow, now: datetime) -> bool:
+        """OMDb failed when the row was cached (raw_omdb NULL) and a day has passed since."""
+        if self._omdb is None or row.raw_omdb is not None or row.imdb_id is None:
             return False
-        omdb_failed = row.raw_omdb is None and row.imdb_id is not None
-        return not (omdb_failed and age >= OMDB_RETRY_AFTER)
+        last_try = self._omdb_tried.get(row.id, row.fetched_at)
+        return now - last_try >= OMDB_RETRY_AFTER
+
+    def _retry_omdb(self, row: repo.TitleRow) -> CachedTitle:
+        """Fill in the ratings only: the TMDB part of the row is still fresh, so TMDB is not
+        called and fetched_at (the 30-day TMDB clock) is left alone."""
+        assert self._omdb is not None and row.imdb_id is not None
+        raw_omdb = self._ask_omdb(row.imdb_id)
+        if raw_omdb is None:
+            self._omdb_tried[row.id] = self._now()
+            return CachedTitle(row, stale=False)  # still unrated; asked again in a day
+        self._omdb_tried.pop(row.id, None)
+        with self._engine.begin() as conn:
+            repo.update_omdb(conn, row.id, parse_omdb(raw_omdb), raw_omdb)
+            updated = repo.get_title(conn, row.id)
+        assert updated is not None
+        return CachedTitle(updated, stale=False)
+
+    def _ask_omdb(self, imdb_id: str) -> dict | None:
+        """OMDb's record, OMDB_UNKNOWN when it has none, None when the call failed."""
+        assert self._omdb is not None
+        try:
+            # No such title is a real answer, kept for 30 days.
+            return self._omdb.by_imdb_id(imdb_id) or OMDB_UNKNOWN
+        except ExternalApiError:
+            return None  # ratings stay empty; retried after OMDB_RETRY_AFTER
 
     def _unreachable(self, cached: repo.TitleRow | None) -> CachedTitle:
         if cached is None:
@@ -111,11 +145,7 @@ class TitleService:
 
         raw_omdb = None
         if record.imdb_id and self._omdb is not None:
-            try:
-                # None = OMDb answered "no such title": a real answer, kept for 30 days.
-                raw_omdb = self._omdb.by_imdb_id(record.imdb_id) or OMDB_UNKNOWN
-            except ExternalApiError:
-                raw_omdb = None  # ratings stay empty; retried after OMDB_RETRY_AFTER
+            raw_omdb = self._ask_omdb(record.imdb_id)
 
         with self._engine.connect() as conn:
             missing = repo.missing_genre_ids(conn, record.genre_ids)
@@ -131,6 +161,7 @@ class TitleService:
             title_id = repo.upsert_title(conn, record, parse_omdb(raw_omdb), raw_omdb, self._now())
             row = repo.get_title(conn, title_id)
         assert row is not None
+        self._omdb_tried.pop(row.id, None)  # fetched_at is the newest attempt now
         return CachedTitle(row, stale=False)
 
     def _genre_rows(self) -> list[GenreRow]:
