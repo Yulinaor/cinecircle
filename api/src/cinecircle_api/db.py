@@ -55,6 +55,9 @@ def user_session(request: Request, claims: CurrentUser) -> Iterator[Connection]:
 
     Commits when the handler returns and rolls back when it raises. Role and claims are
     transaction-local, so nothing leaks to the next request on the pooled connection.
+
+    A commit()/rollback() inside the handler is not an escape hatch: SQLAlchemy refuses any
+    further statement inside the `begin()` block, so nothing can run later as postgres.
     """
     with request.app.state.engine.begin() as conn:
         act_as(conn, claims.raw)

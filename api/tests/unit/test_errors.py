@@ -1,8 +1,10 @@
 """Exception handlers and shutdown behaviour of the app."""
 
 import pytest
+from fastapi import APIRouter
 from fastapi.testclient import TestClient
 
+from cinecircle_api.db import UserDb
 from cinecircle_api.main import create_app
 from tests.tokens import auth_settings, make_token
 
@@ -42,3 +44,21 @@ def test_shutdown_closes_http_clients():
         assert not service._omdb._http.is_closed
     assert service._tmdb._http.is_closed
     assert service._omdb._http.is_closed
+
+
+def test_unauthenticated_is_401_before_any_db_connection():
+    r = TestClient(create_app(auth_settings(DEAD))).get("/titles/1")
+    assert (r.status_code, r.json()) == (401, {"detail": "not_authenticated"})
+
+
+def test_user_db_route_on_a_dead_database_is_503():
+    router = APIRouter()
+
+    @router.get("/_t/db")
+    def db_route(db: UserDb) -> dict:
+        return {"ok": True}
+
+    app = create_app(auth_settings(DEAD))
+    app.include_router(router)
+    r = TestClient(app, headers=AUTH).get("/_t/db")
+    assert (r.status_code, r.json()) == (503, {"detail": "db_unavailable"})

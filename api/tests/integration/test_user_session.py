@@ -4,6 +4,7 @@ import pytest
 import sqlalchemy as sa
 from fastapi import APIRouter
 from fastapi.testclient import TestClient
+from sqlalchemy.exc import InvalidRequestError
 
 from cinecircle_api.db import UserDb, act_as
 from cinecircle_api.main import create_app
@@ -34,6 +35,16 @@ def build_client(user, *, raise_server_exceptions: bool = False) -> TestClient:
     def rename(db: UserDb) -> dict:
         db.execute(_RENAME, {"name": "Changed"})
         return {"ok": True}
+
+    @router.post("/_t/commit-midway")
+    def commit_midway(db: UserDb) -> dict:
+        db.execute(_RENAME, {"name": "Changed"})
+        db.commit()
+        try:
+            who = db.execute(_WHO).one()  # would run as postgres without the guard
+        except InvalidRequestError:  # SQLAlchemy refuses statements after a mid-block commit
+            return {"blocked": True}
+        return {"blocked": False, "who": list(who)}
 
     app = create_app(auth_settings(URL))
     app.include_router(router)
@@ -84,16 +95,27 @@ def test_write_is_committed(people, engine):
         fresh.dispose()
 
 
+def test_commit_inside_a_handler_never_continues_as_postgres(people, engine):
+    client = build_client(people["gal"])
+    r = client.post("/_t/commit-midway")
+    assert r.status_code == 200
+    assert r.json() == {"blocked": True}
+    assert name_of(engine, people["gal"]) == "Changed"  # the first statement was committed
+
+
 def test_stale_session_level_sub_cannot_override_the_token_user(people, engine):
     # Supabase's auth.uid() reads request.jwt.claim.sub before request.jwt.claims->>'sub'.
     with engine.connect() as conn:
-        conn.execute(
-            sa.text("SELECT set_config('request.jwt.claim.sub', :sub, false)"),
-            {"sub": str(people["noa"].id)},
-        )
-        conn.commit()
-        with conn.begin():
-            act_as(conn, claims_for(people["gal"]))
-            assert conn.scalar(sa.text("SELECT auth.uid()::text")) == str(people["gal"].id)
-        conn.execute(sa.text("RESET request.jwt.claim.sub"))
-        conn.commit()
+        try:
+            conn.execute(
+                sa.text("SELECT set_config('request.jwt.claim.sub', :sub, false)"),
+                {"sub": str(people["noa"].id)},
+            )
+            conn.commit()
+            with conn.begin():
+                act_as(conn, claims_for(people["gal"]))
+                assert conn.scalar(sa.text("SELECT auth.uid()::text")) == str(people["gal"].id)
+        finally:
+            conn.rollback()
+            conn.execute(sa.text("RESET request.jwt.claim.sub"))
+            conn.commit()
