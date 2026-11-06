@@ -14,5 +14,25 @@
     "connected": "Connected",
     "waking": "Waking up the server…",
     "offline": "Server unavailable"
+  },
+  "auth": {
+    "loading": "Loading…",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "google": "Continue with Google",
+    "switchToSignUp": "No account yet? Sign up",
+    "switchToSignIn": "Already have an account? Sign in",
+    "checkEmail": "We sent you a confirmation email. Open the link in it to finish signing up.",
+    "signOut": "Sign out",
+    "unconfigured": "Sign-in isn't configured in this environment. VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are missing.",
+    "errors": {
+      "invalid_credentials": "Wrong email or password.",
+      "email_not_confirmed": "Your email isn't confirmed yet. Check your inbox.",
+      "user_already_exists": "An account with this email already exists. Try signing in.",
+      "weak_password": "That password is too weak. Choose a longer one.",
+      "generic": "Something went wrong. Please try again."
+    }
   }
 }

@@ -1,17 +1,16 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { initI18n, LOCALE_STORAGE_KEY, setLocale } from '../i18n'
+import he from '../i18n/he.json'
+import { renderApp, type RenderAppOptions } from '../test/renderApp'
 import { findPhysicalUtilities } from '../test/rtl'
 import { AppShell } from './AppShell'
 
-function renderShell() {
-  return render(
-    <MemoryRouter initialEntries={['/']}>
-      <AppShell />
-    </MemoryRouter>,
-  )
+vi.mock('../auth/supabase', () => ({ supabase: null }))
+
+function renderShell(options?: RenderAppOptions) {
+  return renderApp(<AppShell />, options)
 }
 
 function navTexts() {
@@ -34,6 +33,30 @@ describe('AppShell', () => {
     expect(document.documentElement.dir).toBe('rtl')
     expect(navTexts()).toEqual(['בית', 'גלו', 'פרסום', 'רשימת צפייה', 'פרופיל'])
     expect(screen.getByRole('link', { name: 'בית' })).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('shows the app shell when signed in', () => {
+    renderShell({ auth: { status: 'signed_in' } })
+    expect(within(screen.getByRole('navigation')).getAllByRole('link')).toHaveLength(5)
+  })
+
+  it('signs out from the header', async () => {
+    const { auth } = renderShell()
+    await userEvent.click(screen.getByRole('button', { name: he.auth.signOut }))
+    expect(auth.signOut).toHaveBeenCalled()
+  })
+
+  it('shows the sign-in page when signed out', () => {
+    renderShell({ auth: { status: 'signed_out', session: null } })
+    expect(screen.getByRole('heading', { name: he.auth.signIn })).toBeInTheDocument()
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'שינוי שפה' })).toBeInTheDocument()
+  })
+
+  it('shows a loading status while the session is restored', () => {
+    renderShell({ auth: { status: 'loading', session: null } })
+    expect(screen.getByRole('status')).toHaveTextContent(he.auth.loading)
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
   })
 
   it('switches to English LTR from the toggle and remembers it', async () => {
