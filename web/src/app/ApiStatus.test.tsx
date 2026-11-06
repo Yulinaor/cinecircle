@@ -14,3 +14,8 @@ it('renders the waking message in Hebrew inside role=status', () => {
   render(<ApiStatus />)
   expect(screen.getByRole('status')).toHaveTextContent('מעיר את השרת…')
 })
+
+it('shows only the dot on phones: the text is still there for screen readers', () => {
+  render(<ApiStatus />)
+  expect(screen.getByText('מעיר את השרת…')).toHaveClass('sr-only')
+})

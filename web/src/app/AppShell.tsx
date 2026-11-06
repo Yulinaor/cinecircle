@@ -13,26 +13,17 @@ import { AppRoutes } from './routes'
 
 export function AppShell({ status }: { status?: ReactNode }) {
   const { t } = useTranslation()
-  const { status: authStatus, session, signOut } = useAuth()
+  const { status: authStatus, session } = useAuth()
   // Cached account data must never outlive the user that fetched it (also for A -> B switches).
   const cacheReady = useUserScopedCache(session?.user.id ?? null)
   return (
     <div className="flex h-full flex-col">
       <header className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
-        <span className="text-xl font-extrabold tracking-tight">{t('app.name')}</span>
-        <div className="flex items-center gap-3">
+        <span className="shrink-0 text-xl font-extrabold tracking-tight">{t('app.name')}</span>
+        <div className="flex min-w-0 items-center gap-2">
           {status}
-          {authStatus === 'signed_in' && cacheReady && <AccountLinks />}
+          {authStatus === 'signed_in' && (cacheReady ? <AccountControls /> : <SignOutButton />)}
           <LanguageToggle />
-          {authStatus === 'signed_in' && (
-            <button
-              type="button"
-              onClick={() => void signOut()}
-              className="min-h-11 rounded-xl bg-bg px-3 text-sm font-semibold text-ink hover:bg-line"
-            >
-              {t('auth.signOut')}
-            </button>
-          )}
         </div>
       </header>
       {authStatus === 'loading' && <Loading />}
@@ -57,19 +48,50 @@ function Loading() {
   )
 }
 
-/** Notifications and settings: visible once the account has a profile; each page is also a route. */
-function AccountLinks() {
+function SignOutButton() {
+  const { t } = useTranslation()
+  const { signOut } = useAuth()
+  return (
+    <button
+      type="button"
+      onClick={() => void signOut()}
+      className="min-h-11 rounded-xl bg-bg px-3 text-sm font-semibold text-ink hover:bg-line"
+    >
+      {t('auth.signOut')}
+    </button>
+  )
+}
+
+/**
+ * Header controls once the account is known. With a profile: icon-only notifications and settings
+ * (settings has the sign-out button). Without one (onboarding) there is no settings page, so the
+ * header keeps a sign-out button. Each page is also a route.
+ */
+function AccountControls() {
   const { t } = useTranslation()
   const me = useMe()
-  if (!me.data?.profile) return null
+  if (!me.data?.profile) return <SignOutButton />
   return (
     <>
       <Bell />
       <Link
         to="/settings"
-        className="flex min-h-11 items-center rounded-xl bg-bg px-3 text-sm font-semibold text-ink hover:bg-line"
+        aria-label={t('settings.title')}
+        className="flex min-h-11 min-w-11 items-center justify-center rounded-xl bg-bg text-ink hover:bg-line"
       >
-        {t('settings.title')}
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          className="size-6"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
       </Link>
     </>
   )

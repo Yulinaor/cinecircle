@@ -98,9 +98,29 @@ describe('AppShell', () => {
     expect(settings.map((a) => a.getAttribute('href'))).toEqual(['/settings', '/settings'])
   })
 
-  it('signs out from the header', async () => {
-    const { auth } = renderShell()
-    await userEvent.click(screen.getByRole('button', { name: he.auth.signOut }))
+  it('keeps accessible names on the icon-only header controls', async () => {
+    renderShell()
+    const header = await screen.findByRole('banner')
+    expect(
+      await within(header).findByRole('link', {
+        name: he.notifications.bell.replace('{{unread}}', '0'),
+      }),
+    ).toBeInTheDocument()
+    expect(within(header).getByRole('link', { name: he.settings.title })).toHaveAttribute(
+      'href',
+      '/settings',
+    )
+    expect(within(header).getByRole('button', { name: 'שינוי שפה' })).toBeInTheDocument()
+    // Sign out lives on the settings page once there is a profile, not in the header.
+    expect(within(header).queryByRole('button', { name: he.auth.signOut })).not.toBeInTheDocument()
+  })
+
+  it('signs out from the header while there is no profile yet', async () => {
+    const { auth } = renderShell({ api: fakeMeApi(null).api })
+    await screen.findByRole('heading', { name: he.onboarding.title })
+    await userEvent.click(
+      within(screen.getByRole('banner')).getByRole('button', { name: he.auth.signOut }),
+    )
     expect(auth.signOut).toHaveBeenCalled()
   })
 
