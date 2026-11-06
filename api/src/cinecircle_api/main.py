@@ -1,8 +1,9 @@
 """FastAPI application factory. Run with: uvicorn cinecircle_api.main:create_app --factory"""
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from cinecircle_api.auth import current_claims, make_verifier
 from cinecircle_api.catalog.omdb_client import OmdbClient
 from cinecircle_api.catalog.service import TitleService
 from cinecircle_api.catalog.tmdb_client import TmdbClient
@@ -22,6 +23,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         TmdbClient(settings.tmdb_api_key) if settings.tmdb_api_key else None,
         OmdbClient(settings.omdb_api_key) if settings.omdb_api_key else None,
     )
+    # None when SUPABASE_URL is unset: protected routes then answer 503 auth_unavailable.
+    app.state.verifier = make_verifier(settings)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
@@ -35,5 +38,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"status": "ok"}
 
     app.include_router(health.router)
-    app.include_router(titles.router)
+    # Everything except /live and /health requires sign-in; later routers get the same guard.
+    app.include_router(titles.router, dependencies=[Depends(current_claims)])
     return app

@@ -23,12 +23,23 @@ class Settings(BaseSettings):
     # Backend-only catalogue keys; the app still starts without them (title endpoints answer 503).
     tmdb_api_key: str | None = Field(default=None, validation_alias="TMDB_API_KEY")
     omdb_api_key: str | None = Field(default=None, validation_alias="OMDB_API_KEY")
+    # Supabase Auth. Without SUPABASE_URL every protected route answers 503 auth_unavailable.
+    # The JWT secret is only for HS256 tokens (legacy projects); ES256/RS256 use the JWKS.
+    supabase_url: str | None = Field(default=None, validation_alias="SUPABASE_URL")
+    supabase_jwt_secret: str | None = Field(default=None, validation_alias="SUPABASE_JWT_SECRET")
 
-    @field_validator("tmdb_api_key", "omdb_api_key", mode="before")
+    @field_validator("tmdb_api_key", "omdb_api_key", "supabase_jwt_secret", mode="before")
     @classmethod
     def _blank_key_is_none(cls, value: object) -> object:
         if isinstance(value, str):
             return value.strip() or None
+        return value
+
+    @field_validator("supabase_url", mode="before")
+    @classmethod
+    def _clean_supabase_url(cls, value: object) -> object:
+        if isinstance(value, str):
+            return value.strip().rstrip("/") or None
         return value
 
     @field_validator("cors_origins", mode="before")

@@ -24,6 +24,17 @@ def test_cors_origins_parse_comma_list(monkeypatch):
     assert s.app_env == "local"
 
 
+def test_supabase_settings_cleaned_and_blank_is_none(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://x@127.0.0.1:1/x")
+    monkeypatch.setenv("SUPABASE_URL", " http://127.0.0.1:55321/ ")
+    monkeypatch.setenv("SUPABASE_JWT_SECRET", "  ")
+    s = Settings(_env_file=None)
+    assert s.supabase_url == "http://127.0.0.1:55321"
+    assert s.supabase_jwt_secret is None
+    monkeypatch.setenv("SUPABASE_URL", "")
+    assert Settings(_env_file=None).supabase_url is None
+
+
 def test_cors_origins_default(monkeypatch):
     monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://x@127.0.0.1:1/x")
     monkeypatch.delenv("CORS_ORIGINS", raising=False)
