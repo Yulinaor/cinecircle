@@ -1,5 +1,6 @@
 """The signed-in user's own profile and settings (sign-in is enforced in main.py)."""
 
+import re
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -21,6 +22,10 @@ def _me(db: UserDb, claims: Claims) -> MeResponse:
 
 _AVATAR_MAX_LENGTH = 512
 _AVATAR_HOST_SUFFIX = ".googleusercontent.com"
+_AVATAR_HOST = re.compile(r"[a-z0-9.-]+")
+# Browsers read a backslash as "/" in https URLs and drop tabs and newlines, so parsers disagree
+# about the host of such a URL. Refuse them (and any whitespace or control character) outright.
+_AVATAR_FORBIDDEN = re.compile(r"[\\\s\x00-\x1f\x7f]")
 
 
 def safe_avatar_url(value: object) -> str | None:
@@ -31,12 +36,16 @@ def safe_avatar_url(value: object) -> str | None:
     """
     if not isinstance(value, str) or len(value) > _AVATAR_MAX_LENGTH:
         return None
+    if _AVATAR_FORBIDDEN.search(value):
+        return None
     try:
         parts = urlsplit(value)
         host = parts.hostname
     except ValueError:
         return None
-    if parts.scheme != "https" or parts.username is not None or not host:
+    if parts.scheme != "https" or parts.username is not None or ":" in parts.netloc:
+        return None
+    if not host or not _AVATAR_HOST.fullmatch(host):
         return None
     if host == "googleusercontent.com" or host.endswith(_AVATAR_HOST_SUFFIX):
         return value

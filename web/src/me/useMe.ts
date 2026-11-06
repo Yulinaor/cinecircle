@@ -1,8 +1,6 @@
 import { useMutation, useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
 import type { Me } from '../api/types'
 import { useApi } from '../api/useApi'
-import { useAuth } from '../auth/AuthProvider'
 import { currentLocale, setLocale } from '../i18n'
 
 export const ME_KEY = ['me'] as const
@@ -30,23 +28,16 @@ export function useMe(): UseQueryResult<Me> {
 }
 
 /**
- * `PATCH /me`; keeps the cached account in step with the answer — unless the signed-in user
- * changed while it was in flight: the cache then belongs to someone else and must not receive
- * this user's profile.
+ * `PATCH /me`; keeps the cached account in step with the answer. The write is decided by the
+ * cache itself, not by the caller (which may be gone): it replaces the cached account only if
+ * that is the same user's, so a late answer never lands in the cache of whoever signed in since.
  */
 export function useUpdateMe() {
   const api = useApi()
   const client = useQueryClient()
-  const userId = useAuth().session?.user.id ?? null
-  const current = useRef(userId)
-  useEffect(() => {
-    current.current = userId
-  }, [userId])
   return useMutation({
     mutationFn: (changes: ProfileChanges) => api<Me>('/me', { method: 'PATCH', body: changes }),
-    onMutate: () => ({ userId: current.current }),
-    onSuccess: (me, _changes, context) => {
-      if (context?.userId === current.current) client.setQueryData(ME_KEY, me)
-    },
+    onSuccess: (me) =>
+      client.setQueryData<Me>(ME_KEY, (old) => (old && old.id === me.id ? me : old)),
   })
 }
