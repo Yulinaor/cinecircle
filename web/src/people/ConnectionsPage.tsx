@@ -87,7 +87,7 @@ function ConnectionsList({ tab }: { tab: TabId }) {
               <FollowButton
                 username={user.username}
                 state={user.follow_state}
-                describedBy={nameId}
+                nameId={nameId}
               />
             )
           }

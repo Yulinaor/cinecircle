@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FollowState } from '../api/types'
 import { useApi } from '../api/useApi'
+import { useActionName } from './actionName'
 
 const LABEL_KEY = {
   none: 'follow.follow',
@@ -20,19 +21,26 @@ type Target = Exclude<FollowState, 'self'>
 export function FollowButton({
   username,
   state,
-  describedBy,
+  nameId,
 }: {
   username: string
   state: FollowState
-  /** Id of the element naming the person, so identical buttons in a list are told apart. */
-  describedBy?: string
+  /** Id of the element naming the person: the button is then named "<label> <person>". */
+  nameId?: string
 }) {
   const { t } = useTranslation()
   const api = useApi()
   const client = useQueryClient()
-  // Applies only while the server state it was made from is still what the parent shows;
-  // once a refetch changes `state`, the server's answer wins.
-  const [local, setLocal] = useState<{ from: FollowState; value: Target } | null>(null)
+  // What the button shows until the parent hands us a new server state; then the server wins.
+  const [local, setLocal] = useState<Target | null>(null)
+  const [seenState, setSeenState] = useState(state)
+  if (seenState !== state) {
+    // Adjusted during render (not in an effect), so a stale value never paints, and it can't
+    // come back later when the server state returns to what it was.
+    setSeenState(state)
+    setLocal(null)
+  }
+  const actionName = useActionName(nameId)
   const path = `/follows/${encodeURIComponent(username)}`
 
   const change = useMutation({
@@ -44,8 +52,8 @@ export function FollowButton({
       await api<void>(path, { method: 'DELETE' })
       return 'none'
     },
-    onMutate: () => setLocal({ from: state, value: state === 'none' ? 'requested' : 'none' }),
-    onSuccess: (value) => setLocal({ from: state, value }),
+    onMutate: () => setLocal(state === 'none' ? 'requested' : 'none'),
+    onSuccess: (value) => setLocal(value),
     onError: () => setLocal(null),
     onSettled: async () => {
       await Promise.all([
@@ -56,13 +64,13 @@ export function FollowButton({
   })
 
   if (state === 'self') return null
-  const shown: Target = local && local.from === state ? local.value : state
+  const shown: Target = local ?? state
   return (
     <div className="flex flex-col items-end gap-1">
       <button
         type="button"
         disabled={change.isPending}
-        aria-describedby={describedBy}
+        {...actionName}
         onClick={() => change.mutate()}
         className={`min-h-11 rounded-xl px-4 text-sm font-semibold disabled:opacity-60 ${
           shown === 'none'

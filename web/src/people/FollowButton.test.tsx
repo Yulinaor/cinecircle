@@ -92,6 +92,29 @@ describe('FollowButton', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(he.common.error)
   })
 
+  it('follows the server state again after it changes and changes back', async () => {
+    const fake = fakeApi({ 'POST /follows/gal': { follow_state: 'requested' } })
+    const view = renderApp(<FollowButton username="gal" state="none" />, { api: fake.api })
+    await userEvent.click(screen.getByRole('button', { name: he.follow.follow }))
+    expect(await screen.findByRole('button', { name: he.follow.requested })).toBeEnabled()
+    // the refetch says requested; later they declined and the server says none again
+    view.rerender(<FollowButton username="gal" state="requested" />)
+    expect(screen.getByRole('button', { name: he.follow.requested })).toBeInTheDocument()
+    view.rerender(<FollowButton username="gal" state="none" />)
+    expect(screen.getByRole('button', { name: he.follow.follow })).toBeInTheDocument()
+  })
+
+  it('is named after the person when it sits in a list', () => {
+    renderApp(
+      <>
+        <span id="who">Gal</span>
+        <FollowButton username="gal" state="none" nameId="who" />
+      </>,
+      { api: fakeApi({}).api },
+    )
+    expect(screen.getByRole('button', { name: `${he.follow.follow} Gal` })).toBeInTheDocument()
+  })
+
   it('refetches people and connections after a change', async () => {
     const fake = fakeApi({ 'POST /follows/gal': { follow_state: 'requested' } })
     const { client } = renderApp(<FollowButton username="gal" state="none" />, { api: fake.api })

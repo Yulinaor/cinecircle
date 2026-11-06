@@ -44,7 +44,7 @@ export function NotificationsPage() {
 
 function NotificationRow({ item }: { item: NotificationItem }) {
   const { t } = useTranslation()
-  const textId = useId()
+  const nameId = useId()
   const key = item.type === 'follow_request' ? 'notifications.followRequest' : 'notifications.followAccepted'
   return (
     <li
@@ -53,11 +53,12 @@ function NotificationRow({ item }: { item: NotificationItem }) {
       }`}
     >
       <Avatar url={item.actor.avatar_url} name={item.actor.display_name} />
-      <p id={textId} className="min-w-0 flex-1 text-ink">
-        {t(key, { name: item.actor.display_name })}
-      </p>
+      <p className="min-w-0 flex-1 text-ink">{t(key, { name: item.actor.display_name })}</p>
+      <span id={nameId} hidden>
+        {item.actor.display_name}
+      </span>
       {item.type === 'follow_request' && item.request_pending && (
-        <RequestActions username={item.actor.username} nameId={textId} />
+        <RequestActions username={item.actor.username} nameId={nameId} />
       )}
     </li>
   )

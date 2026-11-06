@@ -29,7 +29,7 @@ export function UserCardRow({
       {actions ? (
         actions(nameId)
       ) : (
-        <FollowButton username={user.username} state={user.follow_state} describedBy={nameId} />
+        <FollowButton username={user.username} state={user.follow_state} nameId={nameId} />
       )}
     </li>
   )

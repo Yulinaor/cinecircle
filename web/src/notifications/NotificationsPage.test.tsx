@@ -80,8 +80,8 @@ describe('NotificationsPage', () => {
     const fake = notifications([request()])
     renderApp(<NotificationsPage />, { api: fake.api })
     expect(await screen.findByText('Dana ביקש/ה לעקוב אחריך')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: he.connections.accept })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: he.connections.decline })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: `${he.connections.accept} Dana` })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: `${he.connections.decline} Dana` })).toBeInTheDocument()
   })
 
   it('request_pending false shows plain text only', async () => {
@@ -101,7 +101,7 @@ describe('NotificationsPage', () => {
   it('accepts a request inline', async () => {
     const fake = notifications([request()])
     renderApp(<NotificationsPage />, { api: fake.api })
-    await userEvent.click(await screen.findByRole('button', { name: he.connections.accept }))
+    await userEvent.click(await screen.findByRole('button', { name: `${he.connections.accept} Dana` }))
     await vi.waitFor(() => expect(screen.queryByRole('button')).not.toBeInTheDocument())
     expect(fake.count('POST /follow-requests/dana/accept')).toBe(1)
     expect(screen.getByText('Dana ביקש/ה לעקוב אחריך')).toBeInTheDocument()
@@ -110,7 +110,7 @@ describe('NotificationsPage', () => {
   it('declines a request inline', async () => {
     const fake = notifications([request()])
     renderApp(<NotificationsPage />, { api: fake.api })
-    await userEvent.click(await screen.findByRole('button', { name: he.connections.decline }))
+    await userEvent.click(await screen.findByRole('button', { name: `${he.connections.decline} Dana` }))
     await vi.waitFor(() => expect(screen.queryByRole('button')).not.toBeInTheDocument())
     expect(fake.count('DELETE /follow-requests/dana')).toBe(1)
   })

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useApi } from '../api/useApi'
+import { useActionName } from './actionName'
 
 const SECONDARY =
   'min-h-11 rounded-xl border border-line bg-surface px-4 text-sm font-semibold text-ink hover:bg-bg disabled:opacity-60'
@@ -33,7 +34,7 @@ function ErrorLine() {
 
 /**
  * Accept / Decline for a pending follow request (Connections page and inline in notifications).
- * `nameId` is the element naming the person, so identical buttons in a list stay distinguishable.
+ * `nameId` is the element naming the person; each button is named "<action> <person>".
  */
 export function RequestActions({ username, nameId }: { username: string; nameId?: string }) {
   const { t } = useTranslation()
@@ -41,13 +42,15 @@ export function RequestActions({ username, nameId }: { username: string; nameId?
   const accept = useConnectionChange(`${base}/accept`, 'POST')
   const decline = useConnectionChange(base, 'DELETE')
   const busy = accept.isPending || decline.isPending
+  const acceptName = useActionName(nameId)
+  const declineName = useActionName(nameId)
   return (
     <div className="flex flex-col items-end gap-1">
       <div className="flex gap-2">
         <button
           type="button"
+          {...acceptName}
           disabled={busy}
-          aria-describedby={nameId}
           onClick={() => accept.mutate()}
           className={PRIMARY}
         >
@@ -55,8 +58,8 @@ export function RequestActions({ username, nameId }: { username: string; nameId?
         </button>
         <button
           type="button"
+          {...declineName}
           disabled={busy}
-          aria-describedby={nameId}
           onClick={() => decline.mutate()}
           className={SECONDARY}
         >
@@ -72,12 +75,13 @@ export function RequestActions({ username, nameId }: { username: string; nameId?
 export function RemoveFollower({ username, nameId }: { username: string; nameId?: string }) {
   const { t } = useTranslation()
   const remove = useConnectionChange(`/followers/${encodeURIComponent(username)}`, 'DELETE')
+  const removeName = useActionName(nameId)
   return (
     <div className="flex flex-col items-end gap-1">
       <button
         type="button"
+        {...removeName}
         disabled={remove.isPending}
-        aria-describedby={nameId}
         onClick={() => remove.mutate()}
         className={SECONDARY}
       >

@@ -47,7 +47,7 @@ describe('PeopleSearchPage', () => {
     expect(fake.log()).toEqual(['GET /users/search?q=ga'])
     await vi.waitFor(() => expect(screen.getByText('Dana')).toBeInTheDocument())
     expect(screen.getByText('@dana')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: he.follow.follow })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: `${he.follow.follow} Dana` })).toBeInTheDocument()
   })
 
   it('waits for a pause in typing and searches once', async () => {
