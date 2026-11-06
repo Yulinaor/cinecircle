@@ -34,12 +34,17 @@ CARD_KEYS = {"username", "display_name", "avatar_url", "follow_state"}
 @pytest.mark.parametrize("viewer", ["gal", "dana", "noa", "ron"])
 def test_api_matrix(viewer, api, gal_content):
     client = api(viewer)
+    bodies = []
     for path in ENDPOINTS:
         r = client.get(path.format(title_id=gal_content.title_ids[0]))
         assert r.status_code == EXPECT.get((viewer, path), 200), (viewer, path, r.text)
         for secret, allowed in SECRETS.items():
             assert (secret in r.text) <= (viewer in allowed), (viewer, path, secret)
         assert r.status_code != 403, (viewer, path)
+        bodies.append(r.text)
+    # Positive control: absence alone would also pass if the data were empty or hidden from all.
+    seen = {s for s in SECRETS if any(s in body for body in bodies)}
+    assert seen == {s for s, allowed in SECRETS.items() if viewer in allowed}, viewer
 
 
 def test_unauthenticated_gets_nothing(api, gal_content):
