@@ -111,3 +111,10 @@ def test_logs_never_contain_key(caplog):
     OmdbClient(KEY, http).by_imdb_id("tt1234567")
     assert caplog.records and all(KEY not in r.getMessage() for r in caplog.records)
     assert logging.getLogger("httpx").level == logging.WARNING
+
+
+def test_json_array_body_is_external_error():
+    http = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200, text="[]")))
+    with pytest.raises(ExternalApiError) as info:
+        TmdbClient(KEY, http).genre_list("movie", "en-US")
+    assert info.value.status == 200

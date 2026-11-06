@@ -109,6 +109,52 @@ def test_duplicate_imdb_id_is_dropped_not_fatal(engine):
         assert repo.get_title(conn, twin_id).imdb_id is None
 
 
+def test_duplicate_imdb_id_drops_its_ratings_too(engine):
+    record, raw_omdb = odyssey()
+    ratings = parse_omdb(raw_omdb)
+    assert ratings.imdb_rating is not None and ratings.rt_score is not None
+    twin = dataclasses.replace(record, tmdb_id=record.tmdb_id + 1_000_000)
+    with engine.begin() as conn:
+        repo.upsert_genres(conn, all_genres())
+        owner_id = repo.upsert_title(conn, record, ratings, raw_omdb, T0)
+        twin_id = repo.upsert_title(conn, twin, ratings, raw_omdb, T0)
+        owner, dropped = repo.get_title(conn, owner_id), repo.get_title(conn, twin_id)
+    assert owner.imdb_rating == ratings.imdb_rating and owner.raw_omdb == raw_omdb
+    assert dropped.imdb_id is None
+    assert (dropped.imdb_rating, dropped.imdb_votes) == (None, None)
+    assert (dropped.rt_score, dropped.metacritic, dropped.raw_omdb) == (None, None, None)
+
+
+def test_update_omdb_touches_only_omdb_columns(engine):
+    record, raw_omdb = odyssey()
+    with engine.begin() as conn:
+        repo.upsert_genres(conn, all_genres())
+        title_id = repo.upsert_title(conn, record, parse_omdb(None), None, T0)
+        repo.update_omdb(conn, title_id, record.imdb_id, parse_omdb(raw_omdb), raw_omdb)
+        row = repo.get_title(conn, title_id)
+    assert row.imdb_rating == parse_omdb(raw_omdb).imdb_rating and row.raw_omdb == raw_omdb
+    assert row.fetched_at == T0 and row.name_en == record.name_en
+    assert {g.id for g in row.genres} == set(record.genre_ids)
+
+
+def test_update_omdb_is_a_noop_after_a_concurrent_refresh(engine):
+    record, raw_omdb = odyssey()
+    late = {**raw_omdb, "Title": "late answer"}
+    with engine.begin() as conn:
+        repo.upsert_genres(conn, all_genres())
+        title_id = repo.upsert_title(conn, record, parse_omdb(None), None, T0)
+        # A refresh stored a fresh OMDb answer while the retry was still waiting for OMDb.
+        repo.upsert_title(conn, record, parse_omdb(raw_omdb), raw_omdb, T0)
+        repo.update_omdb(conn, title_id, record.imdb_id, parse_omdb(late), late)
+        assert repo.get_title(conn, title_id).raw_omdb == raw_omdb
+        # ... or moved the row to another imdb_id.
+        moved = dataclasses.replace(record, imdb_id="tt0000001")
+        repo.upsert_title(conn, moved, parse_omdb(None), None, T0)
+        repo.update_omdb(conn, title_id, record.imdb_id, parse_omdb(late), late)
+        row = repo.get_title(conn, title_id)
+    assert row.imdb_id == "tt0000001" and row.raw_omdb is None
+
+
 def test_missing_genre_ids(engine):
     with engine.begin() as conn:
         repo.upsert_genres(conn, [GenreRow(18, "Drama", "דרמה")])
@@ -143,9 +189,13 @@ def test_concurrent_titles_sharing_imdb_id_do_not_fail(engine, monkeypatch):
     barrier = threading.Barrier(2, timeout=10)
     checked = repo._free_imdb_id
 
+    waited = threading.local()
+
     def check_then_wait(conn, rec):
         result = checked(conn, rec)
-        barrier.wait()  # both pass the check before either inserts
+        if not hasattr(waited, "done"):  # only the first check; a retry re-asks without waiting
+            waited.done = True
+            barrier.wait()  # both pass the check before either inserts
         return result
 
     monkeypatch.setattr(repo, "_free_imdb_id", check_then_wait)
@@ -167,3 +217,43 @@ def test_concurrent_titles_sharing_imdb_id_do_not_fail(engine, monkeypatch):
     with engine.connect() as conn:
         ids = conn.execute(sa.text("SELECT imdb_id FROM app.titles ORDER BY id")).scalars().all()
     assert sorted(ids, key=str) == sorted([record.imdb_id, None], key=str)
+
+
+def test_concurrent_same_title_one_row(engine, monkeypatch):
+    import threading
+
+    record, raw_omdb = odyssey()
+    ratings = parse_omdb(raw_omdb)
+    with engine.begin() as conn:
+        repo.upsert_genres(conn, all_genres())
+    barrier = threading.Barrier(2, timeout=10)
+    checked = repo._free_imdb_id
+
+    waited = threading.local()
+
+    def check_then_wait(conn, rec):
+        result = checked(conn, rec)
+        if not hasattr(waited, "done"):  # only the first check; a retry re-asks without waiting
+            waited.done = True
+            barrier.wait()  # both pass the check before either inserts
+        return result
+
+    monkeypatch.setattr(repo, "_free_imdb_id", check_then_wait)
+    errors: list[BaseException] = []
+
+    def store():
+        try:
+            with engine.begin() as conn:
+                repo.upsert_title(conn, record, ratings, raw_omdb, T0)
+        except BaseException as err:  # noqa: BLE001 - surfaced by the assert below
+            errors.append(err)
+
+    threads = [threading.Thread(target=store) for _ in range(2)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join(20)
+    assert errors == []
+    with engine.connect() as conn:
+        rows = conn.execute(sa.text("SELECT imdb_id, raw_omdb FROM app.titles")).all()
+    assert len(rows) == 1 and rows[0].imdb_id == record.imdb_id and rows[0].raw_omdb == raw_omdb

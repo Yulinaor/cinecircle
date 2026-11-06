@@ -3,7 +3,12 @@ from decimal import Decimal
 
 import pytest
 
-from cinecircle_api.catalog.service import CatalogUnavailable, TitleNotFound, TitleService
+from cinecircle_api.catalog.service import (
+    OMDB_UNKNOWN,
+    CatalogUnavailable,
+    TitleNotFound,
+    TitleService,
+)
 from tests.fakes import NO_HEBREW_ID, ODYSSEY_ID, SEVERANCE_ID, FakeOmdb, FakeTmdb
 
 pytestmark = [pytest.mark.integration, pytest.mark.usefixtures("clean_catalog")]
@@ -136,3 +141,56 @@ def test_omdb_unknown_title_is_not_retried_daily(world):
     again = service.get_by_tmdb(NO_HEBREW_ID, "movie")
     assert (tmdb.calls["title_details"], omdb.calls) == (1, 1)
     assert again.stale is False
+
+
+def test_omdb_retry_does_not_call_tmdb(world):
+    service, tmdb, omdb, clock = world
+    omdb.fail = True
+    service.get_by_tmdb(ODYSSEY_ID, "movie")
+    omdb.fail = False
+    clock.advance(hours=25)
+    cached = service.get_by_tmdb(ODYSSEY_ID, "movie")
+    assert cached.row.imdb_rating == Decimal("8.4") and cached.stale is False
+    assert tmdb.calls["title_details"] == 1 and omdb.calls == 2
+    assert cached.row.fetched_at == T0  # the 30-day TMDB clock is untouched
+    # By internal id the same path applies, and the filled row is now simply fresh.
+    assert service.get(cached.row.id).row.imdb_rating == Decimal("8.4")
+    assert (tmdb.calls["title_details"], omdb.calls) == (1, 2)
+
+
+def test_omdb_retry_failing_again_serves_row_and_waits_another_day(world):
+    service, tmdb, omdb, clock = world
+    omdb.fail = True
+    first = service.get_by_tmdb(ODYSSEY_ID, "movie")
+    clock.advance(hours=25)
+    again = service.get(first.row.id)  # retry fails
+    assert again.stale is False and again.row.imdb_rating is None and omdb.calls == 2
+    clock.advance(hours=30)  # less than a day after the failed retry
+    service.get(first.row.id)
+    assert omdb.calls == 2
+    omdb.fail = False
+    clock.advance(hours=50)  # a day after the failed retry
+    assert service.get(first.row.id).row.imdb_rating == Decimal("8.4")
+    assert (tmdb.calls["title_details"], omdb.calls) == (1, 3)
+
+
+def test_omdb_retry_with_unknown_title_stores_marker(world):
+    service, tmdb, omdb, clock = world
+    omdb.fail = True
+    first = service.get_by_tmdb(NO_HEBREW_ID, "movie")  # FakeOmdb has no record for it
+    omdb.fail = False
+    clock.advance(hours=25)
+    retried = service.get(first.row.id)
+    assert retried.row.raw_omdb == OMDB_UNKNOWN and retried.row.imdb_rating is None
+    clock.advance(days=2)
+    service.get(first.row.id)
+    assert (tmdb.calls["title_details"], omdb.calls) == (1, 2)
+
+
+def test_omdb_retry_without_omdb_client_makes_no_calls(engine):
+    tmdb, clock = FakeTmdb(), Clock()
+    service = TitleService(engine, tmdb, None, now=clock)
+    service.get_by_tmdb(ODYSSEY_ID, "movie")
+    clock.advance(days=3)
+    assert service.get_by_tmdb(ODYSSEY_ID, "movie").stale is False
+    assert tmdb.calls["title_details"] == 1

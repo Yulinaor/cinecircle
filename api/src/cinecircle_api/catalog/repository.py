@@ -161,17 +161,21 @@ def _json(value: dict | None) -> str | None:
     return None if value is None else json.dumps(value, ensure_ascii=False)
 
 
-def upsert_title(
+_OMDB_COLUMNS = ("imdb_rating", "imdb_votes", "rt_score", "metacritic", "raw_omdb")
+
+
+def _title_params(
     conn: Connection,
     record: TitleRecord,
     ratings: OmdbRatings,
     raw_omdb: dict | None,
     fetched_at: datetime,
-) -> int:
+) -> dict:
+    imdb_id = _free_imdb_id(conn, record)
     params = {
         "tmdb_id": record.tmdb_id,
         "media_type": record.media_type,
-        "imdb_id": _free_imdb_id(conn, record),
+        "imdb_id": imdb_id,
         "name_en": record.name_en,
         "name_he": record.name_he,
         "overview_en": record.overview_en,
@@ -190,6 +194,21 @@ def upsert_title(
         "raw_omdb": _json(raw_omdb),
         "fetched_at": fetched_at,
     }
+    if record.imdb_id is not None and imdb_id is None:
+        # The OMDb data was fetched by an imdb_id this row may not hold: it belongs to the other
+        # title, so storing it here would show that title's ratings on this one.
+        params.update(dict.fromkeys(_OMDB_COLUMNS))
+    return params
+
+
+def upsert_title(
+    conn: Connection,
+    record: TitleRecord,
+    ratings: OmdbRatings,
+    raw_omdb: dict | None,
+    fetched_at: datetime,
+) -> int:
+    params = _title_params(conn, record, ratings, raw_omdb, fetched_at)
     try:
         # Savepoint: another title holding this imdb_id may commit between the check and here.
         with conn.begin_nested():
@@ -197,13 +216,17 @@ def upsert_title(
     except IntegrityError as err:
         if getattr(getattr(err.orig, "diag", None), "constraint_name", None) != _IMDB_UNIQUE:
             raise
-        log.warning(
-            "imdb_id %s was taken concurrently; storing tmdb %s %s without it",
-            record.imdb_id,
-            record.media_type,
-            record.tmdb_id,
-        )
-        title_id = conn.execute(_UPSERT_TITLE, {**params, "imdb_id": None}).scalar_one()
+        # The winner has committed by now. Ask again who holds the id: when it is this very
+        # title (two requests caching it at once) the id is ours to keep; otherwise drop it.
+        retry = _title_params(conn, record, ratings, raw_omdb, fetched_at)
+        if retry["imdb_id"] is None:
+            log.warning(
+                "imdb_id %s was taken concurrently; storing tmdb %s %s without it",
+                record.imdb_id,
+                record.media_type,
+                record.tmdb_id,
+            )
+        title_id = conn.execute(_UPSERT_TITLE, retry).scalar_one()
 
     conn.execute(sa.text("DELETE FROM app.title_genres WHERE title_id = :id"), {"id": title_id})
     if record.genre_ids:
@@ -239,6 +262,33 @@ def upsert_title(
             ],
         )
     return title_id
+
+
+def update_omdb(
+    conn: Connection, title_id: int, imdb_id: str, ratings: OmdbRatings, raw_omdb: dict | None
+) -> None:
+    """Store a late OMDb answer for `imdb_id`. fetched_at stays: it is the TMDB data's age.
+
+    A no-op unless the row still has that imdb_id and no OMDb answer, so a refresh that landed
+    while OMDb was being asked is never overwritten by the older answer.
+    """
+    conn.execute(
+        sa.text(
+            "UPDATE app.titles SET imdb_rating = :imdb_rating, imdb_votes = :imdb_votes, "
+            "rt_score = :rt_score, metacritic = :metacritic, "
+            "raw_omdb = CAST(:raw_omdb AS jsonb) "
+            "WHERE id = :id AND imdb_id = :imdb_id AND raw_omdb IS NULL"
+        ),
+        {
+            "id": title_id,
+            "imdb_id": imdb_id,
+            "imdb_rating": ratings.imdb_rating,
+            "imdb_votes": ratings.imdb_votes,
+            "rt_score": ratings.rt_score,
+            "metacritic": ratings.metacritic,
+            "raw_omdb": _json(raw_omdb),
+        },
+    )
 
 
 def missing_genre_ids(conn: Connection, ids: Iterable[int]) -> set[int]:

@@ -1,4 +1,4 @@
-"""Catalogue endpoints. Unauthenticated until Phase 2 adds sign-in (plan decision P3)."""
+"""Catalogue endpoints (sign-in is enforced where main.py includes the router)."""
 
 from typing import Annotated
 

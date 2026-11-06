@@ -14,5 +14,75 @@
     "connected": "Connected",
     "waking": "Waking up the server…",
     "offline": "Server unavailable"
+  },
+  "auth": {
+    "loading": "Loading…",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "google": "Continue with Google",
+    "switchToSignUp": "No account yet? Sign up",
+    "switchToSignIn": "Already have an account? Sign in",
+    "checkEmail": "We sent you a confirmation email. Open the link in it to finish signing up.",
+    "signOut": "Sign out",
+    "unconfigured": "Sign-in isn't configured in this environment. VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are missing.",
+    "errors": {
+      "invalid_credentials": "Wrong email or password.",
+      "email_not_confirmed": "Your email isn't confirmed yet. Check your inbox.",
+      "user_already_exists": "An account with this email already exists. Try signing in.",
+      "weak_password": "That password is too weak. Choose a longer one.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "common": {
+    "error": "Something went wrong. Please try again.",
+    "retry": "Try again"
+  },
+  "onboarding": {
+    "title": "Create your profile",
+    "username": "Username",
+    "usernameHint": "3 to 30 characters: lowercase English letters, digits, underscore and dot.",
+    "displayName": "Display name",
+    "language": "Language",
+    "submit": "Continue",
+    "errors": {
+      "username_taken": "That username is taken. Choose another.",
+      "username_reserved": "That username is reserved. Choose another.",
+      "username_invalid": "That username isn't valid. Use lowercase English letters, digits, underscore and dot (3 to 30 characters)."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "displayName": "Display name",
+    "bio": "About you",
+    "bioCount": "{{length}}/{{max}}",
+    "save": "Save",
+    "saved": "Saved",
+    "language": "Language"
+  },
+  "follow": { "follow": "Follow", "requested": "Requested", "following": "Following" },
+  "people": {
+    "title": "People",
+    "search": "Search people",
+    "minChars": "Type at least 2 characters to search.",
+    "empty": "No people found."
+  },
+  "connections": {
+    "title": "Connections",
+    "requests": "Requests",
+    "followers": "Followers",
+    "following": "Following",
+    "accept": "Accept",
+    "decline": "Decline",
+    "remove": "Remove",
+    "empty": "No one here yet."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "bell": "Notifications, {{unread}} unread",
+    "followRequest": "{{name}} asked to follow you",
+    "followAccepted": "{{name}} accepted your request",
+    "empty": "No notifications yet."
   }
 }

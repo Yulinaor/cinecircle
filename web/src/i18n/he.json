@@ -14,5 +14,75 @@
     "connected": "מחובר",
     "waking": "מעיר את השרת…",
     "offline": "השרת לא זמין"
+  },
+  "auth": {
+    "loading": "טוען…",
+    "signIn": "התחברות",
+    "signUp": "הרשמה",
+    "email": "אימייל",
+    "password": "סיסמה",
+    "google": "המשך עם Google",
+    "switchToSignUp": "אין לך חשבון? הרשמה",
+    "switchToSignIn": "יש לך כבר חשבון? התחברות",
+    "checkEmail": "שלחנו אליך מייל אימות. לחצו על הקישור שבו כדי להשלים את ההרשמה.",
+    "signOut": "התנתקות",
+    "unconfigured": "ההתחברות עדיין לא מוגדרת בסביבה הזו. חסרים הערכים VITE_SUPABASE_URL ו-VITE_SUPABASE_PUBLISHABLE_KEY.",
+    "errors": {
+      "invalid_credentials": "האימייל או הסיסמה שגויים.",
+      "email_not_confirmed": "האימייל עדיין לא אומת. בדקו את תיבת הדואר שלכם.",
+      "user_already_exists": "קיים כבר חשבון עם האימייל הזה. נסו להתחבר.",
+      "weak_password": "הסיסמה חלשה מדי. בחרו סיסמה ארוכה יותר.",
+      "generic": "משהו השתבש. נסו שוב."
+    }
+  },
+  "common": {
+    "error": "משהו השתבש. נסו שוב.",
+    "retry": "ניסיון נוסף"
+  },
+  "onboarding": {
+    "title": "יוצרים פרופיל",
+    "username": "שם משתמש",
+    "usernameHint": "3 עד 30 תווים: אותיות באנגלית קטנות, ספרות, קו תחתון ונקודה.",
+    "displayName": "שם לתצוגה",
+    "language": "שפה",
+    "submit": "המשך",
+    "errors": {
+      "username_taken": "שם המשתמש הזה תפוס. בחרו שם אחר.",
+      "username_reserved": "שם המשתמש הזה שמור. בחרו שם אחר.",
+      "username_invalid": "שם המשתמש לא תקין. השתמשו באותיות באנגלית קטנות, ספרות, קו תחתון ונקודה (3 עד 30 תווים)."
+    }
+  },
+  "settings": {
+    "title": "הגדרות",
+    "displayName": "שם לתצוגה",
+    "bio": "קצת עליי",
+    "bioCount": "{{length}}/{{max}}",
+    "save": "שמירה",
+    "saved": "נשמר",
+    "language": "שפה"
+  },
+  "follow": { "follow": "מעקב", "requested": "נשלחה בקשה", "following": "במעקב" },
+  "people": {
+    "title": "אנשים",
+    "search": "חיפוש אנשים",
+    "minChars": "הקלידו לפחות 2 תווים כדי לחפש.",
+    "empty": "לא נמצאו אנשים."
+  },
+  "connections": {
+    "title": "חיבורים",
+    "requests": "בקשות",
+    "followers": "עוקבים",
+    "following": "במעקב",
+    "accept": "אישור",
+    "decline": "דחייה",
+    "remove": "הסרה",
+    "empty": "אין כאן אף אחד עדיין."
+  },
+  "notifications": {
+    "title": "התראות",
+    "bell": "התראות, {{unread}} שלא נקראו",
+    "followRequest": "{{name}} ביקש/ה לעקוב אחריך",
+    "followAccepted": "{{name}} אישר/ה את בקשת המעקב שלך",
+    "empty": "אין התראות עדיין."
   }
 }

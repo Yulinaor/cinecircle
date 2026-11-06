@@ -8,9 +8,10 @@ from cinecircle_api.catalog.parse import GenreRow, SearchResult
 from cinecircle_api.catalog.repository import SeasonRow, TitleRow
 from cinecircle_api.catalog.service import CachedTitle, CatalogUnavailable, TitleNotFound
 from cinecircle_api.main import create_app
-from cinecircle_api.settings import Settings
+from tests.tokens import auth_settings, make_token
 
 DEAD = "postgresql+psycopg://postgres:postgres@127.0.0.1:1/postgres"
+SIGNED_IN = {"Authorization": f"Bearer {make_token('6f1c2b6e-0000-4000-8000-000000000001')}"}
 
 
 def make_row(**overrides) -> TitleRow:
@@ -71,9 +72,9 @@ def stub():
 
 @pytest.fixture
 def client(stub):
-    app = create_app(Settings(database_url=DEAD, _env_file=None))
+    app = create_app(auth_settings(DEAD))
     app.state.title_service = stub
-    return TestClient(app)
+    return TestClient(app, headers=SIGNED_IN)
 
 
 def test_search_rejects_blank_and_long_queries(client):
@@ -156,8 +157,10 @@ def test_poster_url_built_and_null_safe(client, stub):
     assert body["poster_url"] is None and body["ratings"]["imdb"] is None
 
 
-def test_titles_503_without_keys():
-    client = TestClient(create_app(Settings(database_url=DEAD, _env_file=None)))
+def test_titles_503_without_keys(monkeypatch):
+    monkeypatch.delenv("TMDB_API_KEY", raising=False)
+    monkeypatch.delenv("OMDB_API_KEY", raising=False)
+    client = TestClient(create_app(auth_settings(DEAD)), headers=SIGNED_IN)
     r = client.get("/titles/search", params={"q": "x"})
     assert (r.status_code, r.json()) == (503, {"detail": "catalog_unavailable"})
     assert client.get("/live").status_code == 200

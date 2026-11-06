@@ -9,7 +9,7 @@ CineCircle is a private, follow-based app for movie and TV recommendations.
 
 The interface is in Hebrew (right-to-left) and English.
 
-> **Status:** Phase 1 (catalogue). The API searches TMDB in Hebrew or English and serves cached title details with IMDb, Rotten Tomatoes and Metacritic ratings. See the [roadmap](docs/spec/04-roadmap-and-learning-track.md).
+> **Status:** Phase 2 (accounts and privacy). People sign up with email or Google, choose a username, find each other, and request, approve, decline, cancel, remove and unfollow follows, with a notifications bell. Every API route except `/live` and `/health` requires sign-in. The Phase 1 catalogue (TMDB search in Hebrew or English; cached title details with IMDb, Rotten Tomatoes and Metacritic ratings) sits behind that sign-in. See the [roadmap](docs/spec/04-roadmap-and-learning-track.md).
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ Copy the example environment files:
 | `api/.env.example` | `api/.env` |
 | `web/.env.example` | `web/.env` |
 
-The defaults point at the local database (port 55322) and the local API (port 8000).
+The defaults point at the local database (port 55322) and the local API (port 8000). Sign-in needs a few more values; see [Sign-in setup](#sign-in-setup).
 
 The local Supabase ports are 553xx (API 55321, database 55322, Studio 55323), so CineCircle can run next to another local Supabase project on the default 543xx ports. `DATABASE_URL` must start with `postgresql+psycopg://`; a plain `postgres://` URL is rejected.
 
@@ -51,6 +51,34 @@ Title search and details need two free keys. They go **only** in `api/.env` (git
 
 Without keys the API still starts and `/health` works; the `/titles` endpoints answer `503 catalog_unavailable`. Tests never need keys: they run on recorded responses in `api/tests/fixtures/`.
 
+### Sign-in setup
+
+Accounts are handled by the local Supabase Auth (GoTrue). Run `npm run db:start`, then read the values you need from `npx supabase status` (add `-o json` for the exact variable names):
+
+| File | Variable | Value from `npx supabase status` |
+|---|---|---|
+| `api/.env` | `SUPABASE_URL` | `API_URL`, normally `http://127.0.0.1:55321`. The API verifies sign-in tokens against this project's public keys. |
+| `api/.env` | `SUPABASE_JWT_SECRET` | `JWT_SECRET` (local only). Used only if the API must verify HS256-signed tokens. |
+| `web/.env` | `VITE_SUPABASE_URL` | `API_URL` |
+| `web/.env` | `VITE_SUPABASE_PUBLISHABLE_KEY` | `PUBLISHABLE_KEY` (starts with `sb_publishable_`). This key is safe in the browser. |
+
+Never put the secret or service-role key in `web/`, and never commit any `.env` file.
+
+**Email sign-up.** Local Supabase sends no real email. Every message it would send, including the sign-up confirmation link, lands in Mailpit at http://127.0.0.1:55324. Sign up in the app, open Mailpit, click the link in the message, and you are signed in and asked to choose a username.
+
+**Google sign-in (optional).** The button does not work until you configure it:
+
+1. In [Google Cloud Console](https://console.cloud.google.com/apis/credentials) create an OAuth client of type **Web application**.
+2. Add the authorized redirect URI `http://127.0.0.1:55321/auth/v1/callback`.
+3. Create `supabase/.env` (git-ignored) with the client's two values:
+   ```
+   SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=<client id>
+   SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET=<client secret>
+   ```
+4. Restart the stack: `npm run db:stop && npm run db:start`.
+
+After signing in with Google, onboarding is prefilled with your Google name and avatar.
+
 ## Run locally
 
 You need three terminals:
@@ -61,7 +89,7 @@ npm run api:dev      # 2. API on http://localhost:8000
 npm run web:dev      # 3. web app on http://localhost:5173
 ```
 
-Open http://localhost:5173. The header shows whether the API is reachable. The language button switches between Hebrew and English.
+Open http://localhost:5173 and sign in (see [Sign-in setup](#sign-in-setup)). The header shows whether the API is reachable. The language button switches between Hebrew and English, and your choice is saved to your account.
 
 To stop the database: `npm run db:stop`. To rebuild it from the migrations: `npm run db:reset`.
 

@@ -87,6 +87,16 @@ def test_parse_title_series_contract():
     assert len(t.seasons) <= t.season_count
 
 
+def test_unaired_season_episode_count_zero_is_none():
+    raw = load("tmdb/tv_severance")
+    raw["seasons"] = [
+        {"season_number": 1, "episode_count": 0},
+        {"season_number": 2, "episode_count": 9},
+    ]
+    t = parse_title(raw, "series")
+    assert [s.episode_count for s in t.seasons] == [None, 9]
+
+
 def test_empty_hebrew_overview_is_missing():
     raw = load("tmdb/movie_no_hebrew")
     assert parse_title(raw, "movie").overview_he is None

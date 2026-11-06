@@ -12,6 +12,9 @@ class OmdbClient:
         self._api_key = api_key
         self._http = http or httpx.Client()
 
+    def close(self) -> None:
+        self._http.close()
+
     def by_imdb_id(self, imdb_id: str) -> dict | None:
         """The OMDb record, or None when OMDb answers `"Response": "False"`."""
         body = get_json(self._http, "omdb", BASE_URL, {"i": imdb_id, "apikey": self._api_key})

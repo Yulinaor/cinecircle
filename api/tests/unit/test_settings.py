@@ -21,7 +21,17 @@ def test_cors_origins_parse_comma_list(monkeypatch):
     monkeypatch.setenv("CORS_ORIGINS", "http://localhost:5173, https://cinecircle.onrender.com")
     s = Settings(_env_file=None)
     assert s.cors_origins == ["http://localhost:5173", "https://cinecircle.onrender.com"]
-    assert s.app_env == "local"
+
+
+def test_supabase_settings_cleaned_and_blank_is_none(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://x@127.0.0.1:1/x")
+    monkeypatch.setenv("SUPABASE_URL", " http://127.0.0.1:55321/ ")
+    monkeypatch.setenv("SUPABASE_JWT_SECRET", "  ")
+    s = Settings(_env_file=None)
+    assert s.supabase_url == "http://127.0.0.1:55321"
+    assert s.supabase_jwt_secret is None
+    monkeypatch.setenv("SUPABASE_URL", "")
+    assert Settings(_env_file=None).supabase_url is None
 
 
 def test_cors_origins_default(monkeypatch):
@@ -45,3 +55,11 @@ def test_cors_origins_strip_trailing_slash(monkeypatch):
         "https://cinecircle.onrender.com",
         "http://localhost:5173",
     ]
+
+
+def test_app_env_defaults_to_production(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://x@127.0.0.1:1/x")
+    monkeypatch.delenv("APP_ENV", raising=False)
+    assert Settings(_env_file=None).app_env == "production"
+    monkeypatch.setenv("APP_ENV", "local")
+    assert Settings(_env_file=None).app_env == "local"
