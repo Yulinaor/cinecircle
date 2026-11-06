@@ -21,6 +21,9 @@ class TmdbClient:
         else:
             self._params["api_key"] = api_key
 
+    def close(self) -> None:
+        self._http.close()
+
     def _get(self, path: str, **params: str) -> dict:
         url = f"{BASE_URL}/{path}"
         return get_json(self._http, "tmdb", url, {**self._params, **params}, self._headers)
