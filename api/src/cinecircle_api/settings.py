@@ -17,8 +17,9 @@ class Settings(BaseSettings):
     cors_origins: Annotated[list[str], NoDecode] = Field(
         default=["http://localhost:5173"], validation_alias="CORS_ORIGINS"
     )
+    # Defaults to production so a deploy that forgets APP_ENV does not serve the API docs.
     app_env: Literal["local", "test", "production"] = Field(
-        default="local", validation_alias="APP_ENV"
+        default="production", validation_alias="APP_ENV"
     )
     # Backend-only catalogue keys; the app still starts without them (title endpoints answer 503).
     tmdb_api_key: str | None = Field(default=None, validation_alias="TMDB_API_KEY")

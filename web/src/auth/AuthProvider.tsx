@@ -13,7 +13,12 @@ import { supabase } from './supabase'
 export type AuthState = {
   status: 'loading' | 'signed_out' | 'signed_in'
   session: Session | null
-  signOut(): Promise<void>
+  /**
+   * Ends the session. 'global' (the default, the user's own Sign out) also revokes it on every
+   * other device; 'local' only forgets it here. Never rejects: the session state is cleared
+   * even when Supabase cannot be reached.
+   */
+  signOut(scope?: 'global' | 'local'): Promise<void>
 }
 
 // Context and hook live beside the provider on purpose (single import path for consumers and tests).
@@ -47,9 +52,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const signOut = useCallback(async () => {
+  const signOut = useCallback(async (scope: 'global' | 'local' = 'global') => {
     try {
-      await supabase?.auth.signOut()
+      await supabase?.auth.signOut({ scope })
+    } catch {
+      // Offline or Supabase down: the local session is dropped below either way.
     } finally {
       setSession(null)
     }

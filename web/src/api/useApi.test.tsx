@@ -49,6 +49,21 @@ describe('useApi', () => {
     expect(err).toBeInstanceOf(ApiError)
     expect((err as ApiError).status).toBe(401)
     expect(signOut).toHaveBeenCalledTimes(1)
+    expect(signOut).toHaveBeenCalledWith('local')
+  })
+
+  it('still rethrows the 401 when signing out fails', async () => {
+    signOut.mockRejectedValueOnce(new Error('network down'))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json({ detail: 'not_authenticated' }, { status: 401 })),
+    )
+    const { result } = renderHook(() => useApi(), { wrapper })
+    await expect(result.current('/me')).rejects.toMatchObject({
+      status: 401,
+      detail: 'not_authenticated',
+    })
+    expect(signOut).toHaveBeenCalledWith('local')
   })
 
   it('does not sign out on other errors', async () => {
@@ -71,6 +86,6 @@ describe('useApi', () => {
       detail: 'not_authenticated',
     })
     expect(fetchMock).not.toHaveBeenCalled()
-    expect(signOut).toHaveBeenCalled()
+    expect(signOut).toHaveBeenCalledWith('local')
   })
 })

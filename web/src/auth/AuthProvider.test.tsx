@@ -41,6 +41,7 @@ function Probe() {
       <span data-testid="status">{status}</span>
       <span data-testid="token">{session?.access_token ?? ''}</span>
       <button onClick={() => void signOut()}>out</button>
+      <button onClick={() => void signOut('local')}>out-local</button>
     </div>
   )
 }
@@ -80,7 +81,25 @@ describe('AuthProvider', () => {
     renderProbe()
     await waitFor(() => expect(screen.getByTestId('status')).toHaveTextContent('signed_in'))
     await userEvent.click(screen.getByRole('button', { name: 'out' }))
-    expect(signOutFn).toHaveBeenCalled()
+    expect(signOutFn).toHaveBeenCalledWith({ scope: 'global' })
+    await waitFor(() => expect(screen.getByTestId('status')).toHaveTextContent('signed_out'))
+  })
+
+  it('signOut("local") keeps the other devices signed in', async () => {
+    getSession.mockResolvedValue({ data: { session: { access_token: 'tok' } } })
+    renderProbe()
+    await waitFor(() => expect(screen.getByTestId('status')).toHaveTextContent('signed_in'))
+    await userEvent.click(screen.getByRole('button', { name: 'out-local' }))
+    expect(signOutFn).toHaveBeenCalledWith({ scope: 'local' })
+    await waitFor(() => expect(screen.getByTestId('status')).toHaveTextContent('signed_out'))
+  })
+
+  it('ends the session even when supabase signOut rejects', async () => {
+    getSession.mockResolvedValue({ data: { session: { access_token: 'tok' } } })
+    signOutFn.mockRejectedValue(new Error('network down'))
+    renderProbe()
+    await waitFor(() => expect(screen.getByTestId('status')).toHaveTextContent('signed_in'))
+    await userEvent.click(screen.getByRole('button', { name: 'out' }))
     await waitFor(() => expect(screen.getByTestId('status')).toHaveTextContent('signed_out'))
   })
 

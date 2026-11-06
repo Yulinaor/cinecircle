@@ -27,6 +27,7 @@ describe('Avatar', () => {
     const { container } = render(<Avatar url="https://img.test/a.png" name="Dana" />)
     const img = container.querySelector('img')!
     expect(img).toHaveAttribute('src', 'https://img.test/a.png')
+    expect(img).toHaveAttribute('referrerpolicy', 'no-referrer')
     fireEvent.error(img)
     expect(container.querySelector('img')).toBeNull()
     expect(screen.getByText('D')).toBeInTheDocument()

@@ -10,27 +10,35 @@ export const ApiOverrideContext = createContext<ApiCall | null>(null)
 
 /**
  * Authenticated API caller. Reads the freshest access token per call (supabase refreshes it),
- * and on a 401 signs the user out before rethrowing.
+ * and on a 401 signs the user out of this device only (a 401 must not revoke their other
+ * devices) before rethrowing the original error.
  */
 export function useApi(): ApiCall {
   const override = useContext(ApiOverrideContext)
   const { signOut } = useAuth()
+  const signOutHere = useCallback(async () => {
+    try {
+      await signOut('local')
+    } catch {
+      // The caller needs the original ApiError, not a sign-out failure.
+    }
+  }, [signOut])
   const call = useCallback(
     async <T,>(path: string, init: Omit<ApiInit, 'token'> = {}): Promise<T> => {
       const { data } = (await supabase?.auth.getSession()) ?? { data: { session: null } }
       const token = data.session?.access_token
       if (!token) {
-        await signOut()
+        await signOutHere()
         throw new ApiError(401, 'not_authenticated')
       }
       try {
         return await apiFetch<T>(path, { ...init, token })
       } catch (error) {
-        if (error instanceof ApiError && error.status === 401) await signOut()
+        if (error instanceof ApiError && error.status === 401) await signOutHere()
         throw error
       }
     },
-    [signOut],
+    [signOutHere],
   )
   return override ?? call
 }

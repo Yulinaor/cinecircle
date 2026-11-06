@@ -43,8 +43,15 @@ def test_docs_and_schema_not_served_outside_local(app_env):
         assert client.get(path).status_code == 404, path
 
 
-def test_docs_served_locally():
+def test_docs_not_served_when_app_env_is_unset(monkeypatch):
+    monkeypatch.delenv("APP_ENV", raising=False)
     client = TestClient(create_app(auth_settings(DEAD)))
+    for path in ("/docs", "/redoc", "/openapi.json"):
+        assert client.get(path).status_code == 404, path
+
+
+def test_docs_served_locally():
+    client = TestClient(create_app(auth_settings(DEAD, app_env="local")))
     assert client.get("/openapi.json").status_code == 200
 
 

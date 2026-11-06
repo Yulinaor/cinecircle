@@ -102,12 +102,14 @@ def test_profile_exists_409(api):
 
 
 def test_avatar_copied_from_google_metadata(api):
-    https = api("fresh_https", user_metadata={"avatar_url": "https://lh3.example.com/a.png"})
+    google = "https://lh3.googleusercontent.com/a/abc=s96-c"
+    https = api("fresh_https", user_metadata={"avatar_url": google})
     r = https.post("/me", json={"username": "fresh_https", "display_name": "A"})
-    assert r.json()["profile"]["avatar_url"] == "https://lh3.example.com/a.png"
+    assert r.json()["profile"]["avatar_url"] == google
 
     ignored = {
-        "fresh_http": {"avatar_url": "http://lh3.example.com/a.png"},
+        "fresh_http": {"avatar_url": "http://lh3.googleusercontent.com/a.png"},
+        "fresh_other": {"avatar_url": "https://lh3.example.com/a.png"},
         "fresh_num": {"avatar_url": 5},
         "fresh_none": None,
         "fresh_str": "not-a-dict",

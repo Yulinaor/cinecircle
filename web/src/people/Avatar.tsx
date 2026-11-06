@@ -24,6 +24,7 @@ export function Avatar({ url, name }: { url: string | null; name: string }) {
       <img
         src={url}
         alt=""
+        referrerPolicy="no-referrer"
         onError={() => setFailed(url)}
         className={`${className} bg-line object-cover`}
       />

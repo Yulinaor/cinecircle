@@ -1,6 +1,7 @@
 """The signed-in user's own profile and settings (sign-in is enforced in main.py)."""
 
 from typing import Any
+from urllib.parse import urlsplit
 
 from fastapi import APIRouter, HTTPException
 
@@ -18,10 +19,33 @@ def _me(db: UserDb, claims: Claims) -> MeResponse:
     return MeResponse(id=claims.user_id, email=claims.email, profile=repository.get_my_profile(db))
 
 
+_AVATAR_MAX_LENGTH = 512
+_AVATAR_HOST_SUFFIX = ".googleusercontent.com"
+
+
+def safe_avatar_url(value: object) -> str | None:
+    """The avatar URL if it points at Google's user-content hosts, else None.
+
+    user_metadata is user-writable and the URL is rendered as <img src> for every viewer, so
+    anything else would let a user make other people's browsers contact a host of their choice.
+    """
+    if not isinstance(value, str) or len(value) > _AVATAR_MAX_LENGTH:
+        return None
+    try:
+        parts = urlsplit(value)
+        host = parts.hostname
+    except ValueError:
+        return None
+    if parts.scheme != "https" or parts.username is not None or not host:
+        return None
+    if host == "googleusercontent.com" or host.endswith(_AVATAR_HOST_SUFFIX):
+        return value
+    return None
+
+
 def _google_avatar(claims: Claims) -> str | None:
     metadata: Any = claims.raw.get("user_metadata")
-    avatar = metadata.get("avatar_url") if isinstance(metadata, dict) else None
-    return avatar if isinstance(avatar, str) and avatar.startswith("https://") else None
+    return safe_avatar_url(metadata.get("avatar_url") if isinstance(metadata, dict) else None)
 
 
 @router.get("")
