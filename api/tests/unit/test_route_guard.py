@@ -10,7 +10,7 @@ from tests.tokens import auth_settings, make_token
 DEAD = "postgresql+psycopg://postgres:postgres@127.0.0.1:1/postgres"
 OPEN_PATHS = {"/live", "/health"}
 # One placeholder per path parameter; later tasks add their own (e.g. "username": "gal").
-PATH_PARAMS = {"media_type": "movie", "tmdb_id": "1", "title_id": "1"}
+PATH_PARAMS = {"media_type": "movie", "tmdb_id": "1", "title_id": "1", "username": "gal"}
 UID = "6f1c2b6e-0000-4000-8000-000000000001"
 
 

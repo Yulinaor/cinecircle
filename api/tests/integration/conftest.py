@@ -1,14 +1,19 @@
 import os
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Any
-from uuid import UUID
+from uuid import UUID, uuid5
 
 import pytest
 import sqlalchemy as sa
+from fastapi.testclient import TestClient
 
+from cinecircle_api.catalog.service import TitleService
 from cinecircle_api.db import act_as, make_engine
+from cinecircle_api.main import create_app
+from tests.fakes import FakeOmdb, FakeTmdb
+from tests.tokens import auth_settings, make_token
 
 URL = os.environ.get(
     "DATABASE_URL", "postgresql+psycopg://postgres:postgres@127.0.0.1:55322/postgres"
@@ -123,6 +128,41 @@ def people(engine) -> Iterator[dict[str, TestUser]]:
     yield users
     with engine.begin() as conn:
         conn.execute(_DELETE_TEST_USERS)  # cascades to profiles, follows, notifications
+
+
+# ===== HTTP clients (the real app on the real DB, one signed-in user each) =====
+
+_FRESH_NAMESPACE = UUID("00000000-0000-4000-8000-00000000f000")
+_INSERT_FRESH_USER = sa.text(
+    "INSERT INTO auth.users (id, email, aud, role)"
+    " VALUES (:id, :email, 'authenticated', 'authenticated') ON CONFLICT DO NOTHING"
+)
+
+
+@pytest.fixture
+def api(people, engine) -> Iterator[Callable[..., TestClient]]:
+    """`api("noa")` is a client signed in as that person; extra keyword arguments become
+    token claims (e.g. `user_metadata=...`). A key starting with "fresh" is a signed-in user
+    who has no profile yet (an auth.users row is created for them; `people` cleans it up)."""
+    apps = []
+
+    def client_for(key: str, **claims: Any) -> TestClient:
+        if key in people:
+            user_id, email = people[key].id, people[key].email
+        else:
+            assert key.startswith("fresh"), key
+            user_id, email = uuid5(_FRESH_NAMESPACE, key), f"{key}@{TEST_EMAIL_DOMAIN}"
+            with engine.begin() as conn:
+                conn.execute(_INSERT_FRESH_USER, {"id": user_id, "email": email})
+        app = create_app(auth_settings(URL))
+        app.state.title_service = TitleService(app.state.engine, FakeTmdb(), FakeOmdb())
+        apps.append(app)
+        token = make_token(str(user_id), **{"email": email, **claims})
+        return TestClient(app, headers={"Authorization": f"Bearer {token}"})
+
+    yield client_for
+    for app in apps:
+        app.state.engine.dispose()
 
 
 # ===== Gal's content (shared post, private rating, wishlist, genre pref, event) =====
