@@ -52,7 +52,15 @@ class TokenVerifier:
                 raise AuthUnavailable
             try:
                 key = self._jwks.get_signing_key_from_jwt(token).key
+            except jwt.PyJWKClientConnectionError:
+                raise AuthUnavailable from None
             except jwt.PyJWKClientError:
+                # Either no key matches this token's kid (a bad token) or the JWKS itself is
+                # unusable (empty, not a JSON object): only the latter is our fault.
+                self._require_usable_jwks(self._jwks)
+                raise InvalidToken from None
+            except (jwt.PyJWKSetError, jwt.PyJWKError, ValueError, OSError):
+                # Malformed JWKS body (JSONDecodeError is a ValueError) or a socket-level failure.
                 raise AuthUnavailable from None
             except jwt.PyJWTError:
                 raise InvalidToken from None
@@ -75,6 +83,13 @@ class TokenVerifier:
             raise InvalidToken from None
         email = payload.get("email")
         return Claims(user_id, email if isinstance(email, str) else None, payload)
+
+    @staticmethod
+    def _require_usable_jwks(jwks: jwt.PyJWKClient) -> None:
+        try:
+            jwks.get_signing_keys()  # served from the client's cache when it is fresh
+        except (jwt.PyJWTError, ValueError, OSError):
+            raise AuthUnavailable from None
 
 
 def make_verifier(settings: Settings) -> TokenVerifier | None:

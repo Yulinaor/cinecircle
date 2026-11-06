@@ -36,6 +36,18 @@ def test_probes_stay_open():
     assert client.get("/health").status_code in (200, 503)  # DB is dead here; never 401
 
 
+@pytest.mark.parametrize("app_env", ["production", "test"])
+def test_docs_and_schema_not_served_outside_local(app_env):
+    client = TestClient(create_app(auth_settings(DEAD, app_env=app_env)))
+    for path in ("/docs", "/redoc", "/openapi.json"):
+        assert client.get(path).status_code == 404, path
+
+
+def test_docs_served_locally():
+    client = TestClient(create_app(auth_settings(DEAD)))
+    assert client.get("/openapi.json").status_code == 200
+
+
 @pytest.mark.parametrize("header", [None, "Bearer", "Bearer ", "Basic abc", "Bearer garbage"])
 def test_bad_authorization_header_401(header):
     client = TestClient(create_app(auth_settings(DEAD)))

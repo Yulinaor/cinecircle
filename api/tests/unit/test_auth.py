@@ -1,3 +1,4 @@
+import json
 import time
 from uuid import UUID
 
@@ -16,9 +17,20 @@ DEAD = "postgresql+psycopg://postgres:postgres@127.0.0.1:1/postgres"
 class StubJwks:
     """Stands in for jwt.PyJWKClient: hands back one fixed public key, or raises."""
 
-    def __init__(self, public_key=None, error: Exception | None = None) -> None:
+    def __init__(
+        self,
+        public_key=None,
+        error: Exception | None = None,
+        keys_error: Exception | None = None,
+    ) -> None:
         self.jwk = jwt.PyJWK(jwt.algorithms.ECAlgorithm.to_jwk(public_key, as_dict=True))
-        self.error = error
+        self.error = error  # raised when looking up the key for a token
+        self.keys_error = keys_error  # raised when listing the JWKS itself
+
+    def get_signing_keys(self) -> list[jwt.PyJWK]:
+        if self.keys_error:
+            raise self.keys_error
+        return [self.jwk]
 
     def get_signing_key_from_jwt(self, token: str) -> jwt.PyJWK:
         if self.error:
@@ -106,7 +118,34 @@ def test_rejects_hs256_when_no_secret():
 
 def test_unreachable_jwks_is_auth_unavailable():
     private = ec.generate_private_key(ec.SECP256R1())
-    jwks = StubJwks(private.public_key(), error=jwt.PyJWKClientError("down"))
+    jwks = StubJwks(private.public_key(), error=jwt.PyJWKClientConnectionError("down"))
+    with pytest.raises(AuthUnavailable):
+        verifier(secret=None, jwks=jwks).verify(es256_token(private))
+
+
+def test_unknown_kid_is_invalid_token():
+    private = ec.generate_private_key(ec.SECP256R1())
+    missing = jwt.PyJWKClientError('Unable to find a signing key that matches: "k1"')
+    jwks = StubJwks(private.public_key(), error=missing)
+    with pytest.raises(InvalidToken):
+        verifier(secret=None, jwks=jwks).verify(es256_token(private))
+
+
+def test_jwks_without_signing_keys_is_auth_unavailable():
+    private = ec.generate_private_key(ec.SECP256R1())
+    empty = jwt.PyJWKClientError("The JWKS endpoint did not contain any signing keys")
+    jwks = StubJwks(private.public_key(), error=empty, keys_error=empty)
+    with pytest.raises(AuthUnavailable):
+        verifier(secret=None, jwks=jwks).verify(es256_token(private))
+
+
+@pytest.mark.parametrize(
+    "error",
+    [json.JSONDecodeError("Expecting value", "<html>", 0), ValueError("bad"), OSError("reset")],
+)
+def test_unparseable_or_broken_jwks_response_is_auth_unavailable(error):
+    private = ec.generate_private_key(ec.SECP256R1())
+    jwks = StubJwks(private.public_key(), error=error)
     with pytest.raises(AuthUnavailable):
         verifier(secret=None, jwks=jwks).verify(es256_token(private))
 

@@ -14,7 +14,15 @@ from cinecircle_api.settings import Settings, get_settings
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
-    app = FastAPI(title="CineCircle API", version="0.1.0")
+    # The interactive docs and schema are unauthenticated, so only the local app serves them.
+    docs = settings.app_env == "local"
+    app = FastAPI(
+        title="CineCircle API",
+        version="0.1.0",
+        docs_url="/docs" if docs else None,
+        redoc_url="/redoc" if docs else None,
+        openapi_url="/openapi.json" if docs else None,
+    )
     app.state.settings = settings
     app.state.engine = make_engine(settings.database_url)
     # Without a key the client is None and the title endpoints answer 503; the app still starts.
