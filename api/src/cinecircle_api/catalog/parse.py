@@ -1,5 +1,7 @@
 """Pure functions: raw TMDB/OMDb JSON → records. No I/O."""
 
+import html
+import re
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal, InvalidOperation
@@ -224,3 +226,107 @@ def pick_text(he: str | None, en: str | None, lang: Locale) -> tuple[str | None,
         if text:
             return text, text_lang
     return None, None
+
+
+# ===== Discover: list items and reviews =====
+
+
+@dataclass(frozen=True)
+class ListItem:
+    tmdb_id: int
+    media_type: MediaType
+    name: str | None
+    poster_path: str | None
+    year: int | None
+    genre_ids: tuple[int, ...]
+    vote_average: float | None
+
+
+def parse_list(raw: dict, media_type: MediaType) -> list[ListItem]:
+    """Items of a TMDB list answer (trending, top rated, recommendations). Items without an id
+    are skipped; a name stays None when TMDB sent none (the service decides what to show)."""
+    is_movie = media_type == "movie"
+    items: list[ListItem] = []
+    for item in raw.get("results") or []:
+        if not isinstance(item, dict) or not isinstance(item.get("id"), int):
+            continue
+        vote = item.get("vote_average")
+        items.append(
+            ListItem(
+                tmdb_id=item["id"],
+                media_type=media_type,
+                name=_text(item.get("title" if is_movie else "name")),
+                poster_path=_text(item.get("poster_path")),
+                year=_year(item.get("release_date" if is_movie else "first_air_date")),
+                genre_ids=tuple(g for g in item.get("genre_ids") or [] if isinstance(g, int)),
+                vote_average=float(vote) if isinstance(vote, int | float) and vote else None,
+            )
+        )
+    return items
+
+
+@dataclass(frozen=True)
+class ReviewRecord:
+    source_review_id: str
+    author_name: str
+    excerpt: str
+    url: str
+    author_rating: float | None
+    language: str | None
+
+
+_BLOCK_TAG = re.compile(r"</?(?:br|p|div|li|ul|ol|h[1-6]|blockquote|tr)\b[^>]*>", re.IGNORECASE)
+_TAG = re.compile(r"</?[A-Za-z][^>]*>|<!--.*?-->", re.DOTALL)
+_MD_LINK = re.compile(r"!?\[([^\]]*)\]\([^)\s]*\)")
+_MD_STRONG = re.compile(r"(\*\*|__)(?=\S)(.+?)(?<=\S)\1")
+_MD_STAR = re.compile(r"(?<![\w*])\*(?=\S)([^*\n]+?)(?<=\S)\*(?![\w*])")
+_MD_UNDERSCORE = re.compile(r"(?<!\w)_(?=\S)([^_\n]+?)(?<=\S)_(?!\w)")
+
+
+def excerpt(text: str, limit: int = 300) -> str:
+    """Plain text of a review, at most `limit` characters: HTML tags and common markdown
+    emphasis and links reduced to their text, whitespace collapsed, cut on a word boundary with
+    "…" appended (and counted) only when something was cut."""
+    plain = _BLOCK_TAG.sub(" ", text)
+    plain = _TAG.sub("", plain)
+    plain = html.unescape(plain)
+    plain = _MD_LINK.sub(r"\1", plain)
+    plain = _MD_STRONG.sub(r"\2", plain)
+    plain = _MD_STAR.sub(r"\1", plain)
+    plain = _MD_UNDERSCORE.sub(r"\1", plain)
+    plain = " ".join(plain.split())
+    if len(plain) <= limit:
+        return plain
+    head = plain[: limit - 1]
+    if not plain[limit - 1].isspace():  # the cut would land inside a word: drop its beginning
+        boundary = head.rfind(" ")
+        if boundary > 0:
+            head = head[:boundary]
+    return head.rstrip() + "…"
+
+
+def parse_reviews(raw: dict) -> list[ReviewRecord]:
+    """Reviews with an id, a name, a text and an https link; the rest are skipped."""
+    records: list[ReviewRecord] = []
+    for item in raw.get("results") or []:
+        if not isinstance(item, dict):
+            continue
+        details = item.get("author_details") or {}
+        review_id = _text(item.get("id"))
+        author = _text(item.get("author")) or _text(details.get("username"))
+        url = _text(item.get("url"))
+        body = excerpt(item.get("content") or "")
+        if not (review_id and author and body and url and url.startswith("https://")):
+            continue
+        rating = details.get("rating")
+        records.append(
+            ReviewRecord(
+                source_review_id=review_id,
+                author_name=author,
+                excerpt=body,
+                url=url,
+                author_rating=float(rating) if isinstance(rating, int | float) else None,
+                language=_text(item.get("iso_639_1")),
+            )
+        )
+    return records

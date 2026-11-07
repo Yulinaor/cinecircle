@@ -1,0 +1,135 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/3icyRAqgakNcQn6aDVz9libFmBA.jpg",
+      "id": 1423191,
+      "title": "Resident Evil",
+      "original_title": "Resident Evil",
+      "overview": "Medical courier Bryan unwittingly finds himself fighting for survival as one fateful, horrifying night collapses around him in chaos.",
+      "poster_path": "/gAgWJhUSQWCgtKR8170nMkYlBda.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        27,
+        878,
+        12
+      ],
+      "popularity": 494.056,
+      "release_date": "2026-09-16",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.447,
+      "vote_count": 1673
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/bulFtfy3oBQtCnAMSi7g6DSSds3.jpg",
+      "id": 1368337,
+      "title": "The Odyssey",
+      "original_title": "The Odyssey",
+      "overview": "Odysseus, the legendary King of Ithaca, embarks on a long and perilous journey home following the Trojan War. Throughout his voyage, he is forced to confront the whims of gods, mythological monsters, and trials that stretch both his cunning and his humanity to the breaking point.",
+      "poster_path": "/5rhTDKUhPYvpdQIijFIs5VoWsON.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        12,
+        28,
+        14
+      ],
+      "popularity": 188.0529,
+      "release_date": "2026-07-15",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.0,
+      "vote_count": 4369
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/kpqsljPQtWqPKJBTAEtoXtQZ9Ko.jpg",
+      "id": 1263337,
+      "title": "Heart of the Beast",
+      "original_title": "Heart of the Beast",
+      "overview": "After a harrowing plane crash, Special Forces officer James Belmont and his combat dog, Odin, find themselves stranded deep in the Alaskan wilderness. Together, they are forced into a brutal fight for survival against the elements.",
+      "poster_path": "/6sYemVUn79UPKz1ZsSG6kPU4RVy.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        12,
+        53
+      ],
+      "popularity": 202.1924,
+      "release_date": "2026-09-19",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.325,
+      "vote_count": 438
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/5MBdRdiGv3AKzZDGbni88xc6JFi.jpg",
+      "id": 1792170,
+      "title": "Model Citizen",
+      "original_title": "Model Citizen",
+      "overview": "With his memories gone and his past a blur, ex-cop Steven Bay seeks treatment for his amnesia while working on an isolated farm. Instead, he's met with rising hostility, strange surveillance, and instincts he can’t fully control. When the pressure becomes unbearable, Bay begins a desperate hunt for the truth behind his fractured reality.",
+      "poster_path": "/7SE0LBwgqiqZzkm9gKVbBAbcNQL.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        80,
+        878,
+        53
+      ],
+      "popularity": 36.8657,
+      "release_date": "2026-11-03",
+      "softcore": false,
+      "video": false,
+      "vote_average": 6.567,
+      "vote_count": 15
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/k0BY5D4Ya6NHhsvNYMmaabpvUtS.jpg",
+      "id": 1483525,
+      "title": "Possible Love",
+      "original_title": "가능한 사랑",
+      "overview": "A laid-off worker and his wife cross paths with a documentary filmmaker and her spouse and confront their hidden desires.",
+      "poster_path": "/1ERGPNiKtnEcsvJS1ywsmqmcIDO.jpg",
+      "media_type": "movie",
+      "original_language": "ko",
+      "genre_ids": [
+        18
+      ],
+      "popularity": 45.1143,
+      "release_date": "2026-09-23",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.6,
+      "vote_count": 21
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/sEsMwSDUWGIx9EfNxzM6KzVSsSQ.jpg",
+      "id": 1375441,
+      "title": "Primetime",
+      "original_title": "Primetime",
+      "overview": "In 2006, To Catch a Predator host Chris Hansen sets out to make television history. When a high stakes operation goes fatally wrong, his veneered dream of fame curdles into a nightmare of performative justice.",
+      "poster_path": "/lmrulvLbmaejTix1YaMxo1oGhH1.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        53,
+        18
+      ],
+      "popularity": 109.9456,
+      "release_date": "2026-09-23",
+      "softcore": false,
+      "video": false,
+      "vote_average": 6.804,
+      "vote_count": 347
+    }
+  ],
+  "total_pages": 500,
+  "total_results": 10000
+}

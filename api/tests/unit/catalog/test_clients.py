@@ -125,3 +125,26 @@ def test_json_array_body_is_external_error():
     with pytest.raises(ExternalApiError) as info:
         TmdbClient(KEY, http).genre_list("movie", "en-US")
     assert info.value.status == 200
+
+
+def test_discover_calls_use_the_right_paths():
+    seen, http = recording()
+    client = TmdbClient(KEY, http)
+    client.trending("movie", "he-IL")
+    client.trending("tv", "en-US")
+    client.top_rated("tv", "he-IL")
+    client.recommendations("movie", 603, "en-US")
+    client.reviews("movie", 603)
+    paths = [r.url.path for r in seen]
+    assert paths == [
+        "/3/trending/movie/week",
+        "/3/trending/tv/week",
+        "/3/tv/top_rated",
+        "/3/movie/603/recommendations",
+        "/3/movie/603/reviews",
+    ]
+    assert seen[0].url.params["language"] == "he-IL"
+    assert seen[2].url.params["language"] == "he-IL"
+    assert seen[3].url.params["language"] == "en-US"
+    assert "language" not in seen[4].url.params  # reviews come in every language
+    assert all(r.url.params["page"] == "1" for r in seen)

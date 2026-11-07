@@ -20,7 +20,8 @@ URL = os.environ.get(
     "DATABASE_URL", "postgresql+psycopg://postgres:postgres@127.0.0.1:55322/postgres"
 )
 _TRUNCATE = sa.text(
-    "TRUNCATE app.title_genres, app.title_seasons, app.titles, app.genres RESTART IDENTITY CASCADE"
+    "TRUNCATE app.title_genres, app.title_seasons, app.titles, app.genres, app.discover_cache"
+    " RESTART IDENTITY CASCADE"  # external_reviews goes with titles
 )
 
 
@@ -241,6 +242,14 @@ def gal_content(people, clean_catalog, engine) -> GalContent:
                 " VALUES (:gal, :title, 'discover')"
             ),
             {"gal": GAL.id, "title": second},
+        )
+        conn.execute(
+            sa.text(
+                "INSERT INTO app.external_reviews"
+                " (title_id, source_review_id, author_name, excerpt, url)"
+                " VALUES (:title, 'r1', 'jdoe', 'Fine.', 'https://www.themoviedb.org/review/r1')"
+            ),
+            {"title": first},
         )
         conn.execute(sa.text("INSERT INTO app.genres (id, name_en) VALUES (28, 'Action')"))
         conn.execute(

@@ -92,6 +92,8 @@ PROBES |= {
     "genre_prefs": "SELECT count(*) > 0 FROM app.user_genre_prefs WHERE user_id = :gal",
     "events": "SELECT count(*) > 0 FROM app.events WHERE user_id = :gal",
 }
+SEES |= {"external_reviews": {"gal", "dana", "noa", "ron"}}  # TMDB reviews: catalogue data (P7)
+PROBES |= {"external_reviews": "SELECT count(*) = 1 FROM app.external_reviews"}
 CONTENT_TABLES = ["posts", "wishlist_items", "user_genre_prefs", "events"]
 
 
@@ -196,6 +198,14 @@ def test_authenticated_grants_are_exact(engine, table):
         assert table_priv("TRUNCATE, REFERENCES, TRIGGER") is False
         for priv in ("SELECT", "INSERT", "UPDATE", "DELETE"):  # one at a time: a list means ANY
             assert table_priv(priv, role="service_role") is True, priv
+
+
+@pytest.mark.parametrize("viewer", VIEWERS)
+def test_discover_cache_is_not_readable_by_anyone_signed_in(viewer, people, engine):
+    """The Discover list cache is service-only: no viewer can read it, whoever they follow."""
+    with as_user(engine, people[viewer]) as conn, pytest.raises(ProgrammingError) as exc:
+        run(conn, "SELECT count(*) FROM app.discover_cache")
+    assert_permission_denied(exc, "discover_cache")
 
 
 @pytest.mark.parametrize("seq", ["posts_id_seq", "events_id_seq"])

@@ -9,6 +9,7 @@ from tests.fixtures import load
 ODYSSEY_ID = 1368337
 SEVERANCE_ID = 95396
 NO_HEBREW_ID = 791523
+MATRIX_ID = 603  # the movie the recommendation and review fixtures were recorded for
 
 _DETAILS = {
     ("movie", ODYSSEY_ID): "tmdb/movie_odyssey",
@@ -48,6 +49,28 @@ class FakeTmdb:
     def genre_list(self, kind: str, language: str) -> dict:
         self._call("genre_list")
         return load(f"tmdb/genre_{kind}_{'he' if language == 'he-IL' else 'en'}")
+
+    def trending(self, kind: str, language: str) -> dict:
+        self._call("trending")
+        return load(f"tmdb/trending_{kind}_{'he' if language == 'he-IL' else 'en'}")
+
+    def top_rated(self, kind: str, language: str) -> dict:
+        self._call("top_rated")
+        return load(f"tmdb/top_rated_{kind}_{'he' if language == 'he-IL' else 'en'}")
+
+    def recommendations(self, kind: str, tmdb_id: int, language: str) -> dict:
+        """The recorded list for any movie id (it was recorded for MATRIX_ID); none for series."""
+        self._call("recommendations")
+        if kind != "movie":
+            return {"page": 1, "results": [], "total_results": 0}
+        return load(f"tmdb/recommendations_movie_{'he' if language == 'he-IL' else 'en'}")
+
+    def reviews(self, kind: str, tmdb_id: int) -> dict:
+        """The recorded reviews for any movie id (recorded for MATRIX_ID); none for series."""
+        self._call("reviews")
+        if kind != "movie":
+            return {"id": tmdb_id, "page": 1, "results": [], "total_results": 0}
+        return load("tmdb/reviews_movie")
 
 
 class FakeOmdb:
