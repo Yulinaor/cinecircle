@@ -9,6 +9,7 @@ import pytest
 import sqlalchemy as sa
 from fastapi.testclient import TestClient
 
+from cinecircle_api.catalog.parse import GenreRow
 from cinecircle_api.catalog.service import TitleService
 from cinecircle_api.db import act_as, make_engine
 from cinecircle_api.main import create_app
@@ -283,3 +284,124 @@ def gal_wish(gal_content, engine) -> int:
             {"gal": GAL.id, "title": title_id},
         )
     return title_id
+
+
+# ===== The spec 03 section 4 dataset (Taste Match) =====
+# Dana has 20 rated titles (mean exactly 0.70, no picks), all private. Gal (whom Dana follows)
+# shares 6.5 on each of Dana's eight Comedy titles C1-C8 (gap 1.5) and 9.0 on *The Odyssey*;
+# his 1.0 on A1 is private. Severance is a series Dana has not rated.
+
+ACTION, ADVENTURE, DRAMA, MYSTERY, SCIFI, COMEDY = 28, 12, 18, 9648, 878, 35
+_SPEC_GENRES = (
+    (ACTION, "Action", "אקשן"),
+    (ADVENTURE, "Adventure", "הרפתקאות"),
+    (DRAMA, "Drama", None),
+    (MYSTERY, "Mystery", None),
+    (SCIFI, "Science Fiction", None),
+    (COMEDY, "Comedy", None),
+)
+SEVERANCE_GENRES = (
+    GenreRow(DRAMA, "Drama", None),
+    GenreRow(MYSTERY, "Mystery", None),
+    GenreRow(SCIFI, "Science Fiction", "מדע בדיוני"),
+)
+
+INSERT_GENRE = sa.text("INSERT INTO app.genres (id, name_en, name_he) VALUES (:id, :en, :he)")
+_INSERT_SPEC_TITLE = sa.text(
+    "INSERT INTO app.titles (tmdb_id, media_type, name_en, imdb_rating, raw_tmdb)"
+    " VALUES (:tmdb_id, :media_type, :name, :imdb, '{}') RETURNING id"
+)
+INSERT_TITLE_GENRE = sa.text(
+    "INSERT INTO app.title_genres (title_id, genre_id) VALUES (:title, :genre)"
+)
+_INSERT_SPEC_POST = sa.text(
+    "INSERT INTO app.posts (author_id, title_id, season_number, rating, is_shared)"
+    " VALUES (:author, :title, :season, :rating, :shared) RETURNING id"
+)
+
+
+@dataclass(frozen=True)
+class SpecIds:
+    odyssey_post_id: int
+    odyssey_title_id: int
+    severance_title_id: int
+    dana_post_id: int  # Dana's own post on C9
+    comedy_title_ids: tuple[int, ...]  # C1-C8 (Dana 5.0, Gal shared 6.5)
+    c9_title_id: int
+
+
+def insert_post(conn, author, title, rating, shared, season=0) -> int:
+    return conn.scalar(
+        _INSERT_SPEC_POST,
+        {
+            "author": author.id,
+            "title": title,
+            "season": season,
+            "rating": rating,
+            "shared": shared,
+        },
+    )
+
+
+def _spec_title(conn, tmdb_id, name, genres, imdb=None, media_type="movie") -> int:
+    title_id = conn.scalar(
+        _INSERT_SPEC_TITLE,
+        {"tmdb_id": tmdb_id, "media_type": media_type, "name": name, "imdb": imdb},
+    )
+    for genre in genres:
+        conn.execute(INSERT_TITLE_GENRE, {"title": title_id, "genre": genre})
+    return title_id
+
+
+def spec_dataset(engine, people) -> SpecIds:
+    """03 section 4, built as postgres (no RLS). `people` cleanup removes the posts; the
+    `clean_catalog` fixture removes the titles."""
+    n = iter(range(1000, 2000))
+    with engine.begin() as conn:
+        for genre_id, name_en, name_he in _SPEC_GENRES:
+            conn.execute(INSERT_GENRE, {"id": genre_id, "en": name_en, "he": name_he})
+
+        def dana(name, genres, rating):
+            title = _spec_title(conn, next(n), name, genres)
+            return title, insert_post(conn, DANA, title, rating, False)
+
+        a1, _ = dana("A1", [ACTION], 10)
+        dana("A2", [ACTION], 10)
+        dana("B1", [ADVENTURE], 9)
+        dana("B2", [ADVENTURE], 9)
+        for i in range(1, 5):
+            dana(f"D{i}", [DRAMA], 7)
+        dana("M1", [MYSTERY], 9)
+        dana("S1", [SCIFI], 9.5)
+        dana("S2", [SCIFI], 9.5)
+        comedies = []
+        for i in range(1, 9):
+            title, _ = dana(f"C{i}", [COMEDY], 5)
+            insert_post(conn, GAL, title, 6.5, True)
+            comedies.append(title)
+        c9, dana_post = dana("C9", [COMEDY], 6)
+        insert_post(conn, GAL, a1, 1.0, False)  # private: must be ignored
+
+        odyssey = _spec_title(conn, next(n), "The Odyssey", [ACTION, ADVENTURE, DRAMA], imdb=8.5)
+        odyssey_post = insert_post(conn, GAL, odyssey, 9.0, True)
+        severance = _spec_title(
+            conn,
+            next(n),
+            "Severance",
+            [DRAMA, MYSTERY, SCIFI],
+            imdb=8.7,
+            media_type="series",
+        )
+    return SpecIds(
+        odyssey_post_id=odyssey_post,
+        odyssey_title_id=odyssey,
+        severance_title_id=severance,
+        dana_post_id=dana_post,
+        comedy_title_ids=tuple(comedies),
+        c9_title_id=c9,
+    )
+
+
+@pytest.fixture
+def spec(people, clean_catalog, engine) -> SpecIds:
+    return spec_dataset(engine, people)

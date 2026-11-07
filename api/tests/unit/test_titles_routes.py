@@ -67,6 +67,14 @@ class StubService:
         return self.get(0)
 
 
+class StubTasteContext:
+    """A locked viewer: no taste data is read from the (absent) database."""
+
+    @classmethod
+    def load(cls, conn):
+        return cls()
+
+
 @pytest.fixture
 def stub():
     return StubService()
@@ -77,12 +85,14 @@ def client(stub, monkeypatch):
     app = create_app(auth_settings(DEAD))
     app.state.title_service = stub
     # /titles/{id} also reads the viewer's posts and wishlist; these tests are about the
-    # catalogue part.
+    # catalogue part (and the viewer's taste is stubbed out).
     app.dependency_overrides[user_session] = lambda: None
     monkeypatch.setattr(titles_route.posts_repository, "title_posts", lambda conn, title_id: [])
     monkeypatch.setattr(
         titles_route.wishlist_repository, "in_wishlist", lambda conn, title_id: False
     )
+    monkeypatch.setattr(titles_route, "TasteContext", StubTasteContext)
+    monkeypatch.setattr(titles_route, "title_taste", lambda conn, ctx, title_id, lang: None)
     return TestClient(app, headers=SIGNED_IN)
 
 

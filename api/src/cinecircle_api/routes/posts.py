@@ -17,7 +17,8 @@ from cinecircle_api.db import UserDb
 from cinecircle_api.pagination import BIGINT_MAX
 from cinecircle_api.people.deps import Profile, require_profile
 from cinecircle_api.posts import repository
-from cinecircle_api.posts.models import CreatePost, PostCard, UpdatePost, post_card
+from cinecircle_api.posts.models import CreatePost, PostCard, UpdatePost
+from cinecircle_api.taste.cards import post_cards
 from cinecircle_api.wishlist import repository as wishlist_repository
 
 router = APIRouter(prefix="/posts", tags=["posts"])
@@ -31,7 +32,7 @@ def _card_or_404(db: UserDb, post_id: int, lang: Locale) -> PostCard:
     row = repository.get_post(db, post_id)
     if row is None:
         raise HTTPException(404, "not_found")
-    return post_card(row, lang)
+    return post_cards(db, [row], lang)[0]
 
 
 def _season_text_filled(request: Request, body: CreatePost) -> CreatePost:

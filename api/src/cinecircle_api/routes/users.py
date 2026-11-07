@@ -16,7 +16,8 @@ from cinecircle_api.people import repository
 from cinecircle_api.people.deps import Username, card_or_404, require_profile
 from cinecircle_api.people.models import SearchUsersResponse, UserDetails, UserProfile
 from cinecircle_api.posts import repository as posts_repository
-from cinecircle_api.posts.models import PostPage, post_card
+from cinecircle_api.posts.models import PostPage
+from cinecircle_api.taste.cards import post_cards
 
 router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(require_profile)])
 
@@ -57,4 +58,4 @@ def get_user_posts(
         raise HTTPException(404, "not_found")
     rows = posts_repository.author_posts(db, card.id, after, PAGE_SIZE + 1)
     page, next_cursor = page_of(rows, key=lambda row: row.cursor)
-    return PostPage(posts=[post_card(row, lang) for row in page], next_cursor=next_cursor)
+    return PostPage(posts=post_cards(db, page, lang), next_cursor=next_cursor)

@@ -50,6 +50,7 @@ class MeResponse(BaseModel):
     id: UUID
     email: str | None
     profile: MyProfile | None
+    taste_unlocked: bool  # rated a title or picked a genre (plan P12); False without a profile
 
 
 class CreateProfile(BaseModel):

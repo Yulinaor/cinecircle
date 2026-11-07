@@ -35,6 +35,7 @@ def test_compose_movie_and_read_back(api):
         "updated_at",
         "edited",
         "in_wishlist",
+        "taste",
     }
     assert card["author"] == {
         "username": "gal",
@@ -62,6 +63,7 @@ def test_compose_movie_and_read_back(api):
     assert (card["rating"], card["opinion"]) == (9.0, "Epic")
     assert (card["contains_spoilers"], card["is_shared"], card["edited"]) == (False, True, False)
     assert card["in_wishlist"] is False
+    assert card["taste"] is None  # your own post carries no match
 
     r = gal.get(f"/posts/{card['id']}")
     assert (r.status_code, r.json()) == (200, card)

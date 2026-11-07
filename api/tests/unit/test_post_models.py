@@ -9,6 +9,7 @@ from cinecircle_api.catalog.parse import GenreRow
 from cinecircle_api.people.repository import CardRow
 from cinecircle_api.posts.models import CreatePost, UpdatePost, post_card
 from cinecircle_api.posts.repository import PostRow
+from cinecircle_api.taste.models import Taste
 
 
 def _create(**fields) -> CreatePost:
@@ -125,6 +126,9 @@ def test_post_card_shape():
     assert card.edited is False
     assert card.in_wishlist is False
     assert post_card(_row(in_wishlist=True), "he").in_wishlist is True
+    assert card.taste is None
+    taste = Taste(fit=76, genres=["Drama"], agreement=None)
+    assert post_card(_row(), "he", taste).taste == taste
     assert post_card(_row(), "en").title.genres == ["Drama", "Mystery"]
 
 

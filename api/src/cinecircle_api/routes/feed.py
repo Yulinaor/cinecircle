@@ -11,7 +11,8 @@ from cinecircle_api.db import UserDb
 from cinecircle_api.pagination import PAGE_SIZE, Cursor, cursor_param, page_of
 from cinecircle_api.people.deps import require_profile
 from cinecircle_api.posts import repository
-from cinecircle_api.posts.models import PostPage, post_card
+from cinecircle_api.posts.models import PostPage
+from cinecircle_api.taste.cards import post_cards
 
 router = APIRouter(prefix="/feed", tags=["feed"], dependencies=[Depends(require_profile)])
 
@@ -25,4 +26,4 @@ def home(
 ) -> PostPage:
     rows = repository.feed(db, type_filter, after, PAGE_SIZE + 1)
     page, next_cursor = page_of(rows, key=lambda row: row.cursor)
-    return PostPage(posts=[post_card(row, lang) for row in page], next_cursor=next_cursor)
+    return PostPage(posts=post_cards(db, page, lang), next_cursor=next_cursor)

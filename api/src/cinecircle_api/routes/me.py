@@ -12,12 +12,19 @@ from cinecircle_api.people import repository
 from cinecircle_api.people.deps import Profile
 from cinecircle_api.people.models import CreateProfile, MeResponse, UpdateProfile
 from cinecircle_api.people.usernames import normalize_username
+from cinecircle_api.taste.context import TasteContext
 
 router = APIRouter(prefix="/me", tags=["me"])
 
 
 def _me(db: UserDb, claims: Claims) -> MeResponse:
-    return MeResponse(id=claims.user_id, email=claims.email, profile=repository.get_my_profile(db))
+    profile = repository.get_my_profile(db)
+    return MeResponse(
+        id=claims.user_id,
+        email=claims.email,
+        profile=profile,
+        taste_unlocked=profile is not None and TasteContext.load(db).unlocked,
+    )
 
 
 _AVATAR_MAX_LENGTH = 512

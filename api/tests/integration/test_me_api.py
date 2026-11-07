@@ -23,7 +23,8 @@ def test_me_without_profile_returns_null(api):
     body = r.json()
     assert body["profile"] is None
     assert body["email"] == "fresh@test.cinecircle.local"
-    assert set(body) == {"id", "email", "profile"}
+    assert set(body) == {"id", "email", "profile", "taste_unlocked"}
+    assert body["taste_unlocked"] is False
 
 
 def test_me_with_profile(api, people):
@@ -39,6 +40,7 @@ def test_me_with_profile(api, people):
             "bio": GAL_BIO,
             "locale": "he",
         },
+        "taste_unlocked": False,  # Gal has rated nothing and picked no genre
     }
 
 
