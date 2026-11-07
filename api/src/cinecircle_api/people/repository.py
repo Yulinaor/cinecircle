@@ -3,7 +3,7 @@ connection: it runs as the signed-in user, so RLS decides what comes back and `a
 the viewer. The caller owns the transaction (never commit or roll back here)."""
 
 from dataclasses import dataclass
-from typing import Final
+from typing import Any, Final
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -136,11 +136,25 @@ def card_join_follow(person: str) -> str:
     return f" LEFT JOIN app.follows f ON f.follower_id = auth.uid() AND f.followee_id = {person}.id"
 
 
+_CARD_FIELDS = ("id", "username", "display_name", "avatar_url", "follow_state")
+
+
+def card_columns(person: str, prefix: str = "") -> str:
+    """The columns of a `CardRow` for `person` (a profiles alias), each aliased `{prefix}{field}`;
+    `follow_state` reads the row `f` that `card_join_follow(person)` joins."""
+    columns = [f"{person}.{field} AS {prefix}{field}" for field in _CARD_FIELDS[:-1]]
+    columns.append(follow_state_sql(person) + f" AS {prefix}follow_state")
+    return ", ".join(columns)
+
+
+def pop_card_row(fields: dict[str, Any], prefix: str = "") -> CardRow:
+    """The `CardRow` made of the `{prefix}{field}` entries of `fields`, which are removed."""
+    return CardRow(**{field: fields.pop(f"{prefix}{field}") for field in _CARD_FIELDS})
+
+
 # Pieces of a card query, shared with the follow and notification lists: they all join onto
 # `p` (the person on the card) and read `follow_state` from the viewer's own row towards `p`.
-CARD_COLUMNS = (
-    "p.id, p.username, p.display_name, p.avatar_url, " + follow_state_sql("p") + " AS follow_state"
-)
+CARD_COLUMNS = card_columns("p")
 CARD_JOIN_FOLLOW = card_join_follow("p")
 CARD_FROM = " FROM app.profiles p" + CARD_JOIN_FOLLOW
 _CARD_SELECT = "SELECT " + CARD_COLUMNS + CARD_FROM

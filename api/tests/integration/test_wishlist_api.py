@@ -189,6 +189,24 @@ def test_via_follows_post_visibility(api, gal_content):
     assert len(_items(dana)) == 1
 
 
+def test_resaving_with_a_hidden_source_post_is_404_and_changes_nothing(api, gal_content):
+    gal, dana = api("gal"), api("dana")
+    post_id, title_id = gal_content.shared_post_id, gal_content.title_ids[0]
+    saved = _save(dana, title_id, "post", source_post_id=post_id)
+    assert saved.status_code == 201
+    assert gal.patch(f"/posts/{post_id}", json={"is_shared": False}).status_code == 200
+
+    # The source is checked even though the title is already saved: the same 404 as anywhere.
+    r = _save(dana, title_id, "post", source_post_id=post_id)
+    assert (r.status_code, r.json()) == NOT_FOUND
+    (item,) = _items(dana)
+    assert (item["source"], item["status"]) == ("post", "want")
+    assert item["via"] is None  # still hidden; the item itself is unchanged
+    assert {k: v for k, v in item.items() if k != "via"} == {
+        k: v for k, v in saved.json().items() if k != "via"
+    }
+
+
 def test_my_post_and_rate_loop(api):
     dana = api("dana")
     odyssey = _cache(dana, "movie", ODYSSEY_ID)
@@ -273,6 +291,13 @@ def test_mark_watched_on_post_and_in_wishlist_sql(api, engine):
     with as_user(engine, DANA) as conn:
         assert conn.scalar(in_wishlist, {"title": odyssey["id"]}) is True
         assert conn.scalar(in_wishlist, {"title": severance["id"]}) is False
+        # The inner alias must not capture an outer column that is itself called `w`.
+        outer = sa.text(
+            "SELECT w.title_id FROM (VALUES (:odyssey), (:severance)) AS w(title_id)"
+            " WHERE " + repository.IN_WISHLIST_SQL.format(title="w.title_id")
+        )
+        rows = conn.execute(outer, {"odyssey": odyssey["id"], "severance": severance["id"]})
+        assert [r.title_id for r in rows] == [odyssey["id"]]
 
         repository.mark_watched_on_post(conn, severance["id"])  # not on the list: a no-op
         assert repository.get_item(conn, severance["id"]) is None

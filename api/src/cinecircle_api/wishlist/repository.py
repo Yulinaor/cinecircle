@@ -13,18 +13,18 @@ from sqlalchemy.exc import IntegrityError
 
 from cinecircle_api.catalog.parse import GenreRow, MediaType
 from cinecircle_api.pagination import Cursor
-from cinecircle_api.people.repository import CardRow, card_join_follow, follow_state_sql
+from cinecircle_api.people.repository import CardRow, card_columns, card_join_follow, pop_card_row
+from cinecircle_api.posts.repository import TITLE_COLUMNS, genre_rows
 from cinecircle_api.wishlist.models import SaveTitle, WishlistSource, WishlistStatus
 
 _SOURCE_VALID = "wishlist_source_valid"  # raised by the app.wishlist_check_source trigger
 _TITLE_FKEY = "wishlist_items_title_id_fkey"
-_VIA_FIELDS = ("id", "username", "display_name", "avatar_url", "follow_state")
 
 # For other queries: whether the caller's own list holds a title. `{title}` is a column
 # reference (or a bind parameter). It reflects nobody else's list (plan P5).
 IN_WISHLIST_SQL = (
-    "EXISTS (SELECT 1 FROM app.wishlist_items w"
-    " WHERE w.owner_id = auth.uid() AND w.title_id = {title})"
+    "EXISTS (SELECT 1 FROM app.wishlist_items wl_own"
+    " WHERE wl_own.owner_id = auth.uid() AND wl_own.title_id = {title})"
 )
 
 
@@ -74,18 +74,11 @@ class WishlistRow:
 # it), `pr` = that post's author, `f` = the owner's follow row towards the author, `mp` = the
 # owner's newest post on the title. Callers append more conditions, ORDER BY and LIMIT.
 _SELECT = (
-    "SELECT w.title_id, w.status, w.source, w.added_at, w.watched_at,"
-    " t.media_type, t.name_he, t.name_en, t.overview_he, t.overview_en, t.poster_path,"
-    " t.year_start, t.runtime_min, t.imdb_rating, t.tmdb_rating,"
-    " COALESCE((SELECT json_agg(json_build_array(g.id, g.name_en, g.name_he) ORDER BY g.id)"
-    "           FROM app.title_genres tg JOIN app.genres g ON g.id = tg.genre_id"
-    "           WHERE tg.title_id = t.id), '[]') AS genres,"
-    " vp.id AS via_post_id,"
-    " pr.id AS via_author_id, pr.username AS via_author_username,"
-    " pr.display_name AS via_author_display_name, pr.avatar_url AS via_author_avatar_url, "
-    + follow_state_sql("pr")
-    + " AS via_author_follow_state,"
-    " mp.id AS my_post_id, mp.rating AS my_rating"
+    "SELECT w.title_id, w.status, w.source, w.added_at, w.watched_at, "
+    + TITLE_COLUMNS
+    + ", vp.id AS via_post_id, "
+    + card_columns("pr", "via_author_")
+    + ", mp.id AS my_post_id, mp.rating AS my_rating"
     " FROM app.wishlist_items w"
     " JOIN app.titles t ON t.id = w.title_id"
     " LEFT JOIN app.posts vp ON vp.id = w.source_post_id"
@@ -126,9 +119,11 @@ _DELETE = sa.text(
 
 def wishlist_row(row: sa.Row) -> WishlistRow:
     fields = row._asdict()
-    via = {key: fields.pop(f"via_author_{key}") for key in _VIA_FIELDS}
-    genres = tuple(GenreRow(*genre) for genre in fields.pop("genres"))
-    via_author = CardRow(**via) if via["id"] is not None else None
+    # Without a visible source post the author columns are NULL (follow_state 'none').
+    via_author = pop_card_row(fields, "via_author_")
+    genres = genre_rows(fields.pop("genres"))
+    if fields["via_post_id"] is None:
+        via_author = None
     return WishlistRow(**fields, via_author=via_author, genres=genres)
 
 
