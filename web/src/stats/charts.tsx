@@ -21,10 +21,10 @@ export function ColumnChart({ items, labelledBy }: { items: Column[]; labelledBy
         <li
           key={item.key}
           role="listitem"
-          aria-label={`${item.label}: ${item.value}`}
           className="flex min-w-0 flex-1 flex-col items-center gap-1"
         >
-          <bdi dir="ltr" className="text-xs font-bold text-ink">
+          <span className="sr-only">{`${item.label}: ${item.value}`}</span>
+          <bdi dir="ltr" aria-hidden="true" className="text-xs font-bold text-ink">
             {item.value}
           </bdi>
           <div className="flex w-full flex-1 items-end justify-center">
@@ -35,7 +35,10 @@ export function ColumnChart({ items, labelledBy }: { items: Column[]; labelledBy
               style={{ blockSize: share(item.value, max) }}
             />
           </div>
-          <span className="flex min-h-8 items-start text-center text-xs leading-tight text-muted">
+          <span
+            aria-hidden="true"
+            className="h-10 w-full overflow-hidden break-words text-center text-xs leading-tight text-muted"
+          >
             {item.label}
           </span>
         </li>

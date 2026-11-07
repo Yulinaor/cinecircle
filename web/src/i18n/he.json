@@ -220,14 +220,20 @@
     "distribution": { "title": "הדירוגים שלך" },
     "genres": {
       "title": "הז׳אנרים המובילים",
-      "detail": "{{count}} כותרים · ממוצע {{mean}}"
+      "detail_one": "כותר אחד · ממוצע {{mean}}",
+      "detail_two": "{{count}} כותרים · ממוצע {{mean}}",
+      "detail_many": "{{count}} כותרים · ממוצע {{mean}}",
+      "detail_other": "{{count}} כותרים · ממוצע {{mean}}"
     },
     "imdb": {
       "title": "את/ה מול IMDb",
       "higher": "בממוצע הדירוג שלך גבוה ב־{{gap}} מ־IMDb",
       "lower": "בממוצע הדירוג שלך נמוך ב־{{gap}} מ־IMDb",
       "same": "בממוצע הדירוג שלך דומה ל־IMDb",
-      "compared": "על סמך {{count}} כותרים עם דירוג IMDb",
+      "compared_one": "על סמך כותר אחד עם דירוג IMDb",
+      "compared_two": "על סמך {{count}} כותרים עם דירוג IMDb",
+      "compared_many": "על סמך {{count}} כותרים עם דירוג IMDb",
+      "compared_other": "על סמך {{count}} כותרים עם דירוג IMDb",
       "empty": "לאף כותר שדירגת אין עדיין דירוג IMDb.",
       "bucket": {
         "much_lower": "נמוך בהרבה",

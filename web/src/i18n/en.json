@@ -220,14 +220,20 @@
     "distribution": { "title": "Your ratings" },
     "genres": {
       "title": "Top genres",
-      "detail": "{{count}} titles · average {{mean}}"
+      "detail_one": "{{count}} title · average {{mean}}",
+      "detail_two": "{{count}} titles · average {{mean}}",
+      "detail_many": "{{count}} titles · average {{mean}}",
+      "detail_other": "{{count}} titles · average {{mean}}"
     },
     "imdb": {
       "title": "You vs. IMDb",
       "higher": "On average you rate {{gap}} higher than IMDb",
       "lower": "On average you rate {{gap}} lower than IMDb",
       "same": "On average you rate like IMDb",
-      "compared": "Based on {{count}} titles with an IMDb rating",
+      "compared_one": "Based on {{count}} title with an IMDb rating",
+      "compared_two": "Based on {{count}} titles with an IMDb rating",
+      "compared_many": "Based on {{count}} titles with an IMDb rating",
+      "compared_other": "Based on {{count}} titles with an IMDb rating",
       "empty": "None of your rated titles has an IMDb rating yet.",
       "bucket": {
         "much_lower": "Much lower",

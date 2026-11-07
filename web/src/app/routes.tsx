@@ -39,7 +39,7 @@ export function AppRoutes() {
       <Route path="/titles/:id" element={<TitlePage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/stats" element={<StatsPage />} />
-      <Route path="/taste"element={<TasteQuizPage />} />
+      <Route path="/taste" element={<TasteQuizPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )

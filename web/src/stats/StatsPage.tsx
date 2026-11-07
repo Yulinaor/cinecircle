@@ -66,7 +66,7 @@ function ImdbSection({ imdb }: { imdb: MyStats['imdb'] }) {
               }))}
             />
             <p className="text-sm text-muted">
-              {isolating('stats.imdb.compared', { count: number(imdb.compared) })}
+              {isolating('stats.imdb.compared', { count: number(imdb.compared) }, {}, imdb.compared)}
             </p>
           </>
         )
@@ -149,10 +149,12 @@ export function StatsPage() {
                     items={data.genres.map((genre) => ({
                       key: String(genre.id),
                       label: <bdi dir="auto">{genre.name}</bdi>,
-                      detail: isolating('stats.genres.detail', {
-                        count: number(genre.count),
-                        mean: oneDecimal(genre.mean),
-                      }),
+                      detail: isolating(
+                        'stats.genres.detail',
+                        { count: number(genre.count), mean: oneDecimal(genre.mean) },
+                        {},
+                        genre.count,
+                      ),
                       value: genre.count,
                       max,
                     }))}

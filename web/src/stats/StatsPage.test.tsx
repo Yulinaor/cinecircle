@@ -48,8 +48,8 @@ describe('StatsPage', () => {
     const dist = screen.getByRole('region', { name: he.stats.distribution.title })
     const columns = within(dist).getAllByRole('listitem')
     expect(columns).toHaveLength(10)
-    expect(columns.map((c) => c.textContent)).toEqual(
-      MY_STATS.distribution.map((b) => `${b.count}${b.rating}`),
+    expect(columns.map((c) => c.querySelector('.sr-only')?.textContent)).toEqual(
+      MY_STATS.distribution.map((b) => `${b.rating}: ${b.count}`),
     )
 
     const genres = screen.getByRole('region', { name: he.stats.genres.title })
@@ -79,6 +79,22 @@ describe('StatsPage', () => {
   it('says "one title" in Hebrew for a single rating', async () => {
     setup({ ...MY_STATS, rated: 1 })
     expect(await screen.findByText('דירגת כותר אחד')).toBeInTheDocument()
+  })
+
+  it.each([
+    ['he', HE, 'כותר אחד · ממוצע 7.8', 'על סמך כותר אחד עם דירוג IMDb'],
+    ['en', EN, '1 title · average 7.8', 'Based on 1 title with an IMDb rating'],
+  ] as const)('uses the singular for one title (%s)', async (lang, key, genres, compared) => {
+    await setLocale(lang)
+    const one: MyStats = {
+      ...MY_STATS,
+      genres: [{ id: 18, name: 'Drama', count: 1, mean: 7.8 }],
+      imdb: { ...MY_STATS.imdb, compared: 1 },
+    }
+    setup(one, key)
+    await screen.findAllByRole('region')
+    expect(line(genres)).toBeInTheDocument()
+    expect(line(compared)).toBeInTheDocument()
   })
 
   it('links each agreed account to its profile', async () => {
