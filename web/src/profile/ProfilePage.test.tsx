@@ -61,12 +61,12 @@ describe('ProfilePage', () => {
     expect(await screen.findByRole('heading', { name: 'Gal' })).toBeInTheDocument()
     expect(screen.getByText('@gal_b')).toBeInTheDocument()
     expect(screen.getByText('אוהבת סרטים')).toBeInTheDocument()
-    expect(screen.getByText(he.profile.posts).closest('li')).toHaveTextContent('4')
-    expect(screen.getByRole('link', { name: `3 ${he.profile.followers}` })).toHaveAttribute(
+    expect(screen.getByText(he.profile.posts_other).closest('li')).toHaveTextContent('4')
+    expect(screen.getByRole('link', { name: `3 ${he.profile.followers_other}` })).toHaveAttribute(
       'href',
       '/connections',
     )
-    expect(screen.getByRole('link', { name: `2 ${he.profile.following}` })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: `2 ${he.profile.following_other}` })).toHaveAttribute(
       'href',
       '/connections',
     )
@@ -81,6 +81,23 @@ describe('ProfilePage', () => {
     expect(await screen.findByText('דירוג פרטי שלי')).toBeInTheDocument()
     expect(screen.getByText(he.post.private)).toBeInTheDocument()
     expect(fake.log()).toContain('GET /users/gal_b/posts?lang=he')
+  })
+
+  it.each([
+    ['he', 1, ['1 פוסט', '1 עוקב/ת', '1 במעקב']],
+    ['he', 2, ['2 פוסטים', '2 עוקבים', '2 במעקב']],
+    ['en', 1, ['1 Post', '1 Follower', '1 Following']],
+    ['en', 2, ['2 Posts', '2 Followers', '2 Following']],
+  ] as const)('pluralises counts (%s, %i)', async (lang, n, expected) => {
+    const details = { bio: null, post_count: n, followers_count: n, following_count: n }
+    const profile = { ...ownProfile, details }
+    renderAt('/profile', {
+      'GET /me': { ...ME, profile: { ...PROFILE, locale: lang } },
+      'GET /users/gal_b': profile,
+      [`GET /users/gal_b/posts?lang=${lang}`]: page([]),
+    })
+    const stats = (await screen.findByRole('link', { name: expected[1] })).closest('ul')!
+    expect(within(stats).getAllByRole('listitem').map((li) => li.textContent)).toEqual(expected)
   })
 
   it('own profile with no posts says so', async () => {
@@ -103,11 +120,11 @@ describe('ProfilePage', () => {
     })
     expect(await screen.findByRole('heading', { name: 'Gal' })).toBeInTheDocument()
     expect(screen.getByText('ביו של גל')).toBeInTheDocument()
-    expect(screen.getByText(he.profile.posts).closest('li')).toHaveTextContent('5')
+    expect(screen.getByText(he.profile.posts_other).closest('li')).toHaveTextContent('5')
     expect(screen.getByRole('button', { name: `${he.follow.following} Gal` })).toBeInTheDocument()
     expect(await screen.findByText(OPINION)).toBeInTheDocument()
     // No follower / following counts and no owner links on someone else's profile.
-    expect(screen.queryByText(new RegExp(he.profile.followers))).toBeNull()
+    expect(screen.queryByText(new RegExp(he.profile.followers_other))).toBeNull()
     expect(screen.queryByRole('link', { name: he.profile.editProfile })).toBeNull()
     expect(fake.log()).toContain('GET /users/gal/posts?lang=he')
   })
@@ -119,7 +136,7 @@ describe('ProfilePage', () => {
     expect(screen.getByRole('button', { name: `${he.follow.follow} Gal` })).toBeInTheDocument()
     expect(screen.getByText(he.profile.locked)).toBeInTheDocument()
     expect(screen.queryByText(he.profile.noPosts)).toBeNull()
-    expect(screen.queryByText(he.profile.posts)).toBeNull()
+    expect(screen.queryByText(he.profile.posts_other)).toBeNull()
     expect(fake.log()).toEqual(['GET /me', 'GET /users/gal'])
   })
 

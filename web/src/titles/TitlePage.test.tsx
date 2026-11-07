@@ -58,6 +58,7 @@ const SERIES: TitlePageData = {
     {
       season_number: 1,
       name: 'העונה הראשונה',
+      name_lang: 'he',
       overview: null,
       air_date: '2026-02-03',
       episode_count: 9,
@@ -66,6 +67,7 @@ const SERIES: TitlePageData = {
     {
       season_number: 2,
       name: null,
+      name_lang: null,
       overview: null,
       air_date: null,
       episode_count: null,
@@ -118,6 +120,20 @@ describe('TitlePage', () => {
     expect(one).toHaveTextContent('9 פרקים')
     expect(two).toHaveTextContent('עונה 2')
     expect(two).not.toHaveTextContent('פרקים')
+  })
+
+  it("names a season in the UI language, never with TMDB's other-language name", async () => {
+    const english = {
+      ...SERIES.seasons[1],
+      season_number: 3,
+      name: 'Season 3',
+      name_lang: 'en' as const,
+    }
+    renderTitle(serve({ ...SERIES, seasons: [...SERIES.seasons, english] }).api)
+    const seasons = await screen.findByRole('list', { name: he.title.seasons })
+    const third = within(seasons).getAllByRole('listitem')[2]
+    expect(third).toHaveTextContent('עונה 3')
+    expect(third).not.toHaveTextContent('Season 3')
   })
 
   it('shows a lone end year without a dangling dash', async () => {

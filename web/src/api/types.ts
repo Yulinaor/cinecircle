@@ -99,6 +99,7 @@ export type TitleSearchItem = {
 export type Season = {
   season_number: number
   name: string | null
+  name_lang: Lang | null
   overview: string | null
   air_date: string | null
   episode_count: number | null

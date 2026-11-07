@@ -79,6 +79,39 @@ describe('PostCard', () => {
     expect(document.querySelector('img')).toHaveAttribute('src', POST_CARD.title.poster_url)
   })
 
+  it('keeps the score and "/10" in one left-to-right run', () => {
+    show(POST_CARD)
+    const run = screen.getByText('9.0').closest('[dir="ltr"]')
+    expect(run).not.toBeNull()
+    expect(run).toHaveTextContent('9.0/10')
+  })
+
+  it("shows TMDB's season name only when it is in the UI language", async () => {
+    const series = (name_lang: 'he' | 'en'): PostCardData => ({
+      ...POST_CARD,
+      title: { ...POST_CARD.title, media_type: 'series' },
+      season: {
+        number: 1,
+        name: name_lang === 'he' ? 'עונה ראשונה' : 'Season One',
+        name_lang,
+        overview: null,
+        overview_lang: null,
+        poster_url: null,
+      },
+    })
+    const { unmount } = show(series('en'))
+    expect(screen.getByText('עונה 1')).toBeInTheDocument()
+    expect(screen.queryByText('Season One')).not.toBeInTheDocument()
+    unmount()
+
+    await setLocale('en')
+    const again = show(series('he'))
+    expect(screen.getByText('Season 1')).toBeInTheDocument()
+    again.unmount()
+    show(series('en'))
+    expect(screen.getByText('Season One')).toBeInTheDocument()
+  })
+
   it('names a post on a whole series, and shows a placeholder without any poster', () => {
     show(withTitle({ media_type: 'series', poster_url: null }))
     expect(screen.getByText(he.post.wholeSeries)).toBeInTheDocument()

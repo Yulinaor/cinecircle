@@ -61,6 +61,11 @@ export function TitlePicker({ onPick }: { onPick: (item: TitleSearchItem) => voi
           {t('auth.loading')}
         </p>
       )}
+      {results && results.length === 0 && !search.isPlaceholderData && (
+        <p role="status" className="text-sm text-muted">
+          {t('compose.noResults')}
+        </p>
+      )}
       {results && results.length > 0 && (
         <ul className="flex flex-col gap-2">
           {results.map((item) => (

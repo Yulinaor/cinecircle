@@ -4,12 +4,14 @@ import { Link } from 'react-router'
 import type { PostCard as PostCardData } from '../api/types'
 import { LangLabel } from '../i18n/LangLabel'
 import { Avatar } from '../people/Avatar'
+import { useSeasonName } from './seasonName'
 
 const BADGE = 'rounded-full bg-accent-soft px-2 py-0.5 text-xs font-semibold text-accent'
 
 /** The one way a post is shown, on every screen. */
 export function PostCard({ post }: { post: PostCardData }) {
   const { t } = useTranslation()
+  const seasonName = useSeasonName()
   const { author, title, season } = post
   const isAuthor = author.follow_state === 'self'
   const [revealed, setRevealed] = useState(false)
@@ -17,7 +19,7 @@ export function PostCard({ post }: { post: PostCardData }) {
 
   const posterUrl = season?.poster_url ?? title.poster_url
   const seasonLabel = season
-    ? (season.name ?? t('post.season', { n: season.number }))
+    ? seasonName(season.number, season.name, season.name_lang)
     : title.media_type === 'series'
       ? t('post.wholeSeries')
       : null
@@ -75,9 +77,12 @@ export function PostCard({ post }: { post: PostCardData }) {
               {seasonLabel}
             </p>
           )}
-          <p className="flex items-baseline gap-1 text-ink">
-            <bdi className="text-3xl font-extrabold">{post.rating.toFixed(1)}</bdi>
-            <span className="text-sm text-muted">{t('post.outOf')}</span>
+          <p className="text-ink">
+            {/* One left-to-right run, so a right-to-left screen still reads "9.0/10". */}
+            <bdi dir="ltr" className="inline-flex items-baseline gap-1">
+              <span className="text-3xl font-extrabold">{post.rating.toFixed(1)}</span>
+              <span className="text-sm text-muted">{t('post.outOf')}</span>
+            </bdi>
           </p>
           <MetaLine post={post} />
           {ratings && (

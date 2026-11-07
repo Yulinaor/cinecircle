@@ -9,6 +9,7 @@ import { useLang } from '../i18n/useLang'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { titleKey } from '../posts/keys'
 import { PostCard } from '../posts/PostCard'
+import { useSeasonName } from '../posts/seasonName'
 import { parsePostId } from '../posts/usePost'
 import { ExternalRatings } from './ExternalRatings'
 
@@ -139,6 +140,7 @@ function TitleBody({ title }: { title: TitlePageData }) {
 
 function Seasons({ seasons }: { seasons: Season[] }) {
   const { t } = useTranslation()
+  const seasonName = useSeasonName()
   return (
     <div className="flex flex-col gap-2">
       <h2 id="title-seasons" className="text-lg font-bold text-ink">
@@ -148,7 +150,7 @@ function Seasons({ seasons }: { seasons: Season[] }) {
         {seasons.map((season) => (
           <li key={season.season_number} className="flex flex-col gap-0.5 py-2">
             <span dir="auto" className="font-medium text-ink">
-              {season.name ?? t('post.season', { n: season.season_number })}
+              {seasonName(season.season_number, season.name, season.name_lang)}
             </span>
             <span className="text-sm text-muted">
               {[

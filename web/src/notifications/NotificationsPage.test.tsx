@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ApiError } from '../api/client'
 import type { NotificationItem } from '../api/types'
 import { initI18n, setLocale } from '../i18n'
 import he from '../i18n/he.json'
@@ -145,6 +146,32 @@ describe('NotificationsPage', () => {
     expect(fake.count('GET /notifications?cursor=c1')).toBe(1)
   })
 
+  it('keeps loaded notifications when Load more fails, and Retry recovers', async () => {
+    let failNext = true
+    const fake = fakeApi({
+      'GET /notifications': { items: [request()], unread_count: 2, next_cursor: 'c1' },
+      'GET /notifications?cursor=c1': () => {
+        if (failNext) throw new ApiError(500, 'boom')
+        return {
+          items: [request({ id: 2, type: 'follow_accepted', request_pending: false, actor: ERAN })],
+          unread_count: 2,
+          next_cursor: null,
+        }
+      },
+      'POST /notifications/read': () => undefined,
+    })
+    renderApp(<NotificationsPage />, { api: fake.api })
+    await userEvent.click(await screen.findByRole('button', { name: he.common.loadMore }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(he.common.error)
+    expect(screen.getByText('Dana ביקש/ה לעקוב אחריך')).toBeInTheDocument()
+    failNext = false
+    await userEvent.click(screen.getByRole('button', { name: he.common.retry }))
+    expect(await screen.findByText('Eran אישר/ה את בקשת המעקב שלך')).toBeInTheDocument()
+    expect(screen.getByText('Dana ביקש/ה לעקוב אחריך')).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(fake.count('GET /notifications?cursor=c1')).toBe(2)
+  })
+
   it('has no Load more on the last page', async () => {
     const fake = notifications([request()])
     renderApp(<NotificationsPage />, { api: fake.api })
@@ -159,8 +186,19 @@ describe('NotificationsPage', () => {
     expect(screen.getByRole('heading', { name: he.notifications.title })).toBeInTheDocument()
   })
 
-  it('shows an error when notifications cannot be loaded', async () => {
-    renderApp(<NotificationsPage />, { api: fakeApi({}).api })
+  it('shows an error with Retry when notifications cannot be loaded', async () => {
+    let fail = true
+    const fake = fakeApi({
+      'GET /notifications': () => {
+        if (fail) throw new ApiError(500, 'boom')
+        return { items: [request()], unread_count: 1, next_cursor: null }
+      },
+      'POST /notifications/read': () => undefined,
+    })
+    renderApp(<NotificationsPage />, { api: fake.api })
     expect(await screen.findByRole('alert')).toHaveTextContent(he.common.error)
+    fail = false
+    await userEvent.click(screen.getByRole('button', { name: he.common.retry }))
+    expect(await screen.findByText('Dana ביקש/ה לעקוב אחריך')).toBeInTheDocument()
   })
 })

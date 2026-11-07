@@ -6,6 +6,7 @@ import type { PostCard } from '../api/types'
 import { PostForm, type PostFormValues } from '../compose/PostForm'
 import { usePostMutations, type PostChanges } from '../compose/usePostMutations'
 import { NotFoundPage } from '../pages/NotFoundPage'
+import { useSeasonName } from './seasonName'
 import { parsePostId, usePost } from './usePost'
 
 const SECONDARY =
@@ -59,9 +60,10 @@ function EditPostForm({ post }: { post: PostCard }) {
   const navigate = useNavigate()
   const { update, remove } = usePostMutations()
   const [confirming, setConfirming] = useState(false)
+  const seasonName = useSeasonName()
   const { title, season } = post
   const seasonLabel = season
-    ? (season.name ?? t('post.season', { n: season.number }))
+    ? seasonName(season.number, season.name, season.name_lang)
     : title.media_type === 'series'
       ? t('post.wholeSeries')
       : null

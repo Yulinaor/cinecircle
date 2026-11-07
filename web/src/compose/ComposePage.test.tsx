@@ -1,6 +1,6 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Route, Routes } from 'react-router'
+import { Route, Routes, useParams } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../api/client'
 import type { TitleDetail } from '../api/types'
@@ -43,9 +43,10 @@ const DETAIL: TitleDetail = {
   fetched_at: '2026-11-01T10:00:00+00:00',
 }
 
-const season = (n: number, name: string | null) => ({
+const season = (n: number, name: string | null, name_lang: 'he' | 'en' | null) => ({
   season_number: n,
   name,
+  name_lang,
   overview: null,
   air_date: null,
   episode_count: 9,
@@ -58,7 +59,12 @@ const SEVERANCE: TitleDetail = {
   tmdb_id: 200,
   media_type: 'series',
   name: 'Severance',
-  seasons: [season(0, 'Specials'), season(1, 'Season 1'), season(2, null)],
+  seasons: [
+    season(0, 'Specials', 'en'),
+    season(1, 'Season 1', 'en'),
+    season(2, null, null),
+    season(3, 'הפרק האחרון', 'he'),
+  ],
 }
 
 const SEARCH = (q: string, results: unknown[]) => ({
@@ -92,10 +98,15 @@ function setup(routes: Record<string, FakeRoute>, route = '/post') {
     <Routes>
       <Route path="/post" element={<ComposePage />} />
       <Route path="/" element={<p>HOME</p>} />
+      <Route path="/posts/:id" element={<PostRoute />} />
     </Routes>,
     { api: fake.api, route },
   )
   return { fake, ...view }
+}
+
+function PostRoute() {
+  return <p>POST {useParams().id}</p>
 }
 
 /** The JSON body of the first call to `"METHOD /path"`. */
@@ -168,10 +179,11 @@ describe('ComposePage', () => {
     const group = await screen.findByRole('radiogroup', { name: he.compose.season })
     const labels = Array.from(group.querySelectorAll('label')).map((l) => l.textContent)
     // Whole series first; TMDB's "Specials" (season 0) would clash with it, so it is not offered.
-    expect(labels).toEqual([he.post.wholeSeries, 'Season 1', 'עונה 2'])
+    // TMDB's name only when it is in the UI language (A6); else the localised "Season N".
+    expect(labels).toEqual([he.post.wholeSeries, 'עונה 1', 'עונה 2', 'הפרק האחרון'])
     expect(screen.getByRole('radio', { name: he.post.wholeSeries })).toBeChecked()
 
-    await typist.click(screen.getByRole('radio', { name: 'Season 1' }))
+    await typist.click(screen.getByRole('radio', { name: 'עונה 1' }))
     fireEvent.change(slider(), { target: { value: '7.5' } })
     await typist.click(post())
     await screen.findByText('HOME')
@@ -182,15 +194,25 @@ describe('ComposePage', () => {
     })
   })
 
-  it('keep private sends is_shared false', async () => {
-    const { fake } = setup({})
+  it('keep private sends is_shared false and opens the post, as Home never shows it', async () => {
+    const { fake } = setup({ 'POST /posts': { ...POST_CARD, id: 9, is_shared: false } })
     await search('odyssey', 'The Odyssey')
-    expect(await screen.findByRole('radio', { name: he.compose.share })).toBeChecked()
-    await typist.click(screen.getByRole('radio', { name: he.compose.keepPrivate }))
+    const visibility = await screen.findByRole('radiogroup', { name: he.compose.visibility })
+    expect(within(visibility).getByRole('radio', { name: he.compose.share })).toBeChecked()
+    await typist.click(within(visibility).getByRole('radio', { name: he.compose.keepPrivate }))
     fireEvent.change(slider(), { target: { value: '8' } })
     await typist.click(post())
-    await screen.findByText('HOME')
+    expect(await screen.findByText('POST 9')).toBeInTheDocument()
     expect(bodyOf(fake, 'POST /posts')).toMatchObject({ is_shared: false })
+  })
+
+  it('says so when a search finds nothing', async () => {
+    setup(SEARCH('zzz', []))
+    fireEvent.change(await screen.findByRole('searchbox', { name: he.compose.search }), {
+      target: { value: 'zzz' },
+    })
+    expect(await screen.findByText(he.compose.noResults)).toBeInTheDocument()
+    expect(screen.queryByText(he.auth.loading)).not.toBeInTheDocument()
   })
 
   it('counts emoji as characters and allows 500', async () => {
@@ -285,7 +307,7 @@ describe('ComposePage', () => {
   it('Change returns to the search and forgets the season', async () => {
     const { fake } = setup({})
     await search('severance', 'Severance')
-    await typist.click(await screen.findByRole('radio', { name: 'Season 1' }))
+    await typist.click(await screen.findByRole('radio', { name: 'עונה 1' }))
     await typist.click(screen.getByRole('button', { name: he.compose.change }))
     await search('odyssey', 'The Odyssey')
     expect(await screen.findByRole('heading', { name: 'The Odyssey' })).toBeInTheDocument()

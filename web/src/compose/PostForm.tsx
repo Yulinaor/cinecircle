@@ -101,6 +101,7 @@ export function PostForm({
         {t('compose.spoiler')}
       </label>
       <fieldset role="radiogroup" className="flex flex-col gap-1">
+        <legend className="mb-1 text-sm font-medium">{t('compose.visibility')}</legend>
         <label className={OPTION}>
           <input
             type="radio"

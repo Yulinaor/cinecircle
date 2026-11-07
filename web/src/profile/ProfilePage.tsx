@@ -151,11 +151,19 @@ function Stats({ details }: { details: NonNullable<UserProfile['details']> }) {
   }
   return (
     <ul className="flex flex-wrap items-center gap-x-5">
-      {stat(details.post_count, t('profile.posts'))}
+      {stat(details.post_count, t('profile.posts', { count: details.post_count }))}
       {details.followers_count !== null &&
-        stat(details.followers_count, t('profile.followers'), '/connections')}
+        stat(
+          details.followers_count,
+          t('profile.followers', { count: details.followers_count }),
+          '/connections',
+        )}
       {details.following_count !== null &&
-        stat(details.following_count, t('profile.following'), '/connections')}
+        stat(
+          details.following_count,
+          t('profile.following', { count: details.following_count }),
+          '/connections',
+        )}
     </ul>
   )
 }

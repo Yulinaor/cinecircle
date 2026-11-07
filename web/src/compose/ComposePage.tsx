@@ -113,7 +113,8 @@ function ComposeForm({ title, onChange }: { title: TitleDetail; onChange: () => 
   function submit(values: PostFormValues) {
     create.mutate(
       { title_id: title.id, season_number: season, ...values },
-      { onSuccess: () => void navigate('/') },
+      // A private post never shows on Home, so open the post itself.
+      { onSuccess: (card) => void navigate(card.is_shared ? '/' : `/posts/${card.id}`) },
     )
   }
 

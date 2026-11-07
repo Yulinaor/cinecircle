@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import type { Season } from '../api/types'
+import { useSeasonName } from '../posts/seasonName'
 
 /**
  * Whole series (0) or one season of it. TMDB's "Specials" is season 0 too, so it is not offered:
@@ -15,11 +16,15 @@ export function SeasonPicker({
   onChange: (season: number) => void
 }) {
   const { t } = useTranslation()
+  const seasonName = useSeasonName()
   const options = [
     { number: 0, label: t('post.wholeSeries') },
     ...seasons
       .filter((s) => s.season_number > 0)
-      .map((s) => ({ number: s.season_number, label: s.name ?? t('post.season', { n: s.season_number }) })),
+      .map((s) => ({
+        number: s.season_number,
+        label: seasonName(s.season_number, s.name, s.name_lang),
+      })),
   ]
   return (
     <fieldset role="radiogroup" className="flex flex-col gap-1">
