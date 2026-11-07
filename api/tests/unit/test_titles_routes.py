@@ -146,6 +146,7 @@ def test_detail_shape(client, stub):
         {
             "season_number": 1,
             "name": "Season 1",
+            "name_lang": "en",
             "overview": "Intro",
             "air_date": None,
             "episode_count": 9,
@@ -153,6 +154,9 @@ def test_detail_shape(client, stub):
         }
     ]
     assert body["stale"] is False and body["id"] == 7 and body["name_lang"] == "en"
+    # No Hebrew name: a Hebrew screen gets the English one, labelled as English (A6).
+    season = client.get("/titles/7", params={"lang": "he"}).json()["seasons"][0]
+    assert (season["name"], season["name_lang"]) == ("Season 1", "en")
 
 
 def test_poster_url_built_and_null_safe(client, stub):

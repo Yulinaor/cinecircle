@@ -99,6 +99,39 @@ def test_season_rules(api):
     assert r.status_code == 422
 
 
+def test_title_seasons_name_their_language(api):
+    gal = api("gal")
+    severance = _cache(gal, "series", SEVERANCE_ID)
+    first = next(s for s in severance["seasons"] if s["season_number"] == 1)
+    assert first["name_lang"] == "en"  # no Hebrew name until someone posts the season (P8)
+
+    r = gal.post("/posts", json={"title_id": severance["id"], "season_number": 1, "rating": 8})
+    assert r.status_code == 201, r.text
+    for lang in ("he", "en"):
+        seasons = gal.get(f"/titles/{severance['id']}", params={"lang": lang}).json()["seasons"]
+        first = next(s for s in seasons if s["season_number"] == 1)
+        assert (first["name"] is not None, first["name_lang"]) == (True, lang)
+
+
+def test_season_text_is_filled_before_the_request_transaction(api):
+    """The TMDB call must not hold the request's pooled connection open while it waits."""
+    gal = api("gal")
+    severance = _cache(gal, "series", SEVERANCE_ID)
+    state = gal.app.state
+    fill = state.title_service.fill_season_text
+    checked_out = []
+
+    def recording_fill(title_id: int, season_number: int) -> None:
+        checked_out.append(state.engine.pool.checkedout())
+        fill(title_id, season_number)
+
+    state.title_service.fill_season_text = recording_fill
+    r = gal.post("/posts", json={"title_id": severance["id"], "season_number": 1, "rating": 8})
+    assert r.status_code == 201, r.text
+    assert checked_out == [0]
+    assert r.json()["season"]["name_lang"] == "he"  # still filled before the insert
+
+
 def test_duplicate_is_409_with_post_id(api):
     gal = api("gal")
     odyssey = _cache(gal, "movie", ODYSSEY_ID)
