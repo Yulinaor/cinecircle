@@ -18,6 +18,7 @@ from cinecircle_api.pagination import BIGINT_MAX
 from cinecircle_api.people.deps import Profile, require_profile
 from cinecircle_api.posts import repository
 from cinecircle_api.posts.models import CreatePost, PostCard, UpdatePost, post_card
+from cinecircle_api.wishlist import repository as wishlist_repository
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 NEEDS_PROFILE = [Depends(require_profile)]
@@ -61,6 +62,7 @@ def create(
         raise HTTPException(404, "not_found") from None
     except repository.SeasonInvalid:
         raise HTTPException(422, "season_invalid") from None
+    wishlist_repository.mark_watched_on_post(db, body.title_id)  # plan P9, same transaction
     return _card_or_404(db, post_id, lang)
 
 

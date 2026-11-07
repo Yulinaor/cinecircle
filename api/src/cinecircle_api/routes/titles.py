@@ -21,6 +21,7 @@ from cinecircle_api.catalog.service import (
 from cinecircle_api.db import UserDb
 from cinecircle_api.posts import repository as posts_repository
 from cinecircle_api.posts.models import TitlePage, post_card
+from cinecircle_api.wishlist import repository as wishlist_repository
 
 router = APIRouter(prefix="/titles", tags=["titles"])
 
@@ -79,4 +80,8 @@ def by_id(
     needs no profile; a viewer without one has no posts to see, so RLS returns none."""
     detail = _detail(lambda: service.get(title_id), lang)
     rows = posts_repository.title_posts(db, detail.id)
-    return TitlePage(**detail.model_dump(), posts=[post_card(row, lang) for row in rows])
+    return TitlePage(
+        **detail.model_dump(),
+        posts=[post_card(row, lang) for row in rows],
+        in_wishlist=wishlist_repository.in_wishlist(db, detail.id),
+    )

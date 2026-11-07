@@ -264,3 +264,22 @@ def gal_content(people, clean_catalog, engine) -> GalContent:
             pair,
         )
     return GalContent(shared_post_id=shared, private_post_id=private, title_ids=(first, second))
+
+
+GAL_WISHLIST_TITLE = "gal-wishlist-title-sentinel"
+
+
+@pytest.fixture
+def gal_wish(gal_content, engine) -> int:
+    """A third cached movie on Gal's wishlist (source `search`), inserted as postgres. No post
+    mentions it, so only Gal's own wishlist can ever show its name. Returns its title id."""
+    with engine.begin() as conn:
+        title_id = conn.scalar(_INSERT_TITLE, {"tmdb_id": 3, "name": GAL_WISHLIST_TITLE})
+        conn.execute(
+            sa.text(
+                "INSERT INTO app.wishlist_items (owner_id, title_id, source)"
+                " VALUES (:gal, :title, 'search')"
+            ),
+            {"gal": GAL.id, "title": title_id},
+        )
+    return title_id

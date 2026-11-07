@@ -16,16 +16,10 @@ from cinecircle_api.pagination import Cursor
 from cinecircle_api.people.repository import CardRow, card_columns, card_join_follow, pop_card_row
 from cinecircle_api.posts.repository import TITLE_COLUMNS, genre_rows
 from cinecircle_api.wishlist.models import SaveTitle, WishlistSource, WishlistStatus
+from cinecircle_api.wishlist.sql import IN_WISHLIST_SQL
 
 _SOURCE_VALID = "wishlist_source_valid"  # raised by the app.wishlist_check_source trigger
 _TITLE_FKEY = "wishlist_items_title_id_fkey"
-
-# For other queries: whether the caller's own list holds a title. `{title}` is a column
-# reference (or a bind parameter). It reflects nobody else's list (plan P5).
-IN_WISHLIST_SQL = (
-    "EXISTS (SELECT 1 FROM app.wishlist_items wl_own"
-    " WHERE wl_own.owner_id = auth.uid() AND wl_own.title_id = {title})"
-)
 
 
 class TitleMissing(Exception):
@@ -115,6 +109,7 @@ _MARK_WATCHED = sa.text(
 _DELETE = sa.text(
     "DELETE FROM app.wishlist_items WHERE owner_id = auth.uid() AND title_id = :title_id"
 )
+_IN_WISHLIST = sa.text("SELECT " + IN_WISHLIST_SQL.format(title=":title_id"))
 
 
 def wishlist_row(row: sa.Row) -> WishlistRow:
@@ -162,6 +157,11 @@ def save(conn: Connection, data: SaveTitle) -> bool:
         if constraint == _TITLE_FKEY:
             raise TitleMissing from None
         raise
+
+
+def in_wishlist(conn: Connection, title_id: int) -> bool:
+    """Whether the caller's own list holds the title (False for someone with no list)."""
+    return bool(conn.scalar(_IN_WISHLIST, {"title_id": title_id}))
 
 
 def set_status(conn: Connection, title_id: int, status: WishlistStatus) -> bool:

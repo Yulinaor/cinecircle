@@ -79,6 +79,7 @@ class PostCard(BaseModel):
     created_at: datetime
     updated_at: datetime
     edited: bool
+    in_wishlist: bool  # the viewer's own list holds the title (plan P5): nobody else's
 
 
 class PostPage(BaseModel):
@@ -164,10 +165,13 @@ def post_card(row: PostRow, lang: Locale) -> PostCard:
         created_at=row.created_at,
         updated_at=row.updated_at,
         edited=row.updated_at > row.created_at,
+        in_wishlist=row.in_wishlist,
     )
 
 
 class TitlePage(TitleDetail):
-    """A title with the posts the viewer may see on it (plan P9)."""
+    """A title with the posts the viewer may see on it (plan P9) and whether the viewer's own
+    wishlist holds it (plan P5)."""
 
     posts: list[PostCard]
+    in_wishlist: bool

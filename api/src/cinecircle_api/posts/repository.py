@@ -17,6 +17,7 @@ from cinecircle_api.catalog.parse import GenreRow, MediaType, TypeFilter
 from cinecircle_api.pagination import PAGE_SIZE, Cursor
 from cinecircle_api.people.repository import CardRow, card_columns, card_join_follow, pop_card_row
 from cinecircle_api.posts.models import CreatePost
+from cinecircle_api.wishlist.sql import IN_WISHLIST_SQL
 
 _UNIQUE = "posts_author_id_title_id_season_number_key"
 _TITLE_FKEY = "posts_title_id_fkey"
@@ -65,6 +66,7 @@ class PostRow:
     imdb_rating: Decimal | None
     tmdb_rating: Decimal | None
     genres: tuple[GenreRow, ...]
+    in_wishlist: bool
     season_name_he: str | None
     season_name_en: str | None
     season_overview_he: str | None
@@ -87,7 +89,8 @@ TITLE_COLUMNS = (
 )
 
 # The shared card query: `p` = the post, `pr` = its author, `f` = the viewer's follow row
-# towards the author, `t` = the title, `s` = the season (no row for season 0). Callers append
+# towards the author, `t` = the title, `s` = the season (no row for season 0); `in_wishlist` is
+# the viewer's own saved state for the title (plan P5). Callers append
 # WHERE / ORDER BY / LIMIT and turn each row into a PostRow with `post_row`.
 POST_SELECT = (
     "SELECT p.id, p.title_id, p.season_number, p.rating, p.opinion, p.contains_spoilers,"
@@ -95,7 +98,9 @@ POST_SELECT = (
     + card_columns("pr", "author_")
     + ", "
     + TITLE_COLUMNS
-    + ", s.name_he AS season_name_he, s.name_en AS season_name_en,"
+    + ", "
+    + IN_WISHLIST_SQL.format(title="p.title_id")
+    + " AS in_wishlist, s.name_he AS season_name_he, s.name_en AS season_name_en,"
     " s.overview_he AS season_overview_he, s.overview_en AS season_overview_en,"
     " s.poster_path AS season_poster_path"
     " FROM app.posts p"

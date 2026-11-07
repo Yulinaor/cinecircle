@@ -229,7 +229,7 @@ def test_my_post_is_the_newest_on_the_title_any_season(api):
         "/posts", json={"title_id": severance["id"], "season_number": 1, "rating": 9.5}
     )
     assert whole.status_code == season.status_code == 201
-    (item,) = _items(dana)
+    (item,) = _items(dana, "watched")  # the first post marked the wanted title watched
     assert item["my_post"] == {"id": season.json()["id"], "rating": 9.5}
 
 
