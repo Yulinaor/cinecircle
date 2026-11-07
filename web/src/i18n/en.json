@@ -227,6 +227,18 @@
       "watched": "Nothing marked watched yet."
     }
   },
+  "discover": {
+    "type": { "movie": "Movies", "series": "Series" },
+    "section": {
+      "trending": "Trending this week",
+      "top_rated": "Top rated",
+      "because": "Because you rated {{name}} {{rating}}"
+    },
+    "fromTmdb": "From TMDB",
+    "updated": "Updated {{when}}",
+    "unavailable": "Discover can't load right now. Try again in a few minutes.",
+    "allGenres": "All genres"
+  },
   "lang": { "he": "Hebrew", "en": "English" },
   "notFound": {
     "title": "Not found",

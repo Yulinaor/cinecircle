@@ -198,3 +198,41 @@ export type OnboardingBody = {
   genres: string[]
   ratings: { title_id: number; rating: number }[]
 }
+
+export type DiscoverSectionKey = 'trending' | 'top_rated' | 'because'
+
+/** The viewer's own rating that a "because you rated" section is built on. */
+export type DiscoverSeed = {
+  title_id: number
+  name: string | null
+  name_lang: Lang | null
+  rating: number
+}
+
+/** An external (TMDB) title: no CineCircle user content, only the viewer's own `taste`. */
+export type DiscoverItem = {
+  tmdb_id: number
+  media_type: MediaType
+  name: string | null
+  name_lang: Lang | null
+  poster_url: string | null
+  year: number | null
+  genres: { id: number; name: string }[]
+  tmdb_rating: number | null
+  imdb_rating: number | null
+  taste: Taste | null
+}
+
+export type DiscoverSection = {
+  key: DiscoverSectionKey
+  seed: DiscoverSeed | null
+  items: DiscoverItem[]
+}
+
+export type DiscoverPage = {
+  type: MediaType
+  sections: DiscoverSection[]
+  genres: { id: number; name: string }[]
+  stale: boolean
+  fetched_at: string | null
+}

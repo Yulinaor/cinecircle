@@ -227,6 +227,18 @@
       "watched": "עדיין לא סומנו כותרים כנצפים."
     }
   },
+  "discover": {
+    "type": { "movie": "סרטים", "series": "סדרות" },
+    "section": {
+      "trending": "חם השבוע",
+      "top_rated": "הכי מדורגים",
+      "because": "כי דירגת את {{name}} {{rating}}"
+    },
+    "fromTmdb": "מתוך TMDB",
+    "updated": "עודכן {{when}}",
+    "unavailable": "אי אפשר לטעון את ״גלו״ כרגע. נסו שוב בעוד כמה דקות.",
+    "allGenres": "כל הז׳אנרים"
+  },
   "lang": { "he": "עברית", "en": "אנגלית" },
   "notFound": {
     "title": "לא נמצא",

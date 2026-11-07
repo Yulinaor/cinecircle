@@ -204,6 +204,32 @@ describe('TitlePage', () => {
     })
   })
 
+  it('saves from Discover with source discover', async () => {
+    const fake = fakeApi({
+      'GET /titles/3?lang=he': TITLE,
+      'POST /wishlist': WISHLIST_ITEM,
+    })
+    renderTitle(fake.api, '/titles/3?via=discover')
+    await userEvent.click(await screen.findByRole('button', { name: he.wishlist.save }))
+    expect(fake.calls).toHaveBeenCalledWith('/wishlist', {
+      method: 'POST',
+      body: { title_id: 3, source: 'discover' },
+    })
+  })
+
+  it('ignores an unknown via', async () => {
+    const fake = fakeApi({
+      'GET /titles/3?lang=he': TITLE,
+      'POST /wishlist': WISHLIST_ITEM,
+    })
+    renderTitle(fake.api, '/titles/3?via=feed')
+    await userEvent.click(await screen.findByRole('button', { name: he.wishlist.save }))
+    expect(fake.calls).toHaveBeenCalledWith('/wishlist', {
+      method: 'POST',
+      body: { title_id: 3, source: 'search' },
+    })
+  })
+
   it('shows Saved when the title is on your wishlist', async () => {
     renderTitle(serve({ ...TITLE, in_wishlist: true }).api)
     expect(await screen.findByRole('button', { name: he.wishlist.saved })).toHaveAttribute(
