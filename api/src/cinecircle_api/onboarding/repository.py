@@ -29,8 +29,10 @@ _MY_QUIZ_RATINGS = sa.text(
     "   AND t.media_type = ANY(:media_types) AND t.tmdb_id = ANY(:tmdb_ids)"
 )
 _DELETE_PICKS = sa.text("DELETE FROM app.user_genre_prefs WHERE user_id = auth.uid()")
+# Two submits at once can both insert the same pick: the second finds it there and adds nothing.
 _INSERT_PICK = sa.text(
     "INSERT INTO app.user_genre_prefs (user_id, genre_id) VALUES (auth.uid(), :genre_id)"
+    " ON CONFLICT DO NOTHING"
 )
 # A title the caller already posted on (season 0) keeps its post: the conflict inserts nothing.
 _INSERT_PRIVATE = sa.text(

@@ -60,11 +60,12 @@ def test_profile_matches_the_spec_affinities(spec, engine):
 def test_title_example_end_to_end(spec, engine):
     with as_user(engine, DANA) as conn:
         ctx = TasteContext.load(conn)
-        assert ctx.for_title(SEVERANCE_GENRES, 8.7, None, "en") == Taste(
-            fit=79, genres=["Science Fiction", "Mystery"], agreement=None
-        )
         stored = title_inputs(conn, spec.severance_title_id)
         assert stored is not None
+        # Scored from what the database returns for the title, not from hand-built inputs.
+        assert ctx.for_title(stored.genres, stored.imdb_rating, stored.tmdb_rating, "en") == Taste(
+            fit=79, genres=["Science Fiction", "Mystery"], agreement=None
+        )
         assert [g.id for g in stored.genres] == [DRAMA, SCIFI, MYSTERY]
         assert float(stored.imdb_rating) == 8.7
         assert stored.tmdb_rating is None

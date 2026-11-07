@@ -103,9 +103,7 @@ def test_me_reports_whether_taste_is_unlocked(api, spec):
 
 
 def test_taste_unlocks_with_picks_or_ratings(api, spec, engine):
-    with (
-        engine.begin() as conn
-    ):  # Ron follows Gal, accepted, but has rated nothing and picked nothing
+    with engine.begin() as conn:  # Ron follows Gal, accepted, but has rated nothing, picked nothing
         conn.execute(
             sa.text(
                 "UPDATE app.follows SET status = 'accepted'"
