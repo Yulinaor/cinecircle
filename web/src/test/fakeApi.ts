@@ -3,6 +3,7 @@ import { ApiError } from '../api/client'
 import type {
   DiscoverItem,
   DiscoverPage,
+  ExternalReview,
   OnboardingState,
   PostCard,
   TitleDetail,
@@ -152,6 +153,15 @@ export function quizTitleRoutes(lang: 'he' | 'en' = 'he'): Record<string, TitleD
       } satisfies TitleDetail,
     ]),
   )
+}
+
+/** A TMDB review of a title, 7.5/10, by someone named jdoe; the excerpt contains literal markup. */
+export const EXTERNAL_REVIEW: ExternalReview = {
+  author_name: 'jdoe',
+  excerpt: 'A <b>x</b> film that stays with you.',
+  url: 'https://www.themoviedb.org/review/abc',
+  author_rating: 7.5,
+  source: 'tmdb',
 }
 
 /** A TMDB movie in Discover: Hebrew name, TMDB 7.8 only, no Taste Match (still locked). */

@@ -239,6 +239,17 @@
     "unavailable": "אי אפשר לטעון את ״גלו״ כרגע. נסו שוב בעוד כמה דקות.",
     "allGenres": "כל הז׳אנרים"
   },
+  "reviews": {
+    "heading": "ביקורות",
+    "by": "ביקורת של {{author}} ב־TMDB",
+    "rated": "דירג/ה {{rating}}/10",
+    "read": "לקריאה ב־TMDB"
+  },
+  "about": {
+    "heading": "אודות",
+    "tmdbNotice": "מוצר זה משתמש ב־API של TMDB אך אינו מאושר או מוסמך על ידי TMDB.",
+    "omdb": "דירוגי IMDb, Rotten Tomatoes ו־Metacritic מגיעים מ־OMDb."
+  },
   "lang": { "he": "עברית", "en": "אנגלית" },
   "notFound": {
     "title": "לא נמצא",

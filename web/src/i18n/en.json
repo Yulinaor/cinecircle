@@ -239,6 +239,17 @@
     "unavailable": "Discover can't load right now. Try again in a few minutes.",
     "allGenres": "All genres"
   },
+  "reviews": {
+    "heading": "Reviews",
+    "by": "Review by {{author}} on TMDB",
+    "rated": "Rated {{rating}}/10",
+    "read": "Read on TMDB"
+  },
+  "about": {
+    "heading": "About",
+    "tmdbNotice": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+    "omdb": "Ratings: IMDb, Rotten Tomatoes and Metacritic via OMDb."
+  },
   "lang": { "he": "Hebrew", "en": "English" },
   "notFound": {
     "title": "Not found",

@@ -14,6 +14,7 @@ import { parsePostId } from '../posts/usePost'
 import { TasteLine } from '../taste/TasteLine'
 import { SaveButton } from '../wishlist/SaveButton'
 import { ExternalRatings } from './ExternalRatings'
+import { ExternalReviews } from './ExternalReviews'
 
 /** `/titles/:id`. A malformed id, or a title the API says is missing, is Not found. */
 export function TitlePage() {
@@ -130,6 +131,8 @@ function TitleBody({ title, source }: { title: TitlePageData; source: WishlistSo
         </Link>
         <SaveButton titleId={title.id} saved={title.in_wishlist} source={source} />
       </div>
+
+      <ExternalReviews titleId={title.id} />
 
       {title.posts.length > 0 && (
         <>

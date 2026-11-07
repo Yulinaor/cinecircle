@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../api/client'
 import { initI18n, setLocale } from '../i18n'
+import en from '../i18n/en.json'
 import he from '../i18n/he.json'
 import { fakeMeApi, PROFILE } from '../test/fakeMeApi'
 import { renderApp } from '../test/renderApp'
@@ -67,5 +68,28 @@ describe('SettingsPage', () => {
     await userEvent.type(await screen.findByLabelText(he.settings.bio), 'hi')
     await userEvent.click(screen.getByRole('button', { name: he.settings.save }))
     expect(await screen.findByRole('alert')).toHaveTextContent(he.common.error)
+  })
+
+  it('Settings shows the TMDB notice and OMDb line', async () => {
+    renderApp(<SettingsPage />, { api: fakeMeApi().api })
+    expect(await screen.findByRole('heading', { name: he.about.heading })).toBeInTheDocument()
+    expect(screen.getByText(he.about.tmdbNotice)).toBeInTheDocument()
+    expect(screen.getByText(he.about.omdb)).toBeInTheDocument()
+    const link = screen.getByRole('link', { name: 'TMDB' })
+    expect(link).toHaveAttribute('href', 'https://www.themoviedb.org/')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link.className).toContain('min-h-11')
+  })
+
+  it('shows the same notice in English', async () => {
+    await setLocale('en')
+    renderApp(<SettingsPage />, { api: fakeMeApi({ ...PROFILE, locale: 'en' }).api })
+    expect(await screen.findByRole('heading', { name: en.about.heading })).toBeInTheDocument()
+    expect(en.about.tmdbNotice).toBe(
+      'This product uses the TMDB API but is not endorsed or certified by TMDB.',
+    )
+    expect(screen.getByText(en.about.tmdbNotice)).toBeInTheDocument()
+    expect(screen.getByText(en.about.omdb)).toBeInTheDocument()
   })
 })

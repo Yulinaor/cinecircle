@@ -236,3 +236,14 @@ export type DiscoverPage = {
   stale: boolean
   fetched_at: string | null
 }
+
+/** A review of a title written on TMDB: shown with its author and a link, never as a CineCircle post. */
+export type ExternalReview = {
+  author_name: string
+  excerpt: string
+  url: string
+  author_rating: number | null
+  source: 'tmdb'
+}
+
+export type ReviewsPage = { reviews: ExternalReview[] }

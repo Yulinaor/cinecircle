@@ -7,7 +7,7 @@ import type { TitlePage as TitlePageData } from '../api/types'
 import { initI18n, setLocale } from '../i18n'
 import en from '../i18n/en.json'
 import he from '../i18n/he.json'
-import { fakeApi, POST_CARD, WISHLIST_ITEM } from '../test/fakeApi'
+import { EXTERNAL_REVIEW, fakeApi, POST_CARD, WISHLIST_ITEM } from '../test/fakeApi'
 import { renderApp } from '../test/renderApp'
 import { ExternalRatings } from './ExternalRatings'
 import { TitlePage } from './TitlePage'
@@ -169,6 +169,17 @@ describe('TitlePage', () => {
     expect(articles).toHaveLength(2)
     expect(separator.compareDocumentPosition(heading)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
     expect(heading.compareDocumentPosition(articles[0]!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+  })
+
+  it('shows TMDB reviews in the external part, above the followed-people divider', async () => {
+    const fake = fakeApi({
+      'GET /titles/3?lang=he': { ...TITLE, posts: [POST_CARD] },
+      'GET /titles/3/reviews': { reviews: [EXTERNAL_REVIEW] },
+    })
+    renderTitle(fake.api)
+    const reviews = await screen.findByRole('heading', { name: he.reviews.heading })
+    const divider = screen.getByRole('separator')
+    expect(reviews.compareDocumentPosition(divider)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
   })
 
   it('omits the section when there are no posts', async () => {
