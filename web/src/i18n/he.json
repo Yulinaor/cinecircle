@@ -37,7 +37,14 @@
   },
   "common": {
     "error": "משהו השתבש. נסו שוב.",
-    "retry": "ניסיון נוסף"
+    "retry": "ניסיון נוסף",
+    "loadMore": "טעינת עוד"
+  },
+  "feed": {
+    "filter": { "all": "הכול", "movie": "סרטים", "series": "סדרות" },
+    "empty": "עדיין אין פוסטים. עקבו אחרי אנשים כדי לראות מה הם צופים.",
+    "findPeople": "חיפוש אנשים",
+    "createPost": "פרסמו דירוג"
   },
   "onboarding": {
     "title": "יוצרים פרופיל",
@@ -84,5 +91,81 @@
     "followRequest": "{{name}} ביקש/ה לעקוב אחריך",
     "followAccepted": "{{name}} אישר/ה את בקשת המעקב שלך",
     "empty": "אין התראות עדיין."
+  },
+  "post": {
+    "season": "עונה {{n}}",
+    "wholeSeries": "כל הסדרה",
+    "private": "פרטי",
+    "edited": "נערך",
+    "spoiler": "הדעה הזו מכילה ספוילר.",
+    "showSpoiler": "הצגת הספוילר",
+    "edit": "עריכה",
+    "outOf": "/10",
+    "imdb": "IMDb",
+    "tmdb": "TMDB",
+    "minutes": "{{n}} דק׳"
+  },
+  "compose": {
+    "title": "פוסט חדש",
+    "search": "חיפוש סרט או סדרה",
+    "searchHint": "הקלידו את השם של סרט או סדרה.",
+    "noResults": "לא נמצאו תוצאות.",
+    "movie": "סרט",
+    "series": "סדרה",
+    "change": "שינוי",
+    "season": "עונה",
+    "rating": "דירוג",
+    "ratingUnset": "עדיין לא נבחר דירוג",
+    "decrease": "הורידו חצי נקודה",
+    "increase": "הוסיפו חצי נקודה",
+    "opinion": "הדעה שלכם (לא חובה)",
+    "opinionCount": "{{n}}/{{max}}",
+    "spoiler": "הדעה מכילה ספוילר",
+    "share": "שיתוף עם העוקבים",
+    "keepPrivate": "להשאיר פרטי",
+    "visibility": "מי יכול לראות",
+    "submit": "פרסום",
+    "save": "שמירה",
+    "delete": "מחיקה",
+    "confirmDelete": "למחוק את הפוסט?",
+    "yes": "כן",
+    "cancel": "ביטול",
+    "errors": {
+      "catalog_unavailable": "לא הצלחנו לטעון את הפרטים, נסו שוב",
+      "post_exists": "כבר פרסמת על זה.",
+      "editExisting": "לעריכת הפוסט הקיים",
+      "season_invalid": "העונה הזו לא קיימת בסדרה. בחרו עונה אחרת.",
+      "opinion_too_long": "הדעה ארוכה מדי. אפשר עד {{max}} תווים."
+    }
+  },
+  "profile": {
+    "posts_one": "פוסט",
+    "posts_two": "פוסטים",
+    "posts_other": "פוסטים",
+    "followers_one": "עוקב/ת",
+    "followers_two": "עוקבים",
+    "followers_other": "עוקבים",
+    "following_one": "במעקב",
+    "following_two": "במעקב",
+    "following_other": "במעקב",
+    "editProfile": "עריכת פרופיל",
+    "findPeople": "חיפוש אנשים",
+    "connections": "חיבורים",
+    "locked": "החשבון פרטי. עקבו כדי לראות את הפוסטים.",
+    "noPosts": "אין פוסטים עדיין."
+  },
+  "title": {
+    "postAbout": "פרסמו על זה",
+    "seasons": "עונות",
+    "episodes": "{{n}} פרקים",
+    "votes": "{{n}} הצבעות",
+    "fromPeopleYouFollow": "מאנשים שבמעקב שלך",
+    "stale": "ייתכן שהפרטים אינם מעודכנים."
+  },
+  "lang": { "he": "עברית", "en": "אנגלית" },
+  "notFound": {
+    "title": "לא נמצא",
+    "body": "הדף הזה לא קיים, או שאין לכם גישה אליו.",
+    "home": "חזרה לדף הבית"
   }
 }

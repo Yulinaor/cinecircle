@@ -40,5 +40,8 @@ class TmdbClient:
             f"{kind}/{tmdb_id}", language="en-US", append_to_response="external_ids,translations"
         )
 
+    def season_details(self, tmdb_id: int, season_number: int, language: TmdbLanguage) -> dict:
+        return self._get(f"tv/{tmdb_id}/season/{season_number}", language=language)
+
     def genre_list(self, kind: Literal["movie", "tv"], language: TmdbLanguage) -> dict:
         return self._get(f"genre/{kind}/list", language=language)

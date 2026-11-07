@@ -7,7 +7,9 @@ from fastapi.testclient import TestClient
 from cinecircle_api.catalog.parse import GenreRow, SearchResult
 from cinecircle_api.catalog.repository import SeasonRow, TitleRow
 from cinecircle_api.catalog.service import CachedTitle, CatalogUnavailable, TitleNotFound
+from cinecircle_api.db import user_session
 from cinecircle_api.main import create_app
+from cinecircle_api.routes import titles as titles_route
 from tests.tokens import auth_settings, make_token
 
 DEAD = "postgresql+psycopg://postgres:postgres@127.0.0.1:1/postgres"
@@ -71,9 +73,12 @@ def stub():
 
 
 @pytest.fixture
-def client(stub):
+def client(stub, monkeypatch):
     app = create_app(auth_settings(DEAD))
     app.state.title_service = stub
+    # /titles/{id} also reads the viewer's posts; these tests are about the catalogue part.
+    app.dependency_overrides[user_session] = lambda: None
+    monkeypatch.setattr(titles_route.posts_repository, "title_posts", lambda conn, title_id: [])
     return TestClient(app, headers=SIGNED_IN)
 
 
@@ -130,6 +135,7 @@ def test_detail_shape(client, stub):
         seasons=(SeasonRow(1, "Season 1", None, "Intro", None, None, None, 9),),
     )
     body = client.get("/titles/7", params={"lang": "en"}).json()
+    assert body["posts"] == []
     assert body["ratings"] == {
         "imdb": {"rating": 8.4, "votes": 477953},
         "rotten_tomatoes": 94,
@@ -140,6 +146,7 @@ def test_detail_shape(client, stub):
         {
             "season_number": 1,
             "name": "Season 1",
+            "name_lang": "en",
             "overview": "Intro",
             "air_date": None,
             "episode_count": 9,
@@ -147,6 +154,9 @@ def test_detail_shape(client, stub):
         }
     ]
     assert body["stale"] is False and body["id"] == 7 and body["name_lang"] == "en"
+    # No Hebrew name: a Hebrew screen gets the English one, labelled as English (A6).
+    season = client.get("/titles/7", params={"lang": "he"}).json()["seasons"][0]
+    assert (season["name"], season["name_lang"]) == ("Season 1", "en")
 
 
 def test_poster_url_built_and_null_safe(client, stub):

@@ -1,10 +1,8 @@
-"""Hand-written SQL for profiles, cards and posts. Every function takes the request's `UserDb`
+"""Hand-written SQL for profiles and cards. Every function takes the request's `UserDb`
 connection: it runs as the signed-in user, so RLS decides what comes back and `auth.uid()` is
 the viewer. The caller owns the transaction (never commit or roll back here)."""
 
 from dataclasses import dataclass
-from datetime import datetime
-from decimal import Decimal
 from typing import Final
 from uuid import UUID
 
@@ -12,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy import Connection
 from sqlalchemy.exc import IntegrityError
 
-from cinecircle_api.catalog.parse import Locale, MediaType
+from cinecircle_api.catalog.parse import Locale
 from cinecircle_api.people.models import FollowState, MyProfile, UserCard
 
 _PROFILE_PKEY = "profiles_pkey"
@@ -50,22 +48,6 @@ class CardRow:
             avatar_url=self.avatar_url,
             follow_state=self.follow_state,
         )
-
-
-@dataclass(frozen=True)
-class PostRow:
-    id: int
-    title_id: int
-    media_type: MediaType
-    name_he: str | None
-    name_en: str | None
-    poster_path: str | None
-    season_number: int
-    rating: Decimal
-    opinion: str | None
-    contains_spoilers: bool
-    is_shared: bool
-    created_at: datetime
 
 
 # ===== My profile ================================================================================
@@ -137,16 +119,29 @@ def update_my_profile(
 
 # ===== Other people ==============================================================================
 
+
+def follow_state_sql(person: str) -> str:
+    """The viewer's follow state towards `person` (a profiles alias), read from the row `f`
+    that `card_join_follow(person)` joins."""
+    return (
+        f"CASE WHEN {person}.id = auth.uid() THEN 'self'"
+        "      WHEN f.status = 'accepted' THEN 'following'"
+        "      WHEN f.status = 'pending' THEN 'requested'"
+        "      ELSE 'none' END"
+    )
+
+
+def card_join_follow(person: str) -> str:
+    """The viewer's own follow row (`f`) towards `person` (a profiles alias)."""
+    return f" LEFT JOIN app.follows f ON f.follower_id = auth.uid() AND f.followee_id = {person}.id"
+
+
 # Pieces of a card query, shared with the follow and notification lists: they all join onto
 # `p` (the person on the card) and read `follow_state` from the viewer's own row towards `p`.
 CARD_COLUMNS = (
-    "p.id, p.username, p.display_name, p.avatar_url,"
-    " CASE WHEN p.id = auth.uid() THEN 'self'"
-    "      WHEN f.status = 'accepted' THEN 'following'"
-    "      WHEN f.status = 'pending' THEN 'requested'"
-    "      ELSE 'none' END AS follow_state"
+    "p.id, p.username, p.display_name, p.avatar_url, " + follow_state_sql("p") + " AS follow_state"
 )
-CARD_JOIN_FOLLOW = " LEFT JOIN app.follows f ON f.follower_id = auth.uid() AND f.followee_id = p.id"
+CARD_JOIN_FOLLOW = card_join_follow("p")
 CARD_FROM = " FROM app.profiles p" + CARD_JOIN_FOLLOW
 _CARD_SELECT = "SELECT " + CARD_COLUMNS + CARD_FROM
 # Raw strings: the SQL escape character is one backslash.
@@ -163,15 +158,13 @@ _DETAILS = sa.text(
     "               WHERE po.author_id = d.user_id AND po.is_shared) AS post_count"
     " FROM app.profile_details d WHERE d.user_id = :user_id"
 )
-_CAN_SEE = sa.text("SELECT (:user_id = auth.uid()) OR app.follows_approved(:user_id)")
-_POSTS = sa.text(
-    "SELECT po.id, po.title_id, t.media_type, t.name_he, t.name_en, t.poster_path,"
-    " po.season_number, po.rating, po.opinion, po.contains_spoilers, po.is_shared, po.created_at"
-    " FROM app.posts po JOIN app.titles t ON t.id = po.title_id"
-    " WHERE po.author_id = :author_id"
-    " ORDER BY po.created_at DESC, po.id DESC"
-    " LIMIT :limit"
+_FOLLOW_COUNTS = sa.text(
+    "SELECT count(*) FILTER (WHERE followee_id = auth.uid()) AS followers,"
+    "       count(*) FILTER (WHERE follower_id = auth.uid()) AS following"
+    " FROM app.follows"
+    " WHERE status = 'accepted' AND (followee_id = auth.uid() OR follower_id = auth.uid())"
 )
+_CAN_SEE = sa.text("SELECT (:user_id = auth.uid()) OR app.follows_approved(:user_id)")
 
 
 def _like_escape(text: str) -> str:
@@ -198,10 +191,11 @@ def get_details(conn: Connection, user_id: UUID) -> tuple[str | None, int] | Non
     return (row.bio, row.post_count) if row else None
 
 
+def follow_counts(conn: Connection) -> tuple[int, int]:
+    """(accepted followers, accepted followees) of the caller."""
+    row = conn.execute(_FOLLOW_COUNTS).one()
+    return row.followers, row.following
+
+
 def can_see_content(conn: Connection, user_id: UUID) -> bool:
     return bool(conn.scalar(_CAN_SEE, {"user_id": user_id}))
-
-
-def list_posts(conn: Connection, author_id: UUID, limit: int = 50) -> list[PostRow]:
-    rows = conn.execute(_POSTS, {"author_id": author_id, "limit": limit})
-    return [PostRow(**row._asdict()) for row in rows]

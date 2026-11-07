@@ -124,4 +124,20 @@ describe('FollowButton', () => {
     const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey)
     expect(keys).toEqual(expect.arrayContaining([['people'], ['connections']]))
   })
+
+  it('refreshes posts and title pages without waiting for them', async () => {
+    const fake = fakeApi({ 'POST /follows/gal': { follow_state: 'requested' } })
+    const { client } = renderApp(<FollowButton username="gal" state="none" />, { api: fake.api })
+    // Feeds and title pages may be slow to refetch: the button must not wait for them.
+    const invalidate = vi.spyOn(client, 'invalidateQueries').mockImplementation((filters) => {
+      const key = filters?.queryKey?.[0]
+      return key === 'posts' || key === 'title' ? new Promise(() => {}) : Promise.resolve()
+    })
+    await userEvent.click(screen.getByRole('button', { name: he.follow.follow }))
+    await vi.waitFor(() =>
+      expect(screen.getByRole('button', { name: he.follow.requested })).toBeEnabled(),
+    )
+    const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey)
+    expect(keys).toEqual(expect.arrayContaining([['posts'], ['title']]))
+  })
 })

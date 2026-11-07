@@ -19,16 +19,22 @@ export async function getHealth(signal?: AbortSignal): Promise<HealthResponse> {
   return (await res.json()) as HealthResponse
 }
 
-/** A non-2xx API answer. `detail` is the server's error code (e.g. `username_taken`), or "error". */
+/**
+ * A non-2xx API answer. `detail` is the server's error code (e.g. `username_taken`), or "error".
+ * `body` is the parsed JSON body (null when there was none), for extra fields such as the
+ * `post_id` of a 409 `post_exists`.
+ */
 export class ApiError extends Error {
   status: number
   detail: string
+  body: unknown
 
-  constructor(status: number, detail: string) {
+  constructor(status: number, detail: string, body: unknown = null) {
     super(`API ${status}: ${detail}`)
     this.name = 'ApiError'
     this.status = status
     this.detail = detail
+    this.body = body
   }
 }
 
@@ -52,15 +58,17 @@ export async function apiFetch<T>(path: string, init: ApiInit): Promise<T> {
   })
   if (!res.ok) {
     let detail = 'error'
+    let body: unknown = null
     try {
       const data: unknown = await res.json()
+      body = data
       if (data && typeof data === 'object' && 'detail' in data && typeof data.detail === 'string') {
         detail = data.detail
       }
     } catch {
       // Not JSON (proxy error page, empty body): keep the generic code.
     }
-    throw new ApiError(res.status, detail)
+    throw new ApiError(res.status, detail, body)
   }
   if (res.status === 204) return undefined as T
   return (await res.json()) as T

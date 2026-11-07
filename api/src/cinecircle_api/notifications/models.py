@@ -22,3 +22,4 @@ class NotificationItem(BaseModel):
 class NotificationsResponse(BaseModel):
     items: list[NotificationItem]
     unread_count: int
+    next_cursor: str | None

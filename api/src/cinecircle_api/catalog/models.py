@@ -5,6 +5,7 @@ from datetime import date, datetime
 from pydantic import BaseModel
 
 from cinecircle_api.catalog.parse import Locale, MediaType, SearchResult, pick_text
+from cinecircle_api.catalog.repository import SeasonRow
 from cinecircle_api.catalog.service import CachedTitle
 
 POSTER_BASE = "https://image.tmdb.org/t/p/w342"
@@ -46,6 +47,7 @@ class Ratings(BaseModel):
 class Season(BaseModel):
     season_number: int
     name: str | None
+    name_lang: Locale | None
     overview: str | None
     air_date: date | None
     episode_count: int | None
@@ -88,6 +90,19 @@ def search_response(results: list[SearchResult]) -> SearchResponse:
     )
 
 
+def _season(s: SeasonRow, lang: Locale) -> Season:
+    name, name_lang = pick_text(s.name_he, s.name_en, lang)
+    return Season(
+        season_number=s.season_number,
+        name=name,
+        name_lang=name_lang,
+        overview=pick_text(s.overview_he, s.overview_en, lang)[0],
+        air_date=s.air_date,
+        episode_count=s.episode_count,
+        poster_url=poster_url(s.poster_path),
+    )
+
+
 def title_detail(cached: CachedTitle, lang: Locale) -> TitleDetail:
     row = cached.row
     name, name_lang = pick_text(row.name_he, row.name_en, lang)
@@ -121,17 +136,7 @@ def title_detail(cached: CachedTitle, lang: Locale) -> TitleDetail:
             metacritic=row.metacritic,
             tmdb=float(row.tmdb_rating) if row.tmdb_rating is not None else None,
         ),
-        seasons=[
-            Season(
-                season_number=s.season_number,
-                name=pick_text(s.name_he, s.name_en, lang)[0],
-                overview=pick_text(s.overview_he, s.overview_en, lang)[0],
-                air_date=s.air_date,
-                episode_count=s.episode_count,
-                poster_url=poster_url(s.poster_path),
-            )
-            for s in row.seasons
-        ],
+        seasons=[_season(s, lang) for s in row.seasons],
         stale=cached.stale,
         fetched_at=row.fetched_at,
     )

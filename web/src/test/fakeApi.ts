@@ -1,5 +1,6 @@
 import { vi } from 'vitest'
 import { ApiError } from '../api/client'
+import type { PostCard } from '../api/types'
 import type { ApiCall } from '../api/useApi'
 
 type Init = { method?: string; body?: unknown } | undefined
@@ -32,3 +33,31 @@ export const DANA = {
   avatar_url: null,
   follow_state: 'none',
 } as const
+
+/** A shared 9.0 rating of a movie by Dana, with IMDb 8.4; Hebrew text, no season, not edited. */
+export const POST_CARD: PostCard = {
+  id: 7,
+  author: { ...DANA },
+  title: {
+    id: 3,
+    media_type: 'movie',
+    name: 'האודיסאה',
+    name_lang: 'he',
+    poster_url: 'https://image.tmdb.org/t/p/w342/odyssey.jpg',
+    year_start: 2026,
+    runtime_min: 150,
+    genres: ['דרמה', 'הרפתקאות'],
+    overview: 'מסע ארוך הביתה.',
+    overview_lang: 'he',
+    imdb_rating: 8.4,
+    tmdb_rating: 8.0,
+  },
+  season: null,
+  rating: 9,
+  opinion: 'סרט מדהים',
+  contains_spoilers: false,
+  is_shared: true,
+  created_at: '2026-11-01T10:00:00+00:00',
+  updated_at: '2026-11-01T10:00:00+00:00',
+  edited: false,
+}

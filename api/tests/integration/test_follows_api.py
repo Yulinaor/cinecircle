@@ -27,7 +27,7 @@ def test_request_accept_lifecycle(api, gal_content):
     assert noa.get("/users/gal").json()["follow_state"] == "requested"
 
     body = gal.get("/notifications").json()
-    assert set(body) == {"items", "unread_count"}
+    assert set(body) == {"items", "unread_count", "next_cursor"}
     # Unread for Gal: follow_request from Dana, Ron and Noa, plus follow_accepted from Noa (the
     # `gal_content` follow).
     assert body["unread_count"] == 4
@@ -125,7 +125,7 @@ def test_decline_is_silent_and_can_request_again(api):
     ron, gal = api("ron"), api("gal")
     assert gal.delete("/follow-requests/ron").status_code == 204
 
-    assert ron.get("/notifications").json() == {"items": [], "unread_count": 0}
+    assert ron.get("/notifications").json() == {"items": [], "unread_count": 0, "next_cursor": None}
     assert ron.get("/users/gal").json()["follow_state"] == "none"
     assert ron.post("/follows/gal").json() == {"follow_state": "requested"}
 

@@ -37,7 +37,14 @@
   },
   "common": {
     "error": "Something went wrong. Please try again.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "loadMore": "Load more"
+  },
+  "feed": {
+    "filter": { "all": "All", "movie": "Movies", "series": "Series" },
+    "empty": "No posts yet. Follow people to see what they watch.",
+    "findPeople": "Find people",
+    "createPost": "Post a rating"
   },
   "onboarding": {
     "title": "Create your profile",
@@ -84,5 +91,81 @@
     "followRequest": "{{name}} asked to follow you",
     "followAccepted": "{{name}} accepted your request",
     "empty": "No notifications yet."
+  },
+  "post": {
+    "season": "Season {{n}}",
+    "wholeSeries": "Whole series",
+    "private": "Private",
+    "edited": "edited",
+    "spoiler": "This opinion contains a spoiler.",
+    "showSpoiler": "Show spoiler",
+    "edit": "Edit",
+    "outOf": "/10",
+    "imdb": "IMDb",
+    "tmdb": "TMDB",
+    "minutes": "{{n}} min"
+  },
+  "compose": {
+    "title": "New post",
+    "search": "Search for a movie or series",
+    "searchHint": "Type the name of a movie or series.",
+    "noResults": "No results.",
+    "movie": "Movie",
+    "series": "Series",
+    "change": "Change",
+    "season": "Season",
+    "rating": "Rating",
+    "ratingUnset": "No rating chosen yet",
+    "decrease": "Lower by half a point",
+    "increase": "Raise by half a point",
+    "opinion": "Your opinion (optional)",
+    "opinionCount": "{{n}}/{{max}}",
+    "spoiler": "My opinion contains spoilers",
+    "share": "Share with followers",
+    "keepPrivate": "Keep private",
+    "visibility": "Who can see it",
+    "submit": "Post",
+    "save": "Save",
+    "delete": "Delete",
+    "confirmDelete": "Delete this post?",
+    "yes": "Yes",
+    "cancel": "Cancel",
+    "errors": {
+      "catalog_unavailable": "Couldn't load details, try again",
+      "post_exists": "You already posted about this.",
+      "editExisting": "Edit your existing post",
+      "season_invalid": "That season doesn't exist for this series. Pick another one.",
+      "opinion_too_long": "Your opinion is too long. Up to {{max}} characters."
+    }
+  },
+  "profile": {
+    "posts_one": "Post",
+    "posts_two": "Posts",
+    "posts_other": "Posts",
+    "followers_one": "Follower",
+    "followers_two": "Followers",
+    "followers_other": "Followers",
+    "following_one": "Following",
+    "following_two": "Following",
+    "following_other": "Following",
+    "editProfile": "Edit profile",
+    "findPeople": "Find people",
+    "connections": "Connections",
+    "locked": "This account is private. Follow to see their posts.",
+    "noPosts": "No posts yet."
+  },
+  "title": {
+    "postAbout": "Post about this",
+    "seasons": "Seasons",
+    "episodes": "{{n}} episodes",
+    "votes": "{{n}} votes",
+    "fromPeopleYouFollow": "From people you follow",
+    "stale": "These details may be out of date."
+  },
+  "lang": { "he": "Hebrew", "en": "English" },
+  "notFound": {
+    "title": "Not found",
+    "body": "This page doesn't exist, or you can't see it.",
+    "home": "Back to Home"
   }
 }

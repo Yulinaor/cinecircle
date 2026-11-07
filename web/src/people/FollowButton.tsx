@@ -56,9 +56,14 @@ export function FollowButton({
     onSuccess: (value) => setLocal(value),
     onError: () => setLocal(null),
     onSettled: async () => {
+      // Whose posts you can see changed: Home, profile posts and title pages refetch in the
+      // background (not awaited, so the button is usable again without waiting for them).
+      void client.invalidateQueries({ queryKey: ['posts'] })
+      void client.invalidateQueries({ queryKey: ['title'] })
       await Promise.all([
         client.invalidateQueries({ queryKey: ['people'] }),
         client.invalidateQueries({ queryKey: ['connections'] }),
+        client.invalidateQueries({ queryKey: ['profile'] }),
       ])
     },
   })

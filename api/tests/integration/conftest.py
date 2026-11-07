@@ -165,6 +165,28 @@ def api(people, engine) -> Iterator[Callable[..., TestClient]]:
         app.state.engine.dispose()
 
 
+# ===== Catalogue helpers =====
+
+
+def insert_series(conn: sa.Connection, tmdb_id: int, seasons: tuple[int, ...]) -> int:
+    """A cached series with the given season numbers, inserted as postgres (no RLS)."""
+    title_id = conn.scalar(
+        sa.text(
+            "INSERT INTO app.titles (tmdb_id, media_type, name_en, season_count, raw_tmdb)"
+            " VALUES (:tmdb_id, 'series', :name, :count, '{}') RETURNING id"
+        ),
+        {"tmdb_id": tmdb_id, "name": f"Series {tmdb_id}", "count": len(seasons)},
+    )
+    for number in seasons:
+        conn.execute(
+            sa.text(
+                "INSERT INTO app.title_seasons (title_id, season_number) VALUES (:title, :number)"
+            ),
+            {"title": title_id, "number": number},
+        )
+    return title_id
+
+
 # ===== Gal's content (shared post, private rating, wishlist, genre pref, event) =====
 
 

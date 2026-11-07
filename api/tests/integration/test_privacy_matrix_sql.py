@@ -38,6 +38,19 @@ SEES = {  # R5 row -> viewers who can see Gal's item
     "notifications": {"gal"},
     "catalogue": {"gal", "dana", "noa", "ron"},
 }
+# Phase 3 read paths: the feed and title-page queries, run as each viewer.
+FEED_SQL = (
+    "SELECT count(*) = 1 FROM app.posts p WHERE p.is_shared AND (p.author_id = auth.uid()"
+    " OR p.author_id IN (SELECT followee_id FROM app.follows"
+    " WHERE follower_id = auth.uid() AND status = 'accepted'))"
+)
+TITLE_SQL = "SELECT count(*) = 1 FROM app.posts p WHERE p.title_id = {title}"
+SEES |= {
+    "home_feed": {"gal", "dana"},  # Gal's shared post appears in the viewer's Home query
+    "title_page_shared": {"gal", "dana"},  # ... in the title-page query for title_ids[0]
+    "title_page_private": {"gal"},  # Gal's private rating in the title-page query for title_ids[1]
+    "private_in_feed": set(),  # Gal's private rating never appears in anyone's Home, Gal's too
+}
 PROBES = {  # SQL run as the viewer; True when Gal's item is visible
     "card": "SELECT count(*) = 1 FROM app.profiles WHERE id = :gal",
     "bio": "SELECT count(*) = 1 FROM app.profile_details WHERE user_id = :gal",
@@ -57,6 +70,12 @@ PROBES = {  # SQL run as the viewer; True when Gal's item is visible
     "notifications": "SELECT count(*) > 0 FROM app.notifications WHERE recipient_id = :gal",
     "catalogue": "SELECT count(*) = 2 FROM app.titles",
 }
+PROBES |= {
+    "home_feed": FEED_SQL + " AND p.id = :shared",
+    "title_page_shared": TITLE_SQL.format(title=":title1") + " AND p.id = :shared",
+    "title_page_private": TITLE_SQL.format(title=":title2") + " AND p.id = :private",
+    "private_in_feed": FEED_SQL + " AND p.id = :private",
+}
 CONTENT_TABLES = ["posts", "wishlist_items", "user_genre_prefs", "events"]
 
 
@@ -71,6 +90,8 @@ def test_r5_visibility(row, viewer, people, gal_content, engine):
         "gal": people["gal"].id,
         "shared": gal_content.shared_post_id,
         "private": gal_content.private_post_id,
+        "title1": gal_content.title_ids[0],
+        "title2": gal_content.title_ids[1],
     }
     with as_user(engine, people[viewer]) as conn:
         assert conn.scalar(sa.text(PROBES[row]), params) is (viewer in SEES[row])
@@ -106,7 +127,7 @@ POST_COLS = {
 GRANTS = {  # table: (insert columns, update columns, delete); never a whole-table INSERT/UPDATE
     "posts": (
         POST_COLS,
-        {"rating", "opinion", "contains_spoilers", "is_shared", "updated_at"},
+        {"rating", "opinion", "contains_spoilers", "is_shared"},  # updated_at: the trigger's
         True,
     ),
     "wishlist_items": (
@@ -311,7 +332,7 @@ def test_owner_can_manage_own_content(people, gal_content, engine):
         assert new_id > gal_content.private_post_id
         updated = run(
             conn,
-            "UPDATE app.posts SET rating = 6.5, is_shared = true, updated_at = now() WHERE id = :p",
+            "UPDATE app.posts SET rating = 6.5, is_shared = true WHERE id = :p",
             p=new_id,
         )
         assert updated.rowcount == 1

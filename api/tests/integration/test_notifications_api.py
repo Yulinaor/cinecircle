@@ -1,6 +1,8 @@
 import pytest
 import sqlalchemy as sa
 
+from tests.integration.conftest import TEST_EMAIL_DOMAIN
+
 pytestmark = pytest.mark.integration
 
 ITEM_KEYS = {"id", "type", "actor", "created_at", "read", "request_pending"}
@@ -62,3 +64,58 @@ def test_notifications_only_mine(api, engine):
         seen = {i["id"] for i in api(who).get("/notifications").json()["items"]}
         assert not (seen & gal_ids), who
     assert {i["id"] for i in api("gal").get("/notifications").json()["items"]} == gal_ids
+
+
+def test_notifications_paged(api, engine):
+    # Gal already has follow requests from Dana and Ron; 25 more users ask in one transaction,
+    # so many notifications share one created_at and the cursor must break ties by id.
+    with engine.begin() as conn:
+        for n in range(25):
+            uid = conn.scalar(
+                sa.text(
+                    "INSERT INTO auth.users (id, email, aud, role)"
+                    " VALUES (gen_random_uuid(), :email, 'authenticated', 'authenticated')"
+                    " RETURNING id"
+                ),
+                {"email": f"pager_{n:02d}@{TEST_EMAIL_DOMAIN}"},
+            )
+            conn.execute(
+                sa.text(
+                    "INSERT INTO app.profiles (id, username, display_name)"
+                    " VALUES (:id, :username, 'Pager')"
+                ),
+                {"id": uid, "username": f"pager_{n:02d}"},
+            )
+            conn.execute(
+                sa.text(
+                    "INSERT INTO app.follows (follower_id, followee_id)"
+                    " SELECT :id, id FROM app.profiles WHERE username = 'gal'"
+                ),
+                {"id": uid},
+            )
+        truth = [
+            row[0]
+            for row in conn.execute(
+                sa.text(
+                    "SELECT n.id FROM app.notifications n JOIN app.profiles p"
+                    " ON p.id = n.recipient_id WHERE p.username = 'gal'"
+                    " ORDER BY n.created_at DESC, n.id DESC"
+                )
+            )
+        ]
+    assert len(truth) == 27
+
+    gal = api("gal")
+    first = gal.get("/notifications").json()
+    assert set(first) == {"items", "unread_count", "next_cursor"}
+    assert [i["id"] for i in first["items"]] == truth[:20]
+    assert first["next_cursor"] is not None
+    assert first["unread_count"] == 27  # counts every unread, not just this page
+
+    second = gal.get("/notifications", params={"cursor": first["next_cursor"]}).json()
+    assert [i["id"] for i in second["items"]] == truth[20:]  # no gap, no repeat
+    assert second["next_cursor"] is None
+    assert second["unread_count"] == 27
+
+    r = gal.get("/notifications", params={"cursor": "garbage"})
+    assert (r.status_code, r.json()) == (422, {"detail": "invalid_cursor"})

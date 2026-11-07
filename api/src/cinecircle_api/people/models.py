@@ -1,12 +1,11 @@
 """Response and request bodies for /me and /users."""
 
-from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
 
-from cinecircle_api.catalog.parse import Locale, MediaType
+from cinecircle_api.catalog.parse import Locale
 
 FollowState = Literal["self", "none", "requested", "following"]
 
@@ -25,7 +24,10 @@ class UserCard(BaseModel):
 
 class UserDetails(BaseModel):
     bio: str | None
-    post_count: int
+    post_count: int  # shared posts
+    # Accepted follow rows; only the owner sees them (the lists are owner-only too, plan P10).
+    followers_count: int | None = None
+    following_count: int | None = None
 
 
 class UserProfile(UserCard):
@@ -71,26 +73,3 @@ class UpdateProfile(BaseModel):
         if value is None:
             raise ValueError("must not be null")
         return value
-
-
-class PostTitle(BaseModel):
-    id: int
-    media_type: MediaType
-    name: str | None
-    name_lang: Locale | None
-    poster_url: str | None
-
-
-class PostItem(BaseModel):
-    id: int
-    title: PostTitle
-    season_number: int
-    rating: float
-    opinion: str | None
-    contains_spoilers: bool
-    is_shared: bool
-    created_at: datetime
-
-
-class PostsResponse(BaseModel):
-    posts: list[PostItem]

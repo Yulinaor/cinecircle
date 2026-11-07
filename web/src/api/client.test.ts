@@ -57,6 +57,16 @@ describe('apiFetch', () => {
     expect((err as ApiError).detail).toBe('username_taken')
   })
 
+  it('ApiError keeps the JSON body', async () => {
+    stubFetch(Response.json({ detail: 'post_exists', post_id: 5 }, { status: 409 }))
+    const err = await apiFetch('/posts', { token: 't', method: 'POST' }).catch((e: unknown) => e)
+    expect(err).toBeInstanceOf(ApiError)
+    expect((err as ApiError).detail).toBe('post_exists')
+    expect((err as ApiError).body).toEqual({ detail: 'post_exists', post_id: 5 })
+    stubFetch(new Response('<html>', { status: 502 }))
+    await expect(apiFetch('/x', { token: 't' })).rejects.toMatchObject({ body: null })
+  })
+
   it('uses "error" when detail is not a string or the body is not JSON', async () => {
     stubFetch(Response.json({ detail: [{ msg: 'bad' }] }, { status: 422 }))
     await expect(apiFetch('/x', { token: 't' })).rejects.toMatchObject({ status: 422, detail: 'error' })

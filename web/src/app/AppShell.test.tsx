@@ -87,14 +87,27 @@ describe('AppShell', () => {
     expect(screen.queryByRole('link', { name: /התראות/ })).not.toBeInTheDocument()
   })
 
-  it('the profile tab links to connections, people and settings', async () => {
-    renderShell({ route: '/profile' })
-    expect(await screen.findByRole('link', { name: he.connections.title })).toHaveAttribute(
+  it('the profile tab is your own profile, with the account links', async () => {
+    const me = fakeMeApi().api
+    const api = (async (path: string, init?: Parameters<ApiCall>[1]) => {
+      if (path === '/users/gal_b')
+        return {
+          username: 'gal_b',
+          display_name: 'Gal',
+          avatar_url: null,
+          follow_state: 'self',
+          details: { bio: null, post_count: 0, followers_count: 0, following_count: 0 },
+        }
+      if (path === '/users/gal_b/posts?lang=he') return { posts: [], next_cursor: null }
+      return me(path, init)
+    }) as ApiCall
+    renderShell({ route: '/profile', api })
+    expect(await screen.findByRole('link', { name: he.profile.connections })).toHaveAttribute(
       'href',
       '/connections',
     )
-    expect(screen.getByRole('link', { name: he.people.title })).toHaveAttribute('href', '/people')
-    const settings = screen.getAllByRole('link', { name: he.settings.title })
+    expect(screen.getByRole('link', { name: he.profile.findPeople })).toHaveAttribute('href', '/people')
+    const settings = screen.getAllByRole('link', { name: /הגדרות|עריכת פרופיל/ })
     expect(settings.map((a) => a.getAttribute('href'))).toEqual(['/settings', '/settings'])
   })
 
