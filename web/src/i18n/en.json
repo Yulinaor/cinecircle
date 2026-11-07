@@ -167,7 +167,22 @@
   },
   "wishlist": {
     "save": "Save to wishlist",
-    "saved": "Saved"
+    "saved": "Saved",
+    "privateNote": "Only you can see your wishlist.",
+    "tab": { "want": "Want to watch", "watched": "Watched" },
+    "add": "Add a title",
+    "cancel": "Cancel",
+    "markWatched": "Mark watched",
+    "backToWant": "Move back to Want",
+    "remove": "Remove",
+    "rateNow": "Rate it now",
+    "yourRating": "Your rating",
+    "via": "via {{name}}",
+    "from": { "post": "From a post", "discover": "From Discover", "search": "From search" },
+    "empty": {
+      "want": "Nothing here yet. Save titles from Home, a title page or search.",
+      "watched": "Nothing marked watched yet."
+    }
   },
   "lang": { "he": "Hebrew", "en": "English" },
   "notFound": {

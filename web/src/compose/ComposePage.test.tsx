@@ -215,6 +215,19 @@ describe('ComposePage', () => {
     expect(screen.queryByText(he.auth.loading)).not.toBeInTheDocument()
   })
 
+  it('says nothing about results while a new search is pending', async () => {
+    setup({ ...SEARCH('zzz', []), ...SEARCH('zzzz', []) })
+    const box = await screen.findByRole('searchbox', { name: he.compose.search })
+    fireEvent.change(box, { target: { value: 'zzz' } })
+    expect(await screen.findByText(he.compose.noResults)).toBeInTheDocument()
+
+    // A new term is typed but not searched yet: the old "No results." is about the old term.
+    fireEvent.change(box, { target: { value: 'zzzz' } })
+    expect(screen.queryByText(he.compose.noResults)).not.toBeInTheDocument()
+    // Once the new search has answered, it speaks for the new term.
+    expect(await screen.findByText(he.compose.noResults)).toBeInTheDocument()
+  })
+
   it('counts emoji as characters and allows 500', async () => {
     setup({})
     await search('odyssey', 'The Odyssey')

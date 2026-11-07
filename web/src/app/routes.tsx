@@ -11,16 +11,18 @@ import { EditPostPage } from '../posts/EditPostPage'
 import { PostPage } from '../posts/PostPage'
 import { OwnProfilePage, UserProfilePage } from '../profile/ProfilePage'
 import { TitlePage } from '../titles/TitlePage'
+import { WishlistPage } from '../wishlist/WishlistPage'
 import { TABS } from './tabs'
 
 export function AppRoutes() {
   return (
     <Routes>
-      {TABS.filter((tab) => !['/', '/profile', '/post'].includes(tab.path)).map((tab) => (
+      {TABS.filter((tab) => !['/', '/profile', '/post', '/wishlist'].includes(tab.path)).map((tab) => (
         <Route key={tab.path} path={tab.path} element={<Placeholder titleKey={tab.labelKey} />} />
       ))}
       <Route path="/" element={<HomePage />} />
       <Route path="/post" element={<ComposePage />} />
+      <Route path="/wishlist" element={<WishlistPage />} />
       <Route path="/profile" element={<OwnProfilePage />} />
       <Route path="/u/:username" element={<UserProfilePage />} />
       <Route path="/people" element={<PeopleSearchPage />} />

@@ -36,6 +36,8 @@ export function TitlePicker({ onPick }: { onPick: (item: TitleSearchItem) => voi
       ),
   })
   const results = typed ? search.data?.results : undefined
+  // A new term is typed but not searched yet: what is on screen answers the old term.
+  const pending = text.trim() !== term
 
   return (
     <div className="flex flex-col gap-3">
@@ -61,7 +63,7 @@ export function TitlePicker({ onPick }: { onPick: (item: TitleSearchItem) => voi
           {t('auth.loading')}
         </p>
       )}
-      {results && results.length === 0 && !search.isPlaceholderData && (
+      {results && results.length === 0 && !search.isPlaceholderData && !pending && (
         <p role="status" className="text-sm text-muted">
           {t('compose.noResults')}
         </p>
