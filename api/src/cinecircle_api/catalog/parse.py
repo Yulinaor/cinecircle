@@ -122,6 +122,11 @@ def _season(raw: dict) -> SeasonRecord:
     )
 
 
+def parse_season_text(raw: dict) -> tuple[str | None, str | None]:
+    """(name, overview) of a `tv/{id}/season/{n}` answer; empty strings count as missing."""
+    return _text(raw.get("name")), _text(raw.get("overview"))
+
+
 def parse_title(raw: dict, media_type: MediaType) -> TitleRecord:
     is_movie = media_type == "movie"
     name_key = "title" if is_movie else "name"

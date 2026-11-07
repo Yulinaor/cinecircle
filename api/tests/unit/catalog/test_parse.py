@@ -7,6 +7,7 @@ from cinecircle_api.catalog.parse import (
     merge_genre_lists,
     parse_omdb,
     parse_search,
+    parse_season_text,
     parse_title,
     pick_text,
 )
@@ -132,3 +133,11 @@ def test_merge_genre_lists_from_fixtures():
     assert {r.id for r in rows} == {g["id"] for g in en + he}
     drama = next(r for r in rows if r.id == 18)
     assert drama.name_en == "Drama" and drama.name_he and drama.name_he != "Drama"
+
+
+def test_parse_season_text():
+    name, overview = parse_season_text(load("tmdb/tv_severance_season_1_he"))
+    assert name
+    assert overview is None or overview.strip() == overview
+    assert parse_season_text({"name": "", "overview": ""}) == (None, None)
+    assert parse_season_text({}) == (None, None)

@@ -145,7 +145,7 @@ ON CONFLICT (tmdb_id, media_type) DO UPDATE SET
 RETURNING id
 """)
 
-# Season names/overviews in Hebrew are filled later (Phase 3); a refresh keeps them.
+# Season names/overviews in Hebrew are filled lazily (update_season_text); a refresh keeps them.
 _UPSERT_SEASON = sa.text("""
 INSERT INTO app.title_seasons (title_id, season_number, name_en, overview_en, poster_path,
     air_date, episode_count)
@@ -262,6 +262,30 @@ def upsert_title(
             ],
         )
     return title_id
+
+
+def update_season_text(
+    conn: Connection,
+    title_id: int,
+    season_number: int,
+    name_he: str | None,
+    overview_he: str | None,
+) -> None:
+    """Store the Hebrew name and overview of a season. Never overwrites: a no-op unless both
+    are still NULL, so a concurrent fill (or an earlier one) wins."""
+    conn.execute(
+        sa.text(
+            "UPDATE app.title_seasons SET name_he = :name_he, overview_he = :overview_he "
+            "WHERE title_id = :title_id AND season_number = :season_number "
+            "AND name_he IS NULL AND overview_he IS NULL"
+        ),
+        {
+            "title_id": title_id,
+            "season_number": season_number,
+            "name_he": name_he,
+            "overview_he": overview_he,
+        },
+    )
 
 
 def update_omdb(

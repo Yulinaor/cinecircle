@@ -3,6 +3,7 @@ from decimal import Decimal
 
 import pytest
 
+from cinecircle_api.catalog.errors import ExternalNotFound
 from cinecircle_api.catalog.service import (
     OMDB_UNKNOWN,
     CatalogUnavailable,
@@ -194,3 +195,68 @@ def test_omdb_retry_without_omdb_client_makes_no_calls(engine):
     clock.advance(days=3)
     assert service.get_by_tmdb(ODYSSEY_ID, "movie").stale is False
     assert tmdb.calls["title_details"] == 1
+
+
+def _season_one(service, title_id):
+    row = service.get(title_id).row
+    return next(s for s in row.seasons if s.season_number == 1)
+
+
+def test_fill_season_text_once(world):
+    service, tmdb, _, _ = world
+    title = service.get_by_tmdb(SEVERANCE_ID, "series").row
+    assert _season_one(service, title.id).name_he is None
+    service.fill_season_text(title.id, 1)
+    assert tmdb.calls["season_details"] == 1
+    assert _season_one(service, title.id).name_he
+    service.fill_season_text(title.id, 1)
+    assert tmdb.calls["season_details"] == 1
+
+
+def test_fill_season_text_ignores_failures(world, caplog):
+    service, tmdb, _, _ = world
+    title = service.get_by_tmdb(SEVERANCE_ID, "series").row
+    tmdb.fail = True
+    with caplog.at_level("WARNING"):
+        service.fill_season_text(title.id, 1)  # no exception
+    assert tmdb.calls["season_details"] == 1
+    assert _season_one(service, title.id).name_he is None
+    assert any(r.levelname == "WARNING" for r in caplog.records)
+
+
+def test_fill_season_text_ignores_not_found(world):
+    service, tmdb, _, _ = world
+    title = service.get_by_tmdb(SEVERANCE_ID, "series").row
+    tmdb.season_details = lambda *a: (_ for _ in ()).throw(ExternalNotFound("tmdb", 404))
+    service.fill_season_text(title.id, 1)
+    assert _season_one(service, title.id).name_he is None
+
+
+def test_fill_season_text_skips_movies_and_missing(world):
+    service, tmdb, _, _ = world
+    movie = service.get_by_tmdb(ODYSSEY_ID, "movie").row
+    series = service.get_by_tmdb(SEVERANCE_ID, "series").row
+    service.fill_season_text(movie.id, 1)
+    service.fill_season_text(series.id, 99)
+    service.fill_season_text(987654, 1)
+    assert tmdb.calls["season_details"] == 0
+
+
+def test_fill_season_text_without_tmdb_is_a_noop(engine):
+    clock = Clock()
+    cached = TitleService(engine, FakeTmdb(), None, now=clock)
+    title = cached.get_by_tmdb(SEVERANCE_ID, "series").row
+    TitleService(engine, None, None, now=clock).fill_season_text(title.id, 1)
+    assert _season_one(cached, title.id).name_he is None
+
+
+def test_refresh_keeps_season_hebrew(world):
+    service, tmdb, _, clock = world
+    title = service.get_by_tmdb(SEVERANCE_ID, "series").row
+    service.fill_season_text(title.id, 1)
+    filled = _season_one(service, title.id)
+    clock.advance(days=30)
+    service.get(title.id)
+    assert tmdb.calls["title_details"] == 2
+    after = _season_one(service, title.id)
+    assert after.name_he == filled.name_he and after.overview_he == filled.overview_he

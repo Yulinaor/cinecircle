@@ -39,6 +39,12 @@ class FakeTmdb:
             raise ExternalNotFound("tmdb", 404)
         return load(name)
 
+    def season_details(self, tmdb_id: int, season_number: int, language: str) -> dict:
+        self._call("season_details")
+        if (tmdb_id, season_number) != (SEVERANCE_ID, 1):
+            raise ExternalNotFound("tmdb", 404)
+        return load("tmdb/tv_severance_season_1_he")
+
     def genre_list(self, kind: str, language: str) -> dict:
         self._call("genre_list")
         return load(f"tmdb/genre_{kind}_{'he' if language == 'he-IL' else 'en'}")

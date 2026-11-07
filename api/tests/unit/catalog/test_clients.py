@@ -56,6 +56,13 @@ def test_title_details_series_uses_tv_path():
     assert seen[0].url.params["language"] == "en-US"
 
 
+def test_season_details_url_and_language():
+    seen, http = recording()
+    TmdbClient(KEY, http).season_details(95396, 1, "he-IL")
+    assert seen[0].url.path == "/3/tv/95396/season/1"
+    assert seen[0].url.params["language"] == "he-IL"
+
+
 def test_404_raises_not_found():
     _, http = recording(status=404)
     with pytest.raises(ExternalNotFound):

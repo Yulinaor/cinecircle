@@ -1,6 +1,7 @@
 """Cache-first title service: serve app.titles rows, refresh them from TMDB/OMDb when stale,
 and fall back to the cached row when TMDB is down."""
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -19,9 +20,12 @@ from cinecircle_api.catalog.parse import (
     merge_genre_lists,
     parse_omdb,
     parse_search,
+    parse_season_text,
     parse_title,
 )
 from cinecircle_api.catalog.tmdb_client import TmdbClient
+
+logger = logging.getLogger(__name__)
 
 REFRESH_AFTER = timedelta(days=30)
 OMDB_RETRY_AFTER = timedelta(days=1)  # OMDb free tier: 1,000 calls/day
@@ -83,6 +87,35 @@ class TitleService:
         if row is None:
             return self._refresh(tmdb_id, media_type, None)
         return self._serve(row)
+
+    def fill_season_text(self, title_id: int, season_number: int) -> None:
+        """Fetch a season's Hebrew name and overview from TMDB once, while both are unset.
+
+        Best effort (P8): a missing series/season, a season already filled, no TMDB client or a
+        TMDB failure all leave the row as it is; the UI falls back to English.
+        """
+        if self._tmdb is None:
+            return
+        with self._engine.connect() as conn:
+            row = repo.get_title(conn, title_id)
+        if row is None or row.media_type != "series":
+            return
+        season = next((s for s in row.seasons if s.season_number == season_number), None)
+        if season is None or season.name_he is not None or season.overview_he is not None:
+            return
+        try:
+            raw = self._tmdb.season_details(row.tmdb_id, season_number, "he-IL")
+        except (ExternalApiError, ExternalNotFound) as err:
+            logger.warning(
+                "Hebrew season text unavailable for title %s season %s: %s",
+                title_id,
+                season_number,
+                type(err).__name__,
+            )
+            return
+        name_he, overview_he = parse_season_text(raw)
+        with self._engine.begin() as conn:
+            repo.update_season_text(conn, title_id, season_number, name_he, overview_he)
 
     def _serve(self, row: repo.TitleRow) -> CachedTitle:
         now = self._now()
