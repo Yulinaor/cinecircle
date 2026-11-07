@@ -210,7 +210,11 @@ class DiscoverService:
             except ExternalApiError:
                 raw = None  # keep the cached rows; try again on the next request
             if raw is not None:
-                records = parse_reviews(raw)[:MAX_REVIEWS]
+                records = sorted(
+                    parse_reviews(raw),
+                    key=lambda r: r.published_at or datetime.min.replace(tzinfo=UTC),
+                    reverse=True,
+                )[:MAX_REVIEWS]  # the newest five; undated ones sort last
                 with self._engine.begin() as conn:
                     repo.store_reviews(conn, state.id, records, now)
         with self._engine.connect() as conn:

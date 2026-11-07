@@ -95,7 +95,10 @@ class ReviewRow:
 def store_reviews(
     conn: Connection, title_id: int, records: Iterable[ReviewRecord], fetched_at: datetime
 ) -> None:
-    """Upsert the reviews and remember the fetch (also when there were none)."""
+    """Make `records` the title's stored reviews and remember the fetch (also when there were
+    none): rows TMDB no longer returned are deleted, the rest upserted. One transaction, and only
+    called after a successful TMDB answer, so a failed refresh never loses reviews."""
+    records = list(records)
     params = [
         {
             "title_id": title_id,
@@ -105,21 +108,30 @@ def store_reviews(
             "url": r.url,
             "rating": r.author_rating,
             "language": r.language,
+            "published_at": r.published_at,
             "fetched_at": fetched_at,
         }
         for r in records
     ]
+    conn.execute(
+        sa.text(
+            "DELETE FROM app.external_reviews WHERE title_id = :id AND source = 'tmdb' "
+            "AND NOT (source_review_id = ANY(:keep))"
+        ),
+        {"id": title_id, "keep": [r.source_review_id for r in records]},
+    )
     if params:
         conn.execute(
             sa.text(
                 "INSERT INTO app.external_reviews (title_id, source, source_review_id, "
-                "author_name, excerpt, url, author_rating, language, fetched_at) "
+                "author_name, excerpt, url, author_rating, language, published_at, fetched_at) "
                 "VALUES (:title_id, 'tmdb', :rid, :author, :excerpt, :url, :rating, :language, "
-                ":fetched_at) "
+                ":published_at, :fetched_at) "
                 "ON CONFLICT (source, source_review_id) DO UPDATE SET "
                 "author_name = EXCLUDED.author_name, excerpt = EXCLUDED.excerpt, "
                 "url = EXCLUDED.url, author_rating = EXCLUDED.author_rating, "
-                "language = EXCLUDED.language, fetched_at = EXCLUDED.fetched_at"
+                "language = EXCLUDED.language, published_at = EXCLUDED.published_at, "
+                "fetched_at = EXCLUDED.fetched_at"
             ),
             params,
         )
@@ -133,7 +145,7 @@ def newest_reviews(conn: Connection, title_id: int, limit: int) -> list[ReviewRo
     rows = conn.execute(
         sa.text(
             "SELECT author_name, excerpt, url, author_rating, source FROM app.external_reviews "
-            "WHERE title_id = :id ORDER BY fetched_at DESC, id DESC LIMIT :limit"
+            "WHERE title_id = :id ORDER BY published_at DESC NULLS LAST, id DESC LIMIT :limit"
         ),
         {"id": title_id, "limit": limit},
     )

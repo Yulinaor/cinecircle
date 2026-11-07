@@ -1,4 +1,5 @@
 import copy
+from datetime import UTC, datetime
 
 from cinecircle_api.catalog.parse import ListItem, ReviewRecord, excerpt, parse_list, parse_reviews
 from tests.fixtures import load
@@ -151,3 +152,23 @@ def test_parse_reviews_edge_cases():
     assert out[1].author_rating is None
     assert out[2].language == "he"
     assert parse_reviews({}) == []
+
+
+def test_parse_reviews_published_at():
+    reviews = parse_reviews(load("tmdb/reviews_movie"))
+    assert [r.published_at for r in reviews] == [
+        datetime(2013, 7, 20, 8, 27, 42, tzinfo=UTC),
+        datetime(2013, 3, 15, 4, 12, 36, tzinfo=UTC),
+        datetime(2017, 7, 23, 3, 5, 26, tzinfo=UTC),
+    ]
+
+
+def test_parse_reviews_unusable_dates_are_none():
+    raw = copy.deepcopy(load("tmdb/reviews_movie"))
+    r = raw["results"]
+    del r[0]["created_at"]
+    r[1]["created_at"] = "last tuesday"
+    r[2]["created_at"] = "2020-01-02T03:04:05"  # no zone: UTC
+    out = parse_reviews(raw)
+    assert out[0].published_at is None and out[1].published_at is None
+    assert out[2].published_at == datetime(2020, 1, 2, 3, 4, 5, tzinfo=UTC)

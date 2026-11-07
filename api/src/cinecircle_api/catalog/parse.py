@@ -3,7 +3,7 @@
 import html
 import re
 from dataclasses import dataclass
-from datetime import date
+from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Literal
 
@@ -273,6 +273,7 @@ class ReviewRecord:
     url: str
     author_rating: float | None
     language: str | None
+    published_at: datetime | None  # TMDB's created_at
 
 
 _BLOCK_TAG = re.compile(r"</?(?:br|p|div|li|ul|ol|h[1-6]|blockquote|tr)\b[^>]*>", re.IGNORECASE)
@@ -305,6 +306,17 @@ def excerpt(text: str, limit: int = 300) -> str:
     return head.rstrip() + "…"
 
 
+def _timestamp(value: object) -> datetime | None:
+    """An ISO-8601 timestamp as an aware datetime (a missing zone means UTC), else None."""
+    if not isinstance(value, str):
+        return None
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=UTC)
+
+
 def parse_reviews(raw: dict) -> list[ReviewRecord]:
     """Reviews with an id, a name, a text and an https link; the rest are skipped."""
     records: list[ReviewRecord] = []
@@ -327,6 +339,7 @@ def parse_reviews(raw: dict) -> list[ReviewRecord]:
                 url=url,
                 author_rating=float(rating) if isinstance(rating, int | float) else None,
                 language=_text(item.get("iso_639_1")),
+                published_at=_timestamp(item.get("created_at")),
             )
         )
     return records

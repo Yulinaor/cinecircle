@@ -165,13 +165,18 @@ def test_hebrew_list_survives_the_english_one_failing(world, engine):
 
 def test_list_genres_exist_after_load(world, engine):
     service, _, _, _ = world
+    checked = 0
     for media_type in ("movie", "series"):
-        for served in service.lists(media_type, [TRENDING, TOP_RATED], "he"):
-            wanted = {g for item in served.items for g in item.genre_ids}
+        served = service.lists(media_type, [TRENDING, TOP_RATED], "he")
+        assert len(served) == 2 and all(s.items for s in served)
+        for one in served:
+            wanted = {g for item in one.items for g in item.genre_ids}
             assert wanted
             with engine.connect() as conn:
                 found = set(conn.scalars(sa.text("SELECT id FROM app.genres")).all())
             assert wanted <= found
+            checked += len(wanted)
+    assert checked > 0
 
 
 def test_lists_are_served_when_genres_cannot_be_loaded(world, engine):
@@ -193,6 +198,27 @@ def test_imdb_ratings_for_cached_titles_only(world):
     served = service.lists("movie", [TRENDING], "en")[0]
     assert served.imdb == {ODYSSEY_ID: 8.4}
     assert service.lists("series", [TRENDING], "en")[0].imdb == {}
+
+
+def test_imdb_lookup_is_per_media_type(world, engine):
+    # TMDB numbers movies and series separately, so one id can be both.
+    service, _, _, _ = world
+    movie_id = service.lists("movie", [TRENDING], "en")[0].items[0].tmdb_id
+    series_id = service.lists("series", [TRENDING], "en")[0].items[0].tmdb_id
+    insert = sa.text(
+        "INSERT INTO app.titles (tmdb_id, media_type, name_en, imdb_rating, raw_tmdb)"
+        " VALUES (:id, :mt, 'T', :rating, '{}')"
+    )
+    with engine.begin() as conn:
+        conn.execute(insert, {"id": movie_id, "mt": "movie", "rating": 7.1})
+        conn.execute(insert, {"id": movie_id, "mt": "series", "rating": 3.2})
+        conn.execute(insert, {"id": series_id, "mt": "series", "rating": 9.4})
+        conn.execute(insert, {"id": series_id, "mt": "movie", "rating": 2.3})
+    movies = service.lists("movie", [TRENDING], "en")[0]
+    series = service.lists("series", [TRENDING], "en")[0]
+    assert movies.imdb[movie_id] == 7.1 and series.imdb[series_id] == 9.4
+    assert all(r in (7.1, 2.3) for r in movies.imdb.values())
+    assert all(r in (3.2, 9.4) for r in series.imdb.values())
 
 
 def test_imdb_rating_none_when_title_has_no_rating(world, engine):
