@@ -79,6 +79,15 @@ describe('NotificationsPage', () => {
     expect(fake.count('POST /notifications/read')).toBe(1)
   })
 
+  it('the sentence links to the profile of whoever it names', async () => {
+    const fake = notifications([request()])
+    renderApp(<NotificationsPage />, { api: fake.api })
+    expect(await screen.findByRole('link', { name: 'Dana ביקש/ה לעקוב אחריך' })).toHaveAttribute(
+      'href',
+      '/u/dana',
+    )
+  })
+
   it('pending follow request shows Accept and Decline', async () => {
     const fake = notifications([request()])
     renderApp(<NotificationsPage />, { api: fake.api })

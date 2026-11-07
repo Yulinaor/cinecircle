@@ -1,7 +1,6 @@
 import { Route, Routes } from 'react-router'
 import { ComposePage } from '../compose/ComposePage'
 import { HomePage } from '../home/HomePage'
-import { ProfileHubPage } from '../me/ProfileHubPage'
 import { SettingsPage } from '../me/SettingsPage'
 import { NotificationsPage } from '../notifications/NotificationsPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
@@ -10,6 +9,7 @@ import { ConnectionsPage } from '../people/ConnectionsPage'
 import { PeopleSearchPage } from '../people/PeopleSearchPage'
 import { EditPostPage } from '../posts/EditPostPage'
 import { PostPage } from '../posts/PostPage'
+import { OwnProfilePage, UserProfilePage } from '../profile/ProfilePage'
 import { TABS } from './tabs'
 
 export function AppRoutes() {
@@ -20,7 +20,8 @@ export function AppRoutes() {
       ))}
       <Route path="/" element={<HomePage />} />
       <Route path="/post" element={<ComposePage />} />
-      <Route path="/profile" element={<ProfileHubPage />} />
+      <Route path="/profile" element={<OwnProfilePage />} />
+      <Route path="/u/:username" element={<UserProfilePage />} />
       <Route path="/people" element={<PeopleSearchPage />} />
       <Route path="/connections" element={<ConnectionsPage />} />
       <Route path="/notifications" element={<NotificationsPage />} />

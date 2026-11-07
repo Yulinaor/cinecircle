@@ -59,6 +59,7 @@ export function FollowButton({
       await Promise.all([
         client.invalidateQueries({ queryKey: ['people'] }),
         client.invalidateQueries({ queryKey: ['connections'] }),
+        client.invalidateQueries({ queryKey: ['profile'] }),
       ])
     },
   })

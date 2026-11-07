@@ -137,6 +137,16 @@
       "opinion_too_long": "Your opinion is too long. Up to {{max}} characters."
     }
   },
+  "profile": {
+    "posts": "Posts",
+    "followers": "Followers",
+    "following": "Following",
+    "editProfile": "Edit profile",
+    "findPeople": "Find people",
+    "connections": "Connections",
+    "locked": "This account is private. Follow to see their posts.",
+    "noPosts": "No posts yet."
+  },
   "notFound": {
     "title": "Not found",
     "body": "This page doesn't exist, or you can't see it.",

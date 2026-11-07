@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 import type { NotificationItem } from '../api/types'
 import { RequestActions } from '../people/ConnectionActions'
 import { Avatar } from '../people/Avatar'
@@ -65,7 +66,11 @@ function NotificationRow({ item }: { item: NotificationItem }) {
       }`}
     >
       <Avatar url={item.actor.avatar_url} name={item.actor.display_name} />
-      <p className="min-w-0 flex-1 text-ink">{t(key, { name: item.actor.display_name })}</p>
+      <p className="min-w-0 flex-1 text-ink">
+        <Link to={`/u/${item.actor.username}`} className="hover:underline">
+          {t(key, { name: item.actor.display_name })}
+        </Link>
+      </p>
       <span id={nameId} hidden>
         {item.actor.display_name}
       </span>
