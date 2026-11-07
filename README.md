@@ -9,7 +9,7 @@ CineCircle is a private, follow-based app for movie and TV recommendations.
 
 The interface is in Hebrew (right-to-left) and English.
 
-> **Status:** Phase 3 (posts, Home, profiles). People post a movie, a whole series or one season with a rating from 1 to 10 in half steps, an opinion, a spoiler flag and share-or-private; edit and delete their posts; see a Home feed of their own and their approved followees' shared posts; open profiles (locked for non-followers: name, avatar and Follow only); and open title pages with external ratings and posts from people they follow. Phase 2 sign-in, follows with approval and notifications, and the Phase 1 catalogue, stay as they were. See the [roadmap](docs/spec/04-roadmap-and-learning-track.md).
+> **Status:** Phase 4 (Wishlist) is done. Titles can be saved to a private wishlist from post cards, title pages and the Wishlist screen, then moved from Want to Watched and rated with Rate it now. Phase 3 (posts, Home, profiles). People post a movie, a whole series or one season with a rating from 1 to 10 in half steps, an opinion, a spoiler flag and share-or-private; edit and delete their posts; see a Home feed of their own and their approved followees' shared posts; open profiles (locked for non-followers: name, avatar and Follow only); and open title pages with external ratings and posts from people they follow. Phase 2 sign-in, follows with approval and notifications, and the Phase 1 catalogue, stay as they were. See the [roadmap](docs/spec/04-roadmap-and-learning-track.md).
 
 ## Prerequisites
 
@@ -52,6 +52,8 @@ Title search and details need two free keys. They go **only** in `api/.env` (git
 Without keys the API still starts and `/health` works; the `/titles` endpoints answer `503 catalog_unavailable`. Tests never need keys: they run on recorded responses in `api/tests/fixtures/`.
 
 **Posting.** Titles come from TMDB, so searching for a title and posting need `TMDB_API_KEY` (and `OMDB_API_KEY` for the IMDb, Rotten Tomatoes and Metacritic ratings) in `api/.env`. Without them the composer shows "Couldn't load details, try again".
+
+**Wishlist.** The wishlist is private and owner-only: nobody else can see it, count it or be told about it. Titles are saved from post cards, title pages and the Wishlist screen's search, and each moves Want → Watched → Rate it now.
 
 ### Sign-in setup
 
