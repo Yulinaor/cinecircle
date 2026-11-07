@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router'
 import { ComposePage } from '../compose/ComposePage'
+import { HomePage } from '../home/HomePage'
 import { ProfileHubPage } from '../me/ProfileHubPage'
 import { SettingsPage } from '../me/SettingsPage'
 import { NotificationsPage } from '../notifications/NotificationsPage'
@@ -14,9 +15,10 @@ import { TABS } from './tabs'
 export function AppRoutes() {
   return (
     <Routes>
-      {TABS.filter((tab) => tab.path !== '/profile' && tab.path !== '/post').map((tab) => (
+      {TABS.filter((tab) => !['/', '/profile', '/post'].includes(tab.path)).map((tab) => (
         <Route key={tab.path} path={tab.path} element={<Placeholder titleKey={tab.labelKey} />} />
       ))}
+      <Route path="/" element={<HomePage />} />
       <Route path="/post" element={<ComposePage />} />
       <Route path="/profile" element={<ProfileHubPage />} />
       <Route path="/people" element={<PeopleSearchPage />} />

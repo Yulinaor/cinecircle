@@ -40,6 +40,12 @@
     "retry": "Try again",
     "loadMore": "Load more"
   },
+  "feed": {
+    "filter": { "all": "All", "movie": "Movies", "series": "Series" },
+    "empty": "No posts yet. Follow people to see what they watch.",
+    "findPeople": "Find people",
+    "createPost": "Post a rating"
+  },
   "onboarding": {
     "title": "Create your profile",
     "username": "Username",
