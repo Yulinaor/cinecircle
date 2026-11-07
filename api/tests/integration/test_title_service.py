@@ -1,8 +1,12 @@
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from types import SimpleNamespace
 
+import httpx
 import pytest
 
+from cinecircle_api.catalog import _http
+from cinecircle_api.catalog._http import get_json
 from cinecircle_api.catalog.errors import ExternalNotFound
 from cinecircle_api.catalog.service import (
     OMDB_UNKNOWN,
@@ -281,3 +285,40 @@ def test_ensure_genres_unavailable(world, engine):
     assert service.ensure_genres([]) == set()  # nothing to look up, nothing to fail
     with pytest.raises(CatalogUnavailable):
         TitleService(engine, None, None).ensure_genres([28])
+
+
+class _SlowHttp:
+    """Every request takes `seconds` of the fake clock."""
+
+    def __init__(self, tick: list[float], seconds: float) -> None:
+        self._tick, self._seconds = tick, seconds
+
+    def get(self, url, params=None, headers=None, timeout=None) -> httpx.Response:
+        self._tick[0] += self._seconds
+        return httpx.Response(200, json={})
+
+
+class _SlowTmdb(FakeTmdb):
+    """A FakeTmdb whose calls go through get_json, so the request deadline applies."""
+
+    def __init__(self, http: _SlowHttp) -> None:
+        super().__init__()
+        self._http = http
+
+    def _call(self, name: str) -> None:
+        get_json(self._http, "tmdb", f"https://tmdb.test/{name}", {})
+        super()._call(name)  # counted only when the deadline let the call through
+
+
+def test_title_service_cold_fetch_respects_budget(engine, monkeypatch):
+    tick = [1000.0]
+    monkeypatch.setattr(_http, "time", SimpleNamespace(monotonic=lambda: tick[0]))
+    tmdb = _SlowTmdb(_SlowHttp(tick, seconds=4.0))
+    service = TitleService(engine, tmdb, FakeOmdb())
+
+    with pytest.raises(CatalogUnavailable):
+        service.get_by_tmdb(ODYSSEY_ID, "movie")
+
+    # details (10 s left), genres en (6 s left), genres he (2 s left); then the budget is spent.
+    assert sum(tmdb.calls.values()) == 3
+    assert tick[0] == 1012.0
