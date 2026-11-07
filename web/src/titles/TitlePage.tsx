@@ -11,6 +11,7 @@ import { titleKey } from '../posts/keys'
 import { PostCard } from '../posts/PostCard'
 import { useSeasonName } from '../posts/seasonName'
 import { parsePostId } from '../posts/usePost'
+import { TasteLine } from '../taste/TasteLine'
 import { SaveButton } from '../wishlist/SaveButton'
 import { ExternalRatings } from './ExternalRatings'
 
@@ -113,6 +114,7 @@ function TitleBody({ title }: { title: TitlePageData }) {
       )}
 
       <ExternalRatings ratings={title.ratings} />
+      {title.taste && <TasteLine taste={title.taste} />}
       {title.stale && <p className="text-sm text-muted">{t('title.stale')}</p>}
 
       {title.seasons.length > 0 && <Seasons seasons={title.seasons} />}

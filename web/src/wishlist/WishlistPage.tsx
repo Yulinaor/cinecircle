@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { WishlistPage as WishlistPageData, WishlistStatus } from '../api/types'
+import type { WishlistPage as WishlistPageData, WishlistSort, WishlistStatus } from '../api/types'
 import { useApi } from '../api/useApi'
 import { useLoadMoreRetry } from '../api/useLoadMoreRetry'
 import { useLang } from '../i18n/useLang'
@@ -10,6 +10,7 @@ import { wishlistKeys } from './keys'
 import { WishlistRow } from './WishlistRow'
 
 const STATUSES = ['want', 'watched'] as const satisfies readonly WishlistStatus[]
+const SORTS = ['recent', 'fit'] as const satisfies readonly WishlistSort[]
 
 const BUTTON =
   'min-h-11 rounded-xl border border-line bg-surface px-4 font-medium text-ink hover:bg-line disabled:opacity-60'
@@ -20,20 +21,21 @@ export function WishlistPage() {
   const api = useApi()
   const lang = useLang()
   const [status, setStatus] = useState<WishlistStatus>('want')
+  const [sort, setSort] = useState<WishlistSort>('recent')
   const [adding, setAdding] = useState(false)
 
   const list = useInfiniteQuery({
-    queryKey: wishlistKeys.list(status, lang),
+    queryKey: wishlistKeys.list(status, lang, sort),
     initialPageParam: null as string | null,
     queryFn: ({ pageParam, signal }) =>
       api<WishlistPageData>(
-        `/wishlist?status=${status}&lang=${lang}${pageParam === null ? '' : `&cursor=${encodeURIComponent(pageParam)}`}`,
+        `/wishlist?status=${status}&lang=${lang}${sort === 'fit' ? '&sort=fit' : ''}${pageParam === null ? '' : `&cursor=${encodeURIComponent(pageParam)}`}`,
         { signal },
       ),
     getNextPageParam: (page) => page.next_cursor,
   })
   const { data, isError, isFetching, hasNextPage } = list
-  const { loadMore, retry } = useLoadMoreRetry(list, `${status}-${lang}`)
+  const { loadMore, retry } = useLoadMoreRetry(list, `${status}-${lang}-${sort}`)
 
   const items = data?.pages.flatMap((p) => p.items) ?? []
   const errorLine = isError && (
@@ -63,6 +65,23 @@ export function WishlistPage() {
             }`}
           >
             {t(`wishlist.tab.${value}`)}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {SORTS.map((value) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={sort === value}
+            onClick={() => setSort(value)}
+            className={`min-h-11 rounded-full border px-4 text-sm font-medium ${
+              sort === value
+                ? 'border-accent bg-accent-soft text-accent'
+                : 'border-line bg-surface text-ink hover:bg-line'
+            }`}
+          >
+            {t(`wishlist.sort.${value}`)}
           </button>
         ))}
       </div>

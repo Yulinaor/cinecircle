@@ -1,4 +1,4 @@
-import type { WishlistStatus } from '../api/types'
+import type { WishlistSort, WishlistStatus } from '../api/types'
 import type { Locale } from '../i18n'
 
 /**
@@ -8,5 +8,6 @@ import type { Locale } from '../i18n'
  */
 export const wishlistKeys = {
   all: ['wishlist'] as const,
-  list: (status: WishlistStatus, lang: Locale) => ['wishlist', status, lang] as const,
+  list: (status: WishlistStatus, lang: Locale, sort: WishlistSort = 'recent') =>
+    ['wishlist', status, lang, sort] as const,
 }

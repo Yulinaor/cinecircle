@@ -199,4 +199,22 @@ describe('PostCard', () => {
     expect(screen.queryByRole('button', { name: he.wishlist.save })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: he.wishlist.saved })).not.toBeInTheDocument()
   })
+
+  describe('Taste Match', () => {
+    const TASTE = { fit: 76, genres: ['אקשן', 'הרפתקאות'], agreement: 74 }
+
+    it('shows the match line with the author in the reason', () => {
+      show({ ...POST_CARD, taste: TASTE })
+      const line = screen.getByTestId('taste-line')
+      expect(line.textContent?.replace(/\s+/g, ' ')).toBe(
+        '76% התאמה · אקשן והרפתקאות מתאימים לך · 74% הסכמה עם Dana',
+      )
+    })
+
+    it('shows no line without taste', () => {
+      show({ ...POST_CARD, taste: null })
+      expect(screen.queryByTestId('taste-line')).not.toBeInTheDocument()
+      expect(screen.queryByText(/התאמה/)).not.toBeInTheDocument()
+    })
+  })
 })

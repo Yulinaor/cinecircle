@@ -61,6 +61,7 @@ export const POST_CARD: PostCard = {
   updated_at: '2026-11-01T10:00:00+00:00',
   edited: false,
   in_wishlist: false,
+  taste: null,
 }
 
 /** Dana's post on a movie, saved from that post and still wanted; no rating of your own yet. */
@@ -72,4 +73,5 @@ export const WISHLIST_ITEM: WishlistItem = {
   added_at: '2026-11-02T10:00:00+00:00',
   watched_at: null,
   my_post: null,
+  taste: null,
 }

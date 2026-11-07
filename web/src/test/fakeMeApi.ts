@@ -15,7 +15,7 @@ type Call = [path: string, init?: { method?: string; body?: unknown }]
 
 /** In-memory `/me` endpoints (GET, POST, PATCH). Set `state.postError` to make POST fail. */
 export function fakeMeApi(profile: MyProfile | null = PROFILE) {
-  let me: Me = { id: 'user-1', email: 'a@b.co', profile }
+  let me: Me = { id: 'user-1', email: 'a@b.co', profile, taste_unlocked: profile !== null }
   const state = { postError: null as ApiError | null, patchError: null as ApiError | null }
   const fn = vi.fn(async (...[path, init]: Call): Promise<unknown> => {
     const method = init?.method ?? 'GET'

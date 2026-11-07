@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import type { WishlistItem, WishlistStatus } from '../api/types'
 import { LangLabel } from '../i18n/LangLabel'
 import { useActionName } from '../people/actionName'
+import { TasteChip } from '../taste/TasteLine'
 import { useWishlistMutations } from './useWishlistMutations'
 
 const SECONDARY =
@@ -19,7 +20,7 @@ export function WishlistRow({ item }: { item: WishlistItem }) {
   const { t } = useTranslation()
   const { setStatus, remove } = useWishlistMutations()
   const nameId = useId()
-  const { title, via, my_post } = item
+  const { title, via, my_post, taste } = item
   const busy = setStatus.isPending || remove.isPending
   const failed = setStatus.isError || remove.isError
   const primaryName = useActionName(nameId)
@@ -64,6 +65,11 @@ export function WishlistRow({ item }: { item: WishlistItem }) {
           </Link>
         </h2>
         <LangLabel lang={title.name_lang} />
+        {taste && (
+          <p>
+            <TasteChip fit={taste.fit} />
+          </p>
+        )}
         <p className="text-sm text-muted">
           {title.year_start !== null && (
             <>

@@ -472,4 +472,51 @@ describe('routes', () => {
     expect(await screen.findByRole('link', { name: 'Severance' })).toBeInTheDocument()
     expect(screen.getByText(he.wishlist.privateNote)).toBeInTheDocument()
   })
+
+  describe('Taste Match', () => {
+    const WITH_TASTE: WishlistItem = {
+      ...FROM_GAL,
+      taste: { fit: 83, genres: ['דרמה'], agreement: null },
+    }
+
+    it('shows the match chip on rows that have a score', async () => {
+      setup({ [WANT]: page([WITH_TASTE, FROM_SEARCH]) })
+      await screen.findByRole('link', { name: 'האודיסאה' })
+      const row = rowOf('האודיסאה')
+      expect(within(row).getByTestId('taste-chip')).toHaveTextContent('83% התאמה')
+      expect(within(rowOf('Severance')).queryByTestId('taste-chip')).not.toBeInTheDocument()
+    })
+
+    it('sorts the wishlist by match', async () => {
+      const BEST = 'GET /wishlist?status=want&lang=he&sort=fit'
+      const { fake } = setup({ [BEST]: page([FROM_SEARCH, WITH_TASTE]) })
+      await screen.findByRole('link', { name: 'האודיסאה' })
+      const recent = screen.getByRole('button', { name: he.wishlist.sort.recent })
+      const best = screen.getByRole('button', { name: he.wishlist.sort.fit })
+      expect(recent).toHaveAttribute('aria-pressed', 'true')
+      expect(best).toHaveAttribute('aria-pressed', 'false')
+      expect(fake.log()).not.toContain(BEST)
+
+      await userEvent.click(best)
+      await vi.waitFor(() => expect(fake.log()).toContain(BEST))
+      expect(best).toHaveAttribute('aria-pressed', 'true')
+      expect(recent).toHaveAttribute('aria-pressed', 'false')
+      await vi.waitFor(() => {
+        const names = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
+        expect(names).toEqual(['Severance', 'האודיסאה'])
+      })
+    })
+
+    it('passes the sort along when loading more', async () => {
+      const BEST = 'GET /wishlist?status=want&lang=he&sort=fit'
+      const { fake } = setup({
+        [BEST]: page([FROM_GAL], '1'),
+        [`${BEST}&cursor=1`]: page([FROM_SEARCH]),
+      })
+      await userEvent.click(screen.getByRole('button', { name: he.wishlist.sort.fit }))
+      await userEvent.click(await screen.findByRole('button', { name: he.common.loadMore }))
+      expect(await screen.findByRole('link', { name: 'Severance' })).toBeInTheDocument()
+      expect(fake.log()).toContain(`${BEST}&cursor=1`)
+    })
+  })
 })

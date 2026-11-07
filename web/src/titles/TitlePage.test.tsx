@@ -49,6 +49,7 @@ const TITLE: TitlePageData = {
   fetched_at: '2026-11-01T10:00:00+00:00',
   posts: [],
   in_wishlist: false,
+  taste: null,
 }
 const SERIES: TitlePageData = {
   ...TITLE,
@@ -272,5 +273,21 @@ describe('ExternalRatings', () => {
       />,
     )
     expect(screen.queryByRole('list')).not.toBeInTheDocument()
+  })
+
+  it('shows the title score without an agreement', async () => {
+    await setLocale('en')
+    renderTitle(
+      serve({ ...TITLE, taste: { fit: 79, genres: ['Drama'], agreement: null } }, 'en').api,
+    )
+    const line = await screen.findByTestId('taste-line')
+    expect(line.textContent?.replace(/\s+/g, ' ')).toBe('79% match · Drama fits you')
+    expect(line).not.toHaveTextContent('agree')
+  })
+
+  it('shows no Taste Match line when the score is locked', async () => {
+    renderTitle(serve(TITLE).api)
+    await screen.findByRole('heading', { level: 1, name: 'האודיסאה' })
+    expect(screen.queryByTestId('taste-line')).not.toBeInTheDocument()
   })
 })

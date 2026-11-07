@@ -165,11 +165,21 @@
     "fromPeopleYouFollow": "From people you follow",
     "stale": "These details may be out of date."
   },
+  "taste": {
+    "match": "{{pct}}% match",
+    "genres_one": "{{a}} fits you",
+    "genres_two": "{{a}} & {{b}} fit you",
+    "agree": "you agree with {{name}} {{pct}}% of the time",
+    "basedOnYou": "Based on your ratings",
+    "unlock": "Rate a few titles to unlock Taste Match",
+    "unlockCta": "Take the taste quiz"
+  },
   "wishlist": {
     "save": "Save to wishlist",
     "saved": "Saved",
     "privateNote": "Only you can see your wishlist.",
     "tab": { "want": "Want to watch", "watched": "Watched" },
+    "sort": { "recent": "Newest", "fit": "Best match" },
     "add": "Add a title",
     "cancel": "Cancel",
     "markWatched": "Mark watched",
