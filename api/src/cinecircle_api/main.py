@@ -16,6 +16,7 @@ from cinecircle_api.catalog.omdb_client import OmdbClient
 from cinecircle_api.catalog.service import TitleService
 from cinecircle_api.catalog.tmdb_client import TmdbClient
 from cinecircle_api.db import make_engine
+from cinecircle_api.discover.service import DiscoverService
 from cinecircle_api.routes import (
     feed,
     follows,
@@ -84,6 +85,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.engine = make_engine(settings.database_url)
     # Without a key the client is None and the title endpoints answer 503; the app still starts.
     app.state.title_service = TitleService(app.state.engine, tmdb, omdb)
+    app.state.discover_service = DiscoverService(app.state.engine, tmdb, app.state.title_service)
     # None when SUPABASE_URL is unset: protected routes then answer 503 auth_unavailable.
     app.state.verifier = make_verifier(settings)
     app.add_middleware(

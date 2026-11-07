@@ -19,6 +19,8 @@ from cinecircle_api.catalog.service import (
     TitleService,
 )
 from cinecircle_api.db import UserDb
+from cinecircle_api.discover.models import ExternalReview, ReviewsPage
+from cinecircle_api.discover.service import DiscoverService
 from cinecircle_api.events import repository as events
 from cinecircle_api.posts import repository as posts_repository
 from cinecircle_api.posts.models import TitlePage
@@ -39,6 +41,13 @@ def get_title_service(request: Request) -> TitleService:
 
 
 Service = Annotated[TitleService, Depends(get_title_service)]
+
+
+def get_discover_service(request: Request) -> DiscoverService:
+    return request.app.state.discover_service
+
+
+Discover = Annotated[DiscoverService, Depends(get_discover_service)]
 
 
 def _detail(load, lang: Locale) -> TitleDetail:
@@ -95,4 +104,26 @@ def by_id(
         posts=post_cards(db, rows, lang, ctx),
         in_wishlist=wishlist_repository.in_wishlist(db, detail.id),
         taste=taste,
+    )
+
+
+@router.get("/{title_id}/reviews")
+def reviews(discover: Discover, title_id: Annotated[int, Path(ge=1)]) -> ReviewsPage:
+    """Up to five attributed TMDB reviews of a cached title, newest first (plan P7). Catalogue
+    data only: no user transaction is opened. Reviews are an optional extra, so TMDB being down
+    with nothing cached is an empty list, not an error."""
+    rows = discover.reviews(title_id)
+    if rows is None:
+        raise HTTPException(404, "not_found")
+    return ReviewsPage(
+        reviews=[
+            ExternalReview(
+                author_name=r.author_name,
+                excerpt=r.excerpt,
+                url=r.url,
+                author_rating=r.author_rating,
+                source="tmdb",
+            )
+            for r in rows
+        ]
     )

@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 from cinecircle_api.catalog.parse import GenreRow
 from cinecircle_api.catalog.service import TitleService
 from cinecircle_api.db import act_as, make_engine
+from cinecircle_api.discover.service import DiscoverService
 from cinecircle_api.main import create_app
 from tests.fakes import FakeOmdb, FakeTmdb
 from tests.tokens import auth_settings, make_token
@@ -157,7 +158,11 @@ def api(people, engine) -> Iterator[Callable[..., TestClient]]:
             with engine.begin() as conn:
                 conn.execute(_INSERT_FRESH_USER, {"id": user_id, "email": email})
         app = create_app(auth_settings(URL))
-        app.state.title_service = TitleService(app.state.engine, FakeTmdb(), FakeOmdb())
+        tmdb = FakeTmdb()
+        app.state.title_service = TitleService(app.state.engine, tmdb, FakeOmdb())
+        app.state.discover_service = DiscoverService(
+            app.state.engine, tmdb, app.state.title_service
+        )
         apps.append(app)
         token = make_token(str(user_id), **{"email": email, **claims})
         return TestClient(app, headers={"Authorization": f"Bearer {token}"})
