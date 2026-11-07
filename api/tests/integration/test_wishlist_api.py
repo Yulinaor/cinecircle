@@ -180,8 +180,8 @@ def test_via_follows_post_visibility(api, gal_content):
 
     assert gal.delete("/followers/dana").status_code == 204
     assert via() is None
-    assert dana.post("/follows/gal").status_code in (200, 201)
-    assert gal.post("/follow-requests/dana/accept").status_code in (200, 204)
+    assert dana.post("/follows/gal").status_code == 200
+    assert gal.post("/follow-requests/dana/accept").status_code == 200
     assert via()["post_id"] == post_id
 
     assert gal.delete(f"/posts/{post_id}").status_code == 204

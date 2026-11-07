@@ -132,3 +132,26 @@ def test_posting_marks_a_wanted_title_watched(api):
     assert watched[odyssey["id"]]["my_post"]["rating"] == 8.5
     assert watched[severance["id"]]["watched_at"] == watched_at
     assert _items(dana, "want") == []  # the unlisted title stayed off the list
+
+
+def test_a_failed_post_leaves_a_wanted_title_wanted(api):
+    dana = api("dana")
+    odyssey = _cache(dana, "movie", ODYSSEY_ID)
+    severance = _cache(dana, "series", SEVERANCE_ID)
+    r = dana.post("/posts", json={"title_id": odyssey["id"], "rating": 7})
+    assert r.status_code == 201, r.text
+    for title in (odyssey, severance):
+        r = dana.post("/wishlist", json={"title_id": title["id"], "source": "search"})
+        assert r.status_code in (200, 201), r.text
+    r = dana.patch(f"/wishlist/{odyssey['id']}", json={"status": "want"})
+    assert r.status_code == 200, r.text
+    assert {i["title"]["id"] for i in _items(dana)} == {odyssey["id"], severance["id"]}
+
+    # 409: the title already has a post of Dana's. 422: the series has no season 99.
+    r = dana.post("/posts", json={"title_id": odyssey["id"], "rating": 3})
+    assert (r.status_code, r.json()["detail"]) == (409, "post_exists")
+    r = dana.post("/posts", json={"title_id": severance["id"], "season_number": 99, "rating": 3})
+    assert (r.status_code, r.json()) == (422, {"detail": "season_invalid"})
+
+    assert {i["title"]["id"] for i in _items(dana)} == {odyssey["id"], severance["id"]}
+    assert _items(dana, "watched") == []

@@ -13,8 +13,9 @@ export type NewWishlistItem = {
 
 /**
  * Save, move and remove wishlist items. Each one invalidates the wishlist and every post list
- * and title page (their cards show whether the title is saved). Not awaited, so the caller is
- * usable again without waiting for those refetches.
+ * and title page (their cards show whether the title is saved), failures too: a 404 means the
+ * list changed elsewhere, so the screen must refetch. Not awaited, so the caller is usable again
+ * without waiting for those refetches.
  */
 export function useWishlistMutations() {
   const api = useApi()
@@ -28,16 +29,16 @@ export function useWishlistMutations() {
   const save = useMutation({
     mutationFn: (item: NewWishlistItem) =>
       api<WishlistItem>('/wishlist', { method: 'POST', body: item }),
-    onSuccess: invalidate,
+    onSettled: invalidate,
   })
   const setStatus = useMutation({
     mutationFn: ({ titleId, status }: { titleId: number; status: WishlistStatus }) =>
       api<WishlistItem>(`/wishlist/${titleId}`, { method: 'PATCH', body: { status } }),
-    onSuccess: invalidate,
+    onSettled: invalidate,
   })
   const remove = useMutation({
     mutationFn: (titleId: number) => api<void>(`/wishlist/${titleId}`, { method: 'DELETE' }),
-    onSuccess: invalidate,
+    onSettled: invalidate,
   })
   return { save, setStatus, remove }
 }

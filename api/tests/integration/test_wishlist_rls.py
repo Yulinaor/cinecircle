@@ -46,7 +46,7 @@ def test_source_post_must_be_visible_on_the_same_title(people, gal_content, engi
         _assert_source_violation(_try_insert(conn, first, "post", private))  # nor on its title
         _assert_source_violation(_try_insert(conn, first, "post", None))  # post without a post
         # a post id on any other source is refused too (trigger or the table CHECK)
-        assert isinstance(_try_insert(conn, first, "search", shared), IntegrityError)
+        _assert_source_violation(_try_insert(conn, first, "search", shared))
         assert _try_insert(conn, first, "post", shared) is None
         assert scalar(conn, "SELECT count(*) FROM app.wishlist_items") == 1
 

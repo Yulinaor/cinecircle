@@ -151,7 +151,10 @@ describe('WishlistPage', () => {
     expect(within(search).getByText(he.wishlist.from.search)).toBeInTheDocument()
     expect(within(search).queryByRole('link', { name: he.wishlist.from.search })).toBeNull()
     // A series says so; an English name on a Hebrew screen is labelled.
-    expect(within(search).getByText(he.compose.series, { exact: false })).toBeInTheDocument()
+    const meta = within(search).getByText(he.compose.series, { exact: false })
+    // Only the number is isolated left-to-right; the separator stays in the line's own direction.
+    expect(meta).toHaveTextContent(`2022 · ${he.compose.series}`)
+    expect(meta.querySelector('bdi')).toHaveTextContent(/^2022$/)
     expect(within(search).getByText(he.lang.en)).toBeInTheDocument()
     expect(within(gal).queryByText(he.lang.he)).toBeNull()
   })

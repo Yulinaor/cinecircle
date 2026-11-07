@@ -65,7 +65,12 @@ export function WishlistRow({ item }: { item: WishlistItem }) {
         </h2>
         <LangLabel lang={title.name_lang} />
         <p className="text-sm text-muted">
-          {title.year_start !== null && <bdi>{title.year_start} · </bdi>}
+          {title.year_start !== null && (
+            <>
+              <bdi>{title.year_start}</bdi>
+              {' · '}
+            </>
+          )}
           {t(title.media_type === 'movie' ? 'compose.movie' : 'compose.series')}
         </p>
         <p className="text-sm text-muted">

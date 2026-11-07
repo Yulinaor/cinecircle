@@ -45,7 +45,11 @@ def list_items(
     return WishlistPage(items=[wishlist_item(row, lang) for row in page], next_cursor=next_cursor)
 
 
-@router.post("", status_code=201)
+@router.post(
+    "",
+    status_code=201,
+    responses={200: {"model": WishlistItem, "description": "already on the list"}},
+)
 def save(db: UserDb, body: SaveTitle, response: Response, lang: Lang = "he") -> WishlistItem:
     """201 for a new item; 200 with the existing one when the title was already saved."""
     try:

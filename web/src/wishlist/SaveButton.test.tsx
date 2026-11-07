@@ -103,4 +103,20 @@ describe('SaveButton', () => {
     const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey)
     expect(keys).toEqual(expect.arrayContaining([['wishlist'], ['posts'], ['title']]))
   })
+
+  it('refetches even when the server says the title was already removed (404)', async () => {
+    const fake = fakeApi({
+      'DELETE /wishlist/3': () => {
+        throw new ApiError(404, 'not_found')
+      },
+    })
+    const { client } = renderApp(<SaveButton titleId={3} saved source="search" />, {
+      api: fake.api,
+    })
+    const invalidate = vi.spyOn(client, 'invalidateQueries')
+    await userEvent.click(screen.getByRole('button', SAVED))
+    expect(await screen.findByRole('alert')).toHaveTextContent(he.common.error)
+    const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey)
+    expect(keys).toEqual(expect.arrayContaining([['wishlist'], ['posts'], ['title']]))
+  })
 })

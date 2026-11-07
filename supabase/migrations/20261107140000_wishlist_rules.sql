@@ -8,7 +8,8 @@
 -- is indistinguishable from one that does not exist. One fixed message, no ids in it.
 -- Fires on INSERT only: ON DELETE SET NULL later clears source_post_id (the post was deleted) and
 -- must not be blocked, which is also why the CHECK below allows source 'post' with no post.
--- CONSTRAINT lets the API read `diag.constraint_name` and answer 422 source_invalid.
+-- CONSTRAINT lets the API read `diag.constraint_name`; it answers 404 not_found, the same as a
+-- missing title.
 
 CREATE FUNCTION app.wishlist_check_source() RETURNS trigger
 LANGUAGE plpgsql SECURITY INVOKER SET search_path = '' AS $$

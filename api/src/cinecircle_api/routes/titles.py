@@ -76,8 +76,9 @@ def by_tmdb(
 def by_id(
     service: Service, db: UserDb, title_id: Annotated[int, Path(ge=1)], lang: Lang = "he"
 ) -> TitlePage:
-    """The catalogue entry plus the posts on it the viewer may see (plan P9). The catalogue part
-    needs no profile; a viewer without one has no posts to see, so RLS returns none."""
+    """The catalogue entry plus the posts on it the viewer may see (plan P9) and the viewer's own
+    `in_wishlist` flag. The catalogue part needs no profile; a viewer without one has no posts to
+    see, so RLS returns none, and `in_wishlist` is False."""
     detail = _detail(lambda: service.get(title_id), lang)
     rows = posts_repository.title_posts(db, detail.id)
     return TitlePage(
