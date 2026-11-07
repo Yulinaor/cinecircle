@@ -1,6 +1,8 @@
 import copy
 from datetime import UTC, datetime
 
+import pytest
+
 from cinecircle_api.catalog.parse import ListItem, ReviewRecord, excerpt, parse_list, parse_reviews
 from tests.fixtures import load
 
@@ -172,3 +174,26 @@ def test_parse_reviews_unusable_dates_are_none():
     out = parse_reviews(raw)
     assert out[0].published_at is None and out[1].published_at is None
     assert out[2].published_at == datetime(2020, 1, 2, 3, 4, 5, tzinfo=UTC)
+
+
+@pytest.mark.parametrize("content", [None, 5, ["a"], {"x": 1}])
+def test_parse_reviews_skips_a_non_string_content(content):
+    raw = copy.deepcopy(load("tmdb/reviews_movie"))
+    good = len(parse_reviews(raw))
+    raw["results"].append(
+        {"id": "bad", "author": "Eve", "content": content, "url": "https://t.test/b"}
+    )
+    out = parse_reviews(raw)  # must not raise
+    assert len(out) == good and "bad" not in [x.source_review_id for x in out]
+
+
+def test_parse_reviews_keeps_the_first_of_a_repeated_id():
+    raw = {
+        "results": [
+            {"id": "r1", "author": "Ann", "content": "first", "url": "https://t.test/1"},
+            {"id": "r2", "author": "Bob", "content": "other", "url": "https://t.test/2"},
+            {"id": "r1", "author": "Ann", "content": "second", "url": "https://t.test/1b"},
+        ]
+    }
+    out = parse_reviews(raw)
+    assert [(x.source_review_id, x.excerpt) for x in out] == [("r1", "first"), ("r2", "other")]

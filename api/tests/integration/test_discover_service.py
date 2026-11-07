@@ -252,3 +252,40 @@ def test_payload_has_only_catalogue_fields(world, engine):
         p["vote_average"] is None or p["vote_average"] == round(p["vote_average"], 1)
         for p in payload
     )
+
+
+def _write_bad_row(engine, payload: str) -> None:
+    with engine.begin() as conn:
+        conn.execute(
+            sa.text(
+                "INSERT INTO app.discover_cache (list_key, locale, payload, fetched_at)"
+                " VALUES ('trending:movie:week', 'en', CAST(:payload AS jsonb), :at)"
+                " ON CONFLICT (list_key, locale) DO UPDATE SET"
+                " payload = EXCLUDED.payload, fetched_at = EXCLUDED.fetched_at"
+            ),
+            {"payload": payload, "at": T0},
+        )
+
+
+@pytest.mark.parametrize(
+    "bad",
+    ['[{"tmdb_id": 1}]', '[{"tmdb_id": "x"}, 5]', '{"not": "a list"}', "null"],
+    ids=["missing-keys", "wrong-shapes", "not-a-list", "null"],
+)
+def test_an_undecodable_cached_row_is_a_cache_miss(world, engine, bad):
+    service, tmdb, clock, _ = world
+    _write_bad_row(engine, bad)  # fresh by the clock: would be served for six hours
+    served = service.lists("movie", [TRENDING], "en")
+    assert tmdb.calls["trending"] == 1 and len(served[0].items) == 6  # refetched
+    assert served[0].stale is False and served[0].fetched_at == clock.now
+    again = service.lists("movie", [TRENDING], "en")  # the rewritten row decodes
+    assert tmdb.calls["trending"] == 1 and again[0].items == served[0].items
+
+
+def test_an_undecodable_cached_row_with_tmdb_down_omits_the_list(world, engine):
+    service, tmdb, clock, _ = world
+    _write_bad_row(engine, '[{"tmdb_id": 1}]')
+    tmdb.fail = True
+    assert service.lists("movie", [TRENDING], "en") == []
+    clock.advance(hours=9)  # stale and undecodable
+    assert service.lists("movie", [TRENDING], "en") == []

@@ -19,6 +19,9 @@ import { TasteQuizPage } from './TasteQuizPage'
 
 vi.mock('../auth/supabase', () => ({ supabase: null }))
 
+// Under machine load the default 15 s has timed out; give this heavy file room.
+vi.setConfig({ testTimeout: 30_000 })
+
 beforeEach(async () => {
   localStorage.clear()
   initI18n()

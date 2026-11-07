@@ -485,3 +485,20 @@ def test_the_recorder_sees_a_user_transaction(engine):
         with user_transaction(request, claims):
             raise RuntimeError("boom")
     assert in_user_transaction() is False
+
+
+def test_chips_come_only_from_items_that_are_shown(api, engine):
+    # WarGames (860) is the only recommendation with Drama (18) and the only one Dana rated, so it
+    # is dropped from her "because" section; Drama must not stay behind as a chip.
+    seed = _title(engine, 7001, "Seed Nine")
+    wargames = _title(engine, 860, "WarGames")
+    _rate(engine, DANA, seed, 9.0)
+    _rate(engine, DANA, wargames, 5.0)
+    dana = api("dana")
+    body = dana.get("/discover", params={"lang": "en", "section": "because"}).json()
+    assert [s["key"] for s in body["sections"]] == ["because"]
+    assert 860 not in [i["tmdb_id"] for i in _items(body)]
+    drama = 18
+    assert drama not in {g["id"] for i in _items(body) for g in i["genres"]}
+    assert drama not in {g["id"] for g in body["genres"]}
+    assert {g["id"] for g in body["genres"]} == {g["id"] for i in _items(body) for g in i["genres"]}

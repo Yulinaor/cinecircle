@@ -24,7 +24,10 @@ _deadline_end: ContextVar[float | None] = ContextVar("catalog_deadline_end", def
 @contextmanager
 def deadline(seconds: float = REQUEST_BUDGET_S) -> Iterator[None]:
     """Bound every get_json call made inside to `seconds` in total. Nested deadlines keep the
-    earlier end, so a caller's budget can never be extended by a callee."""
+    earlier end, so a caller's budget can never be extended by a callee.
+
+    The budget is soft: httpx applies its timeout per phase (connect, read, write), not to the
+    whole call, so one call can overrun `remaining` by up to one extra phase."""
     end = time.monotonic() + seconds
     current = _deadline_end.get()
     token = _deadline_end.set(end if current is None else min(current, end))

@@ -125,7 +125,7 @@ export function DiscoverPage() {
           className={`flex flex-col gap-6 ${query.isPlaceholderData ? 'opacity-60' : ''}`}
         >
           {page.sections.map((section) => (
-            <SectionRow key={section.key} section={section} />
+            <SectionRow key={sectionId(section)} section={section} />
           ))}
         </div>
       )}
@@ -133,10 +133,17 @@ export function DiscoverPage() {
   )
 }
 
+/** Unique per section: the two `because` sections are told apart by their seed title. */
+function sectionId(section: DiscoverSection): string {
+  return section.key === 'because' && section.seed
+    ? `because-${section.seed.title_id}`
+    : section.key
+}
+
 function SectionRow({ section }: { section: DiscoverSection }) {
   const { t } = useTranslation()
   const isolating = useIsolating()
-  const headingId = `discover-${section.key}`
+  const headingId = `discover-${sectionId(section)}`
   const seed = section.seed
   const heading =
     section.key === 'because' && seed

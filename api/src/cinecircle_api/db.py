@@ -91,7 +91,10 @@ def user_transaction(request: Request, claims: Claims) -> Iterator[Connection]:
     A commit()/rollback() inside the block is not an escape hatch: SQLAlchemy refuses any
     further statement inside the `begin()` block, so nothing can run later as postgres.
 
-    A route that calls this itself declares `RequestScope`, so `in_user_transaction` works there.
+    A sync handler that calls this directly needs no `RequestScope`: the handler and the sync code
+    it calls run in one context copy, and the first call there makes its own cell for
+    `in_user_transaction`. `RequestScope` matters for `UserDb`, whose transaction opens in a
+    dependency while the handler runs in another context copy.
     """
     cell = _OPEN.get()
     if cell is None:  # outside a request (a script, a test): this context gets its own cell

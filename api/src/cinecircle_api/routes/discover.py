@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from cinecircle_api.auth import CurrentUser
 from cinecircle_api.catalog.models import poster_url
 from cinecircle_api.catalog.parse import GenreRow, ListItem, Locale, MediaType, pick_text
-from cinecircle_api.db import RequestScope, user_transaction
+from cinecircle_api.db import user_transaction
 from cinecircle_api.discover import seeds as seeds_repository
 from cinecircle_api.discover.models import (
     DiscoverItem,
@@ -78,7 +78,6 @@ def _seed(row: seeds_repository.SeedRow, lang: Locale) -> Seed:
 def discover(
     request: Request,
     claims: CurrentUser,
-    _scope: RequestScope,
     media_type: Annotated[MediaType, Query(alias="type")] = "movie",
     genre: Annotated[int | None, Query(ge=1)] = None,
     section: Annotated[SectionKey | None, Query()] = None,
@@ -124,9 +123,9 @@ def discover(
             card = _item(one, item, genre_rows, ctx, lang)
             if card is None:
                 continue
-            chips.update({g.id: g for g in card.genres})
             if kind == "recs" and (item.tmdb_id, item.media_type) in rated:
                 continue  # the viewer has rated it already
+            chips.update({g.id: g for g in card.genres})  # items actually shown, before the filter
             if genre is None or genre in {g.id for g in card.genres}:
                 shown.append(card)
         if not shown:

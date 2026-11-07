@@ -83,19 +83,32 @@ def _to_payload(items: list[ListItem]) -> list[dict]:
     ]
 
 
-def _from_payload(payload: list[dict]) -> list[ListItem]:
-    return [
-        ListItem(
-            tmdb_id=p["tmdb_id"],
-            media_type=p["media_type"],
-            name=p["name"],
-            poster_path=p["poster_path"],
-            year=p["year"],
-            genre_ids=tuple(p["genre_ids"]),
-            vote_average=p["vote_average"],
-        )
-        for p in payload
-    ]
+def _from_payload(payload: object) -> list[ListItem] | None:
+    """The cached items, or None when the row does not decode (an old or hand-edited shape)."""
+    if not isinstance(payload, list):
+        return None
+    items: list[ListItem] = []
+    try:
+        for p in payload:
+            if not isinstance(p, dict):
+                return None
+            tmdb_id, media_type = p["tmdb_id"], p["media_type"]
+            if not isinstance(tmdb_id, int) or media_type not in ("movie", "series"):
+                return None
+            items.append(
+                ListItem(
+                    tmdb_id=tmdb_id,
+                    media_type=media_type,
+                    name=p["name"],
+                    poster_path=p["poster_path"],
+                    year=p["year"],
+                    genre_ids=tuple(p["genre_ids"]),
+                    vote_average=p["vote_average"],
+                )
+            )
+    except (KeyError, TypeError):
+        return None
+    return items
 
 
 class DiscoverService:
@@ -168,17 +181,25 @@ class DiscoverService:
         with self._engine.connect() as conn:
             cached = repo.get_cached_list(conn, cache_key, locale)
         now = self._now()
-        if cached is not None and now - cached.fetched_at < LIST_REFRESH_AFTER:
-            return _Loaded(_from_payload(cached.payload), cached.fetched_at, stale=False)
+        items = None if cached is None else _from_payload(cached.payload)
+        if cached is not None and items is None:
+            # An undecodable row is a cache miss: refetch it; if TMDB fails too, omit the list.
+            logger.warning("Discover cache row %s/%s does not decode", cache_key, locale)
+            cached = None
+        if cached is not None and items is not None:
+            if now - cached.fetched_at < LIST_REFRESH_AFTER:
+                return _Loaded(items, cached.fetched_at, stale=False)
 
         payload = self._fetch(media_type, key, locale)
         if payload is None:  # TMDB unreachable: the cached list, if any, is better than none
-            if cached is None:
+            if cached is None or items is None:
                 return None
-            return _Loaded(_from_payload(cached.payload), cached.fetched_at, stale=True)
+            return _Loaded(items, cached.fetched_at, stale=True)
+        fresh = _from_payload(payload)
+        assert fresh is not None  # the payload was built by _to_payload just now
         with self._engine.begin() as conn:
             repo.put_cached_list(conn, cache_key, locale, payload, now)
-        return _Loaded(_from_payload(payload), now, stale=False)
+        return _Loaded(fresh, now, stale=False)
 
     def _fetch(self, media_type: MediaType, key: ListKey, locale: Locale) -> list[dict] | None:
         if self._tmdb is None:

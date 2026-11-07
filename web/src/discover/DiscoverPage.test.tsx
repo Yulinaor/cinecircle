@@ -76,6 +76,34 @@ describe('DiscoverPage', () => {
     expect(within(because).getByText(en.discover.fromTmdb)).toBeInTheDocument()
   })
 
+  it('names two Because sections apart', async () => {
+    await setLocale('en')
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const page: DiscoverPageData = {
+      ...DISCOVER_PAGE,
+      sections: [
+        {
+          key: 'because',
+          seed: { title_id: 5, name: 'The Matrix', name_lang: 'en', rating: 9.5 },
+          items: [DISCOVER_ITEM],
+        },
+        {
+          key: 'because',
+          seed: { title_id: 6, name: 'Inception', name_lang: 'en', rating: 8.5 },
+          items: [DISCOVER_ITEM],
+        },
+      ],
+    }
+    renderDiscover({ 'GET /discover?type=movie&lang=en': page })
+    const first = await screen.findByRole('region', { name: 'Because you rated The Matrix 9.5' })
+    const second = screen.getByRole('region', { name: 'Because you rated Inception 8.5' })
+    expect(first).not.toBe(second)
+    expect(within(first).getByRole('heading')).toHaveTextContent('The Matrix')
+    expect(within(second).getByRole('heading')).toHaveTextContent('Inception')
+    expect(errors.mock.calls.flat().join(' ')).not.toMatch(/same key|unique "key"/i)
+    errors.mockRestore()
+  })
+
   it('switches to series', async () => {
     const series: DiscoverPageData = {
       ...DISCOVER_PAGE,

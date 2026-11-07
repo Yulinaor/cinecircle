@@ -318,18 +318,26 @@ def _timestamp(value: object) -> datetime | None:
 
 
 def parse_reviews(raw: dict) -> list[ReviewRecord]:
-    """Reviews with an id, a name, a text and an https link; the rest are skipped."""
+    """Reviews with an id, a name, a text and an https link; the rest are skipped. A repeated id
+    keeps its first review."""
     records: list[ReviewRecord] = []
+    seen: set[str] = set()
     for item in raw.get("results") or []:
         if not isinstance(item, dict):
             continue
+        content = item.get("content")
+        if not isinstance(content, str):
+            continue  # a number, list or null where text should be: nothing to show
         details = item.get("author_details") or {}
         review_id = _text(item.get("id"))
         author = _text(item.get("author")) or _text(details.get("username"))
         url = _text(item.get("url"))
-        body = excerpt(item.get("content") or "")
+        body = excerpt(content)
         if not (review_id and author and body and url and url.startswith("https://")):
             continue
+        if review_id in seen:
+            continue  # one answer, one row per id (store_reviews upserts by id): keep the first
+        seen.add(review_id)
         rating = details.get("rating")
         records.append(
             ReviewRecord(
