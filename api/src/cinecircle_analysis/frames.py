@@ -70,6 +70,7 @@ _WISHLIST = sa.text(
     " FROM app.wishlist_items w JOIN fu ON fu.id = w.owner_id JOIN ft ON ft.id = w.title_id"
     " LEFT JOIN app.posts sp ON sp.id = w.source_post_id"
     " LEFT JOIN fu sa ON sa.id = sp.author_id LEFT JOIN ft st ON st.id = sp.title_id"
+    " WHERE w.source_post_id IS NULL OR (sa.id IS NOT NULL AND st.id IS NOT NULL)"
     " ORDER BY w.added_at, fu.n, ft.i"
 )
 _EVENTS = sa.text(

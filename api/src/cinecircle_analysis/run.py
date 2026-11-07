@@ -1,13 +1,14 @@
 """The command line: `python -m cinecircle_analysis load | wipe | notebooks`.
 
-Always the database in `DATABASE_URL`, which `load.py` insists is on this machine.
+Always the database in `DATABASE_URL`, which `load.py` insists is on this machine, and only when
+`APP_ENV` is `local` (api/.env sets it); any other environment is refused.
 """
 
 import argparse
 from pathlib import Path
 
 from cinecircle_analysis.fakedata import generate
-from cinecircle_analysis.load import NotLocal, count_rows, load, wipe
+from cinecircle_analysis.load import FakeTitleInUse, NotLocal, count_rows, load, wipe
 from cinecircle_api.db import make_engine
 from cinecircle_api.settings import Settings
 
@@ -49,7 +50,14 @@ def execute_notebooks(directory: Path = NOTEBOOKS_DIR) -> list[Path]:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    engine = make_engine(Settings().database_url)
+    settings = Settings()
+    if settings.app_env != "local":
+        print(
+            f"refusing to {args.command}: APP_ENV is '{settings.app_env}', "
+            "but fake data is only for APP_ENV=local"
+        )
+        return 2
+    engine = make_engine(settings.database_url)
     try:
         if args.command == "wipe":
             wipe(engine)
@@ -61,7 +69,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "notebooks":
             execute_notebooks()
         return 0
-    except NotLocal as refused:
+    except (NotLocal, FakeTitleInUse) as refused:
         print(refused)
         return 2
     finally:

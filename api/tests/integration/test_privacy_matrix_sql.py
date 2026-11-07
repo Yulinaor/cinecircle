@@ -98,10 +98,13 @@ SEES |= {"external_reviews": {"gal", "dana", "noa", "ron"}}  # TMDB reviews: cat
 PROBES |= {"external_reviews": "SELECT count(*) = 1 FROM app.external_reviews"}
 SEES |= {
     "stats_ratings": {"gal"},  # the My Stats `my` CTE holds only the viewer's own ratings
+    # Gal's SHARED post is readable by Dana through RLS but is never one of her own ratings
+    "stats_ratings_shared": {"gal"},
     "stats_agreement_with_gal": {"dana"},  # Gal is an author in the viewer's agreement rows
 }
 PROBES |= {
     "stats_ratings": MY_CTE + " SELECT count(*) > 0 FROM my WHERE title_id = :title2",
+    "stats_ratings_shared": MY_CTE + " SELECT count(*) > 0 FROM my WHERE title_id = :title1",
     # `load_agreements`' statement as is; it needs a rated title in common with Gal.
     "stats_agreement_with_gal": (
         "SELECT count(*) > 0 FROM (" + _AGREEMENTS.text + ") a WHERE a.author_id = :gal"

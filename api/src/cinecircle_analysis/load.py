@@ -6,12 +6,14 @@ any database that is not on this machine before it opens a connection. The app
 """
 
 from collections.abc import Iterable, Iterator
+from contextlib import contextmanager
 from typing import Any
 
 import sqlalchemy as sa
 from sqlalchemy import Connection, Engine
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.exc import IntegrityError
 
 from cinecircle_analysis.fakedata import FAKE_DOMAIN, FAKE_TMDB_BASE, GENRES, Dataset
 
@@ -21,6 +23,10 @@ _CHUNK = 2000
 
 class NotLocal(Exception):
     """The database is not on this machine; fake data is never written there."""
+
+
+class FakeTitleInUse(Exception):
+    """A real account's post or wishlist item references a fake title, so the title cannot go."""
 
 
 def assert_local(engine: Engine) -> None:
@@ -154,9 +160,50 @@ def _wipe(conn: Connection) -> None:
     conn.execute(_WIPE_TITLES)
 
 
+_BLOCKERS = sa.text(
+    "SELECT"
+    " (SELECT count(*) FROM app.posts p JOIN app.titles t ON t.id = p.title_id"
+    "  WHERE t.tmdb_id >= :base AND p.author_id NOT IN"
+    "   (SELECT id FROM auth.users WHERE email LIKE :pattern)) AS posts,"
+    " (SELECT count(*) FROM app.wishlist_items w JOIN app.titles t ON t.id = w.title_id"
+    "  WHERE t.tmdb_id >= :base AND w.owner_id NOT IN"
+    "   (SELECT id FROM auth.users WHERE email LIKE :pattern)) AS wishes"
+).bindparams(base=FAKE_TMDB_BASE, pattern=f"%@{FAKE_DOMAIN}")
+
+_CLEAR_BLOCKERS = (
+    "To clear them, delete those rows yourself as postgres (nothing here deletes a real"
+    " account's rows):\n"
+    "  DELETE FROM app.posts WHERE title_id IN"
+    " (SELECT id FROM app.titles WHERE tmdb_id >= {base}) AND author_id NOT IN"
+    " (SELECT id FROM auth.users WHERE email LIKE '%@{domain}');\n"
+    "  DELETE FROM app.wishlist_items WHERE title_id IN"
+    " (SELECT id FROM app.titles WHERE tmdb_id >= {base}) AND owner_id NOT IN"
+    " (SELECT id FROM auth.users WHERE email LIKE '%@{domain}');"
+)
+
+
+@contextmanager
+def _explain_blocked_wipe(engine: Engine) -> Iterator[None]:
+    """Turn the foreign key error of a fake title still referenced by a real account's post or
+    wishlist item into `FakeTitleInUse`, which says how many rows and how to clear them. Any
+    other integrity error passes through untouched."""
+    try:
+        yield
+    except IntegrityError as error:
+        with engine.connect() as conn:  # the failed transaction is gone: ask in a fresh one
+            blocking = conn.execute(_BLOCKERS).one()
+        if not (blocking.posts or blocking.wishes):
+            raise
+        raise FakeTitleInUse(
+            f"cannot remove the fake titles: {blocking.posts} post(s) and {blocking.wishes}"
+            " wishlist item(s) of non-fake accounts reference them, so the fake data was left"
+            " as it was.\n" + _CLEAR_BLOCKERS.format(base=FAKE_TMDB_BASE, domain=FAKE_DOMAIN)
+        ) from error
+
+
 def wipe(engine: Engine) -> None:
     assert_local(engine)
-    with engine.begin() as conn:
+    with _explain_blocked_wipe(engine), engine.begin() as conn:
         _wipe(conn)
 
 
@@ -169,7 +216,7 @@ def load(engine: Engine, dataset: Dataset) -> dict[str, int]:
     notifications appear. CHECK constraints still apply; foreign keys are then only as good as the
     generator, which the unit tests pin."""
     assert_local(engine)
-    with engine.begin() as conn:
+    with _explain_blocked_wipe(engine), engine.begin() as conn:
         _wipe(conn)
         conn.execute(sa.text("SET LOCAL session_replication_role = replica"))
         return _write(conn, dataset)

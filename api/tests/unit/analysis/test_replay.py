@@ -153,7 +153,7 @@ def test_predictions_use_only_the_past():
     title 5 at hour 12. So V's title-5 prediction has S from A's post alone (C's is later) and
     the agreement uses only the one title both had rated by then; the title-6 one has no S."""
     posts = [_post(1, t, r, t + 1) for t, r in enumerate([8, 6, 7, 9, 5])]
-    posts += [_post(1, 5, 7.0, 10), _post(1, 6, 7.0, 11)]
+    posts += [_post(1, 5, 10.0, 10), _post(1, 6, 7.0, 11)]
     posts += [_post(2, 0, 6.0, 0.5), _post(2, 5, 9.0, 7), _post(2, 6, 9.0, 13)]
     posts += [_post(3, 5, 1.0, 12)]
     ds = _dataset([_user(1), _user(2), _user(3)], [_follow(1, 2), _follow(1, 3)], posts)
@@ -161,9 +161,10 @@ def test_predictions_use_only_the_past():
 
     p5 = by_key[(1, 5)]
     assert p5.at == at(10)
-    assert p5.actual == 7.0
+    assert p5.actual == 10.0
     assert p5.state == "full"
-    assert p5.g == pytest.approx(0.7)  # mean of 8,6,7,9,5 only: title 5 itself is not in it
+    # Mean of 8,6,7,9,5 only. Title 5 itself (10) is not in it: with it the mean would be 0.75.
+    assert p5.g == pytest.approx(0.7)
     assert p5.q == pytest.approx(0.8)
     assert p5.imdb == 8.0
     raw = 1 - 2 / 9  # one common title, gap |8 - 6|
@@ -172,7 +173,7 @@ def test_predictions_use_only_the_past():
 
     p6 = by_key[(1, 6)]
     assert p6.s is None  # A's post on title 6 comes after V's
-    assert p6.g == pytest.approx((8 + 6 + 7 + 9 + 5 + 7) / 60)  # now title 5 counts
+    assert p6.g == pytest.approx(45 / 60)  # (8+6+7+9+5+10)/60: title 5 now counts
 
     # A and C follow nobody; their first posts have no history and are not predicted.
     assert (2, 0) not in by_key

@@ -3,6 +3,7 @@ notebooks read only fake rows, and what they evaluate is what the app would have
 
 from collections.abc import Iterator
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 import sqlalchemy as sa
@@ -83,8 +84,37 @@ def _real_rows_next_to_fake_ones(engine) -> int:
     return real
 
 
+def _fake_wish_from_a_real_post(engine) -> tuple[Any, int]:
+    """A fake user's wish on a fake title whose source post is GAL's (a real account): the post
+    is on the same title, as the wishlist trigger demands. Needs `_real_rows_next_to_fake_ones`
+    first (GAL's post on the first fake title). Returns the new wish's (owner id, title id)."""
+    with engine.begin() as conn:
+        fake_title = conn.scalar(
+            sa.text("SELECT id FROM app.titles WHERE tmdb_id = :base"), {"base": FAKE_TMDB_BASE}
+        )
+        row = conn.execute(
+            sa.text(
+                "SELECT u.id AS owner, p.id AS post FROM auth.users u, app.posts p"
+                " WHERE u.email LIKE :pattern AND p.author_id = :gal AND p.title_id = :title"
+                "   AND NOT EXISTS (SELECT 1 FROM app.wishlist_items w"
+                "                   WHERE w.owner_id = u.id AND w.title_id = :title)"
+                " ORDER BY u.email LIMIT 1"
+            ),
+            {"pattern": f"%@{FAKE_DOMAIN}", "gal": GAL.id, "title": fake_title},
+        ).one()
+        conn.execute(
+            sa.text(
+                "INSERT INTO app.wishlist_items (owner_id, title_id, source, source_post_id)"
+                " VALUES (:owner, :title, 'post', :post)"
+            ),
+            {"owner": row.owner, "title": fake_title, "post": row.post},
+        )
+        return row.owner, fake_title
+
+
 def test_frames_read_fake_users_only(engine, loaded):
     _real_rows_next_to_fake_ones(engine)
+    stray_wish = _fake_wish_from_a_real_post(engine)
     ds = loaded
 
     users = frames.users(engine)
@@ -102,7 +132,17 @@ def test_frames_read_fake_users_only(engine, loaded):
     assert all(p["author"] >= 1 and p["title"] >= 0 for p in posts)
 
     assert len(frames.follows(engine)) == len(ds.follows)  # not the two that involve GAL
-    assert len(frames.wishlist(engine)) == len(ds.wishes)
+    assert len(frames.wishlist(engine)) == len(ds.wishes)  # not the wish sourced from GAL's post
+    with engine.connect() as conn:  # the stray wish is really there, only the reader skips it
+        assert (
+            conn.scalar(
+                sa.text(
+                    "SELECT count(*) FROM app.wishlist_items WHERE owner_id = :o AND title_id = :t"
+                ),
+                {"o": stray_wish[0], "t": stray_wish[1]},
+            )
+            == 1
+        )
     assert len(frames.events(engine)) == len(ds.events)
 
     rebuilt = frames.dataset_from_db(engine)

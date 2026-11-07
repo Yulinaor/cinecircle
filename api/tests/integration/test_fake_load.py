@@ -5,7 +5,7 @@ import pytest
 import sqlalchemy as sa
 
 from cinecircle_analysis.fakedata import FAKE_DOMAIN, FAKE_TMDB_BASE, GENRES, generate
-from cinecircle_analysis.load import load, wipe
+from cinecircle_analysis.load import FakeTitleInUse, load, wipe
 from tests.integration.conftest import GAL, insert_post
 
 pytestmark = pytest.mark.integration
@@ -133,3 +133,45 @@ def test_wipe_removes_only_fake_rows(engine, people, clean_catalog, small):
     assert _count(engine, "SELECT count(*) FROM app.titles WHERE tmdb_id = 7") == 1
     assert _count(engine, "SELECT count(*) FROM app.genres WHERE id = 28") == 1
     assert _count(engine, "SELECT count(*) FROM app.profiles WHERE id = :g", g=GAL.id) == 1
+
+
+def test_wipe_names_the_real_rows_that_block_it(engine, people, clean_catalog, small):
+    """A real account's post and wishlist item on a fake title stop the title delete: `wipe`
+    says so (with counts and the way out) instead of a bare foreign key error, removes nothing,
+    and never deletes the real rows itself."""
+    load(engine, small)
+    try:
+        with engine.begin() as conn:
+            fake_title = conn.scalar(
+                sa.text("SELECT id FROM app.titles WHERE tmdb_id = :base"),
+                {"base": FAKE_TMDB_BASE},
+            )
+            insert_post(conn, GAL, fake_title, 8.0, True)
+            conn.execute(
+                sa.text(
+                    "INSERT INTO app.wishlist_items (owner_id, title_id, source)"
+                    " VALUES (:o, :t, 'search')"
+                ),
+                {"o": GAL.id, "t": fake_title},
+            )
+        with pytest.raises(FakeTitleInUse) as blocked:
+            wipe(engine)
+        message = str(blocked.value)
+        assert "1 post" in message
+        assert "1 wishlist item" in message
+        assert "DELETE" in message  # how to clear them
+        # Rolled back as a whole: the fake data is all still there, and so are GAL's rows.
+        assert _fake_counts(engine)["posts"] == len(small.posts)
+        assert _count(engine, "SELECT count(*) FROM app.posts WHERE author_id = :g", g=GAL.id) == 1
+        assert (
+            _count(engine, "SELECT count(*) FROM app.wishlist_items WHERE owner_id = :g", g=GAL.id)
+            == 1
+        )
+        with pytest.raises(FakeTitleInUse):  # `load` replaces the data first, so it is blocked too
+            load(engine, small)
+    finally:
+        with engine.begin() as conn:
+            for table, column in (("posts", "author_id"), ("wishlist_items", "owner_id")):
+                conn.execute(sa.text(f"DELETE FROM app.{table} WHERE {column} = :g"), {"g": GAL.id})
+        wipe(engine)
+    assert _fake_counts(engine) == dict.fromkeys(_fake_counts(engine), 0)
