@@ -12,6 +12,7 @@ __pycache__/
 .venv/
 .pytest_cache/
 .ruff_cache/
+.ipynb_checkpoints/
 
 # Node
 node_modules/
