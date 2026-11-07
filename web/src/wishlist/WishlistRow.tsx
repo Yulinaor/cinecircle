@@ -54,7 +54,12 @@ export function WishlistRow({ item }: { item: WishlistItem }) {
       )}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <h2 className="text-lg font-bold leading-snug text-ink">
-          <Link id={nameId} to={`/titles/${title.id}`} dir="auto" className="hover:underline">
+          <Link
+            id={nameId}
+            to={`/titles/${title.id}`}
+            dir="auto"
+            className="inline-flex min-h-11 items-center hover:underline"
+          >
             {title.name}
           </Link>
         </h2>
@@ -68,7 +73,7 @@ export function WishlistRow({ item }: { item: WishlistItem }) {
             <Link
               to={`/posts/${via.post_id}`}
               dir="auto"
-              className="font-medium text-accent hover:underline"
+              className="inline-flex min-h-11 items-center font-medium text-accent hover:underline"
             >
               {t('wishlist.via', { name: via.author.display_name })}
             </Link>

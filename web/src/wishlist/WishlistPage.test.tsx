@@ -7,7 +7,7 @@ import { AppRoutes } from '../app/routes'
 import { initI18n, setLocale } from '../i18n'
 import en from '../i18n/en.json'
 import he from '../i18n/he.json'
-import { fakeApi, POST_CARD, WISHLIST_ITEM, type FakeRoute } from '../test/fakeApi'
+import { fakeApi, WISHLIST_ITEM, type FakeRoute } from '../test/fakeApi'
 import { renderApp } from '../test/renderApp'
 import { WishlistPage } from './WishlistPage'
 
@@ -398,6 +398,24 @@ describe('AddToWishlist', () => {
     expect(fake.count('POST /wishlist')).toBe(1)
   })
 
+  it('switches to the tab of an item that was already on the list', async () => {
+    setup({
+      'GET /titles/search?q=odyssey&type=all&lang=he': { results: [ODYSSEY_HIT] },
+      [DETAIL_PATH]: DETAIL,
+      // Saving is idempotent: the existing item comes back, already watched.
+      'POST /wishlist': watched(FROM_SEARCH),
+      [WATCHED]: page([watched(FROM_SEARCH)]),
+    })
+    await openAndPick()
+    await vi.waitFor(() =>
+      expect(screen.getByRole('button', { name: he.wishlist.tab.watched })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      ),
+    )
+    expect(await screen.findByRole('link', { name: 'Severance' })).toBeInTheDocument()
+  })
+
   it('says the catalog is unavailable on 503 and retries', async () => {
     let attempts = 0
     const { fake } = setup({
@@ -450,6 +468,5 @@ describe('routes', () => {
     renderApp(<AppRoutes />, { api: fake.api, route: '/wishlist' })
     expect(await screen.findByRole('link', { name: 'Severance' })).toBeInTheDocument()
     expect(screen.getByText(he.wishlist.privateNote)).toBeInTheDocument()
-    expect(POST_CARD.title.id).toBe(3)
   })
 })

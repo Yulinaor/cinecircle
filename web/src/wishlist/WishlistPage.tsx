@@ -1,8 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { WishlistPage as WishlistPageData, WishlistStatus } from '../api/types'
 import { useApi } from '../api/useApi'
+import { useLoadMoreRetry } from '../api/useLoadMoreRetry'
 import { useLang } from '../i18n/useLang'
 import { AddToWishlist } from './AddToWishlist'
 import { wishlistKeys } from './keys'
@@ -31,20 +32,8 @@ export function WishlistPage() {
       ),
     getNextPageParam: (page) => page.next_cursor,
   })
-  const { data, isError, isFetching, hasNextPage, fetchNextPage, refetch } = list
-  // Retry repeats whichever fetch failed: the next page, or a refetch of what is loaded.
-  const loadMoreFailed = useRef(false)
-
-  const loadMore = () => {
-    loadMoreFailed.current = true
-    void fetchNextPage().then((result) => {
-      loadMoreFailed.current = result.isError
-    })
-  }
-  const retry = () => {
-    if (loadMoreFailed.current && hasNextPage) loadMore()
-    else void refetch()
-  }
+  const { data, isError, isFetching, hasNextPage } = list
+  const { loadMore, retry } = useLoadMoreRetry(list, `${status}-${lang}`)
 
   const items = data?.pages.flatMap((p) => p.items) ?? []
   const errorLine = isError && (
@@ -78,7 +67,7 @@ export function WishlistPage() {
         ))}
       </div>
       {adding ? (
-        <AddToWishlist onDone={() => setAdding(false)} onAdded={() => setStatus('want')} />
+        <AddToWishlist onDone={() => setAdding(false)} onAdded={setStatus} />
       ) : (
         <button type="button" onClick={() => setAdding(true)} className={`${BUTTON} self-start`}>
           {t('wishlist.add')}

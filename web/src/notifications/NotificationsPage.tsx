@@ -2,6 +2,7 @@ import { useEffect, useId, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import type { NotificationItem } from '../api/types'
+import { useLoadMoreRetry } from '../api/useLoadMoreRetry'
 import { RequestActions } from '../people/ConnectionActions'
 import { Avatar } from '../people/Avatar'
 import { useMarkNotificationsRead, useNotifications } from './useNotifications'
@@ -16,21 +17,9 @@ const BUTTON =
 export function NotificationsPage() {
   const { t } = useTranslation()
   const list = useNotifications()
-  const { data, isError, isFetching, hasNextPage, fetchNextPage, refetch } = list
+  const { data, isError, isFetching } = list
   const { mutate: markRead } = useMarkNotificationsRead()
-  // Retry repeats whichever fetch failed: the next page, or a refetch of what is loaded.
-  const loadMoreFailed = useRef(false)
-
-  const loadMore = () => {
-    loadMoreFailed.current = true
-    void fetchNextPage().then((result) => {
-      loadMoreFailed.current = result.isError
-    })
-  }
-  const retry = () => {
-    if (loadMoreFailed.current && hasNextPage) loadMore()
-    else void refetch()
-  }
+  const { loadMore, retry } = useLoadMoreRetry(list)
 
   // Opening the page counts as reading: mark everything read once per visit, then refetch.
   const marked = useRef(false)

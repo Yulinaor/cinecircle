@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '../api/client'
-import type { TitleDetail, TitleSearchItem } from '../api/types'
+import type { TitleDetail, TitleSearchItem, WishlistStatus } from '../api/types'
 import { useApi } from '../api/useApi'
 import { TitlePicker } from '../compose/TitlePicker'
 import { useLang } from '../i18n/useLang'
@@ -20,8 +20,8 @@ export function AddToWishlist({
   onAdded,
 }: {
   onDone: () => void
-  /** Only after a save, before `onDone`. */
-  onAdded?: () => void
+  /** Only after a save, before `onDone`, with the saved item's status (it may have been there already). */
+  onAdded?: (status: WishlistStatus) => void
 }) {
   const { t } = useTranslation()
   const api = useApi()
@@ -40,8 +40,8 @@ export function AddToWishlist({
         save.mutate(
           { title_id: found.id, source: 'search' },
           {
-            onSuccess: () => {
-              onAdded?.()
+            onSuccess: (item) => {
+              onAdded?.(item.status)
               onDone()
             },
           },
