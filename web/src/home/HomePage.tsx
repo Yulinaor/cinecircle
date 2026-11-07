@@ -54,6 +54,7 @@ export function HomePage() {
       </div>
       <PostList
         query={feed}
+        scope={`${type}-${lang}`}
         empty={
           <div className="flex flex-col items-start gap-3">
             <p className="text-muted">{t('feed.empty')}</p>

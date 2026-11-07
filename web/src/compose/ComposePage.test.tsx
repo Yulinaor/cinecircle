@@ -215,6 +215,19 @@ describe('ComposePage', () => {
     expect(screen.queryByText(he.auth.loading)).not.toBeInTheDocument()
   })
 
+  it('says nothing about results while a new search is pending', async () => {
+    setup({ ...SEARCH('zzz', []), ...SEARCH('zzzz', []) })
+    const box = await screen.findByRole('searchbox', { name: he.compose.search })
+    fireEvent.change(box, { target: { value: 'zzz' } })
+    expect(await screen.findByText(he.compose.noResults)).toBeInTheDocument()
+
+    // A new term is typed but not searched yet: the old "No results." is about the old term.
+    fireEvent.change(box, { target: { value: 'zzzz' } })
+    expect(screen.queryByText(he.compose.noResults)).not.toBeInTheDocument()
+    // Once the new search has answered, it speaks for the new term.
+    expect(await screen.findByText(he.compose.noResults)).toBeInTheDocument()
+  })
+
   it('counts emoji as characters and allows 500', async () => {
     setup({})
     await search('odyssey', 'The Odyssey')
@@ -326,7 +339,7 @@ describe('ComposePage', () => {
     expect(fake.calls).not.toHaveBeenCalled()
   })
 
-  it('refreshes posts, titles and profiles after posting', async () => {
+  it('refreshes posts, titles, profiles and the wishlist after posting', async () => {
     const { client } = setup({})
     const invalidate = vi.spyOn(client, 'invalidateQueries')
     await search('odyssey', 'The Odyssey')
@@ -334,7 +347,7 @@ describe('ComposePage', () => {
     await typist.click(post())
     await screen.findByText('HOME')
     const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey)
-    expect(keys).toEqual(expect.arrayContaining([['posts'], ['title'], ['profile']]))
+    expect(keys).toEqual(expect.arrayContaining([['posts'], ['title'], ['profile'], ['wishlist']]))
   })
 })
 

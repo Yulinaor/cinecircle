@@ -2,7 +2,8 @@ import type { Locale } from '../i18n'
 
 /**
  * Query keys for posts and titles. Language is part of every key: the API returns text in the
- * requested language. Every post mutation invalidates `['posts']`, `['title']` and `['profile']`.
+ * requested language. Every post mutation invalidates `['posts']`, `['title']`, `['profile']`
+ * and `['wishlist']`.
  */
 export const postKeys = {
   all: ['posts'] as const,

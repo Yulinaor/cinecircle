@@ -4,7 +4,12 @@ planted in Gal's private data. Later phases add their endpoints to ENDPOINTS."""
 import pytest
 from fastapi.testclient import TestClient
 
-from tests.integration.conftest import GAL_BIO, GAL_PRIVATE_OPINION, GAL_SHARED_OPINION
+from tests.integration.conftest import (
+    GAL_BIO,
+    GAL_PRIVATE_OPINION,
+    GAL_SHARED_OPINION,
+    GAL_WISHLIST_TITLE,
+)
 
 pytestmark = pytest.mark.integration
 
@@ -23,6 +28,8 @@ ENDPOINTS = [
     "/feed?type=movie",
     "/posts/{shared}",
     "/posts/{private}",
+    "/wishlist",
+    "/wishlist?status=watched",
 ]
 EXPECT = {  # (viewer, path) -> status; every pair not listed is 200
     ("noa", "/users/gal/posts"): 404,
@@ -37,6 +44,7 @@ SECRETS = {  # sentinel -> viewers allowed to receive it in any response body
     GAL_BIO: {"gal", "dana"},
     GAL_SHARED_OPINION: {"gal", "dana"},
     GAL_PRIVATE_OPINION: {"gal"},
+    GAL_WISHLIST_TITLE: {"gal"},
 }
 CARD_KEYS = {"username", "display_name", "avatar_url", "follow_state"}
 
@@ -51,7 +59,7 @@ def _url(path: str, content) -> str:
 
 
 @pytest.mark.parametrize("viewer", ["gal", "dana", "noa", "ron"])
-def test_api_matrix(viewer, api, gal_content):
+def test_api_matrix(viewer, api, gal_content, gal_wish):
     client = api(viewer)
     bodies = []
     for path in ENDPOINTS:
@@ -66,7 +74,7 @@ def test_api_matrix(viewer, api, gal_content):
     assert seen == {s for s, allowed in SECRETS.items() if viewer in allowed}, viewer
 
 
-def test_unauthenticated_gets_nothing(api, gal_content):
+def test_unauthenticated_gets_nothing(api, gal_content, gal_wish):
     # Same app as a signed-in client, but a request carrying no Authorization header.
     anonymous = TestClient(api("gal").app)
     for path in ENDPOINTS:

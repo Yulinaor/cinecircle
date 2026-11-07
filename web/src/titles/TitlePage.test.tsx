@@ -7,7 +7,7 @@ import type { TitlePage as TitlePageData } from '../api/types'
 import { initI18n, setLocale } from '../i18n'
 import en from '../i18n/en.json'
 import he from '../i18n/he.json'
-import { fakeApi, POST_CARD } from '../test/fakeApi'
+import { fakeApi, POST_CARD, WISHLIST_ITEM } from '../test/fakeApi'
 import { renderApp } from '../test/renderApp'
 import { ExternalRatings } from './ExternalRatings'
 import { TitlePage } from './TitlePage'
@@ -48,6 +48,7 @@ const TITLE: TitlePageData = {
   stale: false,
   fetched_at: '2026-11-01T10:00:00+00:00',
   posts: [],
+  in_wishlist: false,
 }
 const SERIES: TitlePageData = {
   ...TITLE,
@@ -182,6 +183,31 @@ describe('TitlePage', () => {
     expect(await screen.findByRole('link', { name: he.title.postAbout })).toHaveAttribute(
       'href',
       '/post?title=3',
+    )
+  })
+
+  it('title page saves from search', async () => {
+    const fake = fakeApi({
+      'GET /titles/3?lang=he': TITLE,
+      'POST /wishlist': WISHLIST_ITEM,
+    })
+    renderTitle(fake.api)
+    const post = await screen.findByRole('link', { name: he.title.postAbout })
+    const button = screen.getByRole('button', { name: he.wishlist.save })
+    expect(button).toHaveAttribute('aria-pressed', 'false')
+    expect(post.parentElement).toContainElement(button)
+    await userEvent.click(button)
+    expect(fake.calls).toHaveBeenCalledWith('/wishlist', {
+      method: 'POST',
+      body: { title_id: 3, source: 'search' },
+    })
+  })
+
+  it('shows Saved when the title is on your wishlist', async () => {
+    renderTitle(serve({ ...TITLE, in_wishlist: true }).api)
+    expect(await screen.findByRole('button', { name: he.wishlist.saved })).toHaveAttribute(
+      'aria-pressed',
+      'true',
     )
   })
 

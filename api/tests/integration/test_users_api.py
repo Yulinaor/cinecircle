@@ -240,6 +240,7 @@ def test_posts_by_relation(api, gal_content):
         "created_at": posts[1]["created_at"],
         "updated_at": posts[1]["created_at"],
         "edited": False,
+        "in_wishlist": False,
     }
     assert posts[0]["rating"] == 4.5 and posts[0]["opinion"] == GAL_PRIVATE_OPINION
 

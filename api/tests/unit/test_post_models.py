@@ -102,6 +102,7 @@ def _row(**fields) -> PostRow:
         imdb_rating=Decimal("8.7"),
         tmdb_rating=None,
         genres=(GenreRow(18, "Drama", "דרמה"), GenreRow(9648, "Mystery", None)),
+        in_wishlist=False,
         season_name_he=None,
         season_name_en="Season 1",
         season_overview_he=None,
@@ -122,6 +123,8 @@ def test_post_card_shape():
     assert card.rating == 9.5 and isinstance(card.rating, float)
     assert card.season is None
     assert card.edited is False
+    assert card.in_wishlist is False
+    assert post_card(_row(in_wishlist=True), "he").in_wishlist is True
     assert post_card(_row(), "en").title.genres == ["Drama", "Mystery"]
 
 

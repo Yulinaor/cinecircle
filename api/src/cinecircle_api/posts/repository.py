@@ -15,8 +15,9 @@ from sqlalchemy.exc import IntegrityError
 
 from cinecircle_api.catalog.parse import GenreRow, MediaType, TypeFilter
 from cinecircle_api.pagination import PAGE_SIZE, Cursor
-from cinecircle_api.people.repository import CardRow, card_join_follow, follow_state_sql
+from cinecircle_api.people.repository import CardRow, card_columns, card_join_follow, pop_card_row
 from cinecircle_api.posts.models import CreatePost
+from cinecircle_api.wishlist.sql import IN_WISHLIST_SQL
 
 _UNIQUE = "posts_author_id_title_id_season_number_key"
 _TITLE_FKEY = "posts_title_id_fkey"
@@ -65,6 +66,7 @@ class PostRow:
     imdb_rating: Decimal | None
     tmdb_rating: Decimal | None
     genres: tuple[GenreRow, ...]
+    in_wishlist: bool
     season_name_he: str | None
     season_name_en: str | None
     season_overview_he: str | None
@@ -76,22 +78,29 @@ class PostRow:
         return Cursor(self.created_at, self.id)
 
 
-# The shared card query: `p` = the post, `pr` = its author, `f` = the viewer's follow row
-# towards the author, `t` = the title, `s` = the season (no row for season 0). Callers append
-# WHERE / ORDER BY / LIMIT and turn each row into a PostRow with `post_row`.
-POST_SELECT = (
-    "SELECT p.id, p.title_id, p.season_number, p.rating, p.opinion, p.contains_spoilers,"
-    " p.is_shared, p.created_at, p.updated_at,"
-    " pr.id AS author_id, pr.username AS author_username,"
-    " pr.display_name AS author_display_name, pr.avatar_url AS author_avatar_url, "
-    + follow_state_sql("pr")
-    + " AS author_follow_state,"
-    " t.media_type, t.name_he, t.name_en, t.overview_he, t.overview_en, t.poster_path,"
+# The title columns of a card query (alias `t`): exactly what `card_title` reads, genres as
+# [id, name_en, name_he] triples that `genre_rows` unpacks. Shared with the wishlist query.
+TITLE_COLUMNS = (
+    "t.media_type, t.name_he, t.name_en, t.overview_he, t.overview_en, t.poster_path,"
     " t.year_start, t.runtime_min, t.imdb_rating, t.tmdb_rating,"
     " COALESCE((SELECT json_agg(json_build_array(g.id, g.name_en, g.name_he) ORDER BY g.id)"
     "           FROM app.title_genres tg JOIN app.genres g ON g.id = tg.genre_id"
-    "           WHERE tg.title_id = t.id), '[]') AS genres,"
-    " s.name_he AS season_name_he, s.name_en AS season_name_en,"
+    "           WHERE tg.title_id = t.id), '[]') AS genres"
+)
+
+# The shared card query: `p` = the post, `pr` = its author, `f` = the viewer's follow row
+# towards the author, `t` = the title, `s` = the season (no row for season 0); `in_wishlist` is
+# the viewer's own saved state for the title (plan P5). Callers append
+# WHERE / ORDER BY / LIMIT and turn each row into a PostRow with `post_row`.
+POST_SELECT = (
+    "SELECT p.id, p.title_id, p.season_number, p.rating, p.opinion, p.contains_spoilers,"
+    " p.is_shared, p.created_at, p.updated_at, "
+    + card_columns("pr", "author_")
+    + ", "
+    + TITLE_COLUMNS
+    + ", "
+    + IN_WISHLIST_SQL.format(title="p.title_id")
+    + " AS in_wishlist, s.name_he AS season_name_he, s.name_en AS season_name_en,"
     " s.overview_he AS season_overview_he, s.overview_en AS season_overview_en,"
     " s.poster_path AS season_poster_path"
     " FROM app.posts p"
@@ -101,7 +110,6 @@ POST_SELECT = (
     + " LEFT JOIN app.title_seasons s"
     " ON s.title_id = p.title_id AND s.season_number = p.season_number AND p.season_number > 0"
 )
-_AUTHOR_FIELDS = ("id", "username", "display_name", "avatar_url", "follow_state")
 
 _GET = sa.text(POST_SELECT + " WHERE p.id = :id")
 _NEWEST_FIRST = " ORDER BY p.created_at DESC, p.id DESC LIMIT :limit"
@@ -131,10 +139,15 @@ _IS_MINE = sa.text("SELECT 1 FROM app.posts WHERE id = :id AND author_id = auth.
 _DELETE = sa.text("DELETE FROM app.posts WHERE id = :id AND author_id = auth.uid()")
 
 
+def genre_rows(raw: list[list[Any]]) -> tuple[GenreRow, ...]:
+    """The `genres` column of `TITLE_COLUMNS` as rows."""
+    return tuple(GenreRow(*genre) for genre in raw)
+
+
 def post_row(row: sa.Row) -> PostRow:
     fields = row._asdict()
-    author = CardRow(**{key: fields.pop(f"author_{key}") for key in _AUTHOR_FIELDS})
-    genres = tuple(GenreRow(*genre) for genre in fields.pop("genres"))
+    author = pop_card_row(fields, "author_")
+    genres = genre_rows(fields.pop("genres"))
     return PostRow(**fields, author=author, genres=genres)
 
 

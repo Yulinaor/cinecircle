@@ -10,6 +10,19 @@ const keys = (o: object, p = ''): string[] =>
 
 describe('locale', () => {
   it('he and en have identical keys', () => expect(keys(he)).toEqual(keys(en)))
+  it.each([
+    ['he', he],
+    ['en', en],
+  ])('every plural key has a _many twin in %s', (_name, strings) => {
+    const text = (key: string) =>
+      key.split('.').reduce<unknown>((o, part) => (o as Record<string, unknown>)[part], strings)
+    const others = keys(strings).filter((k) => k.endsWith('_other'))
+    expect(others.length).toBeGreaterThan(0)
+    for (const key of others) {
+      const many = key.replace(/_other$/, '_many')
+      expect(text(many), many).toBe(text(key))
+    }
+  })
   it('defaults to Hebrew with no storage', () => expect(resolveInitialLocale(null)).toBe('he'))
   it('uses a stored supported locale', () =>
     expect(resolveInitialLocale({ getItem: () => 'en' })).toBe('en'))

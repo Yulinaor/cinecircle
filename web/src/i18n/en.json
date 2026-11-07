@@ -141,12 +141,15 @@
   "profile": {
     "posts_one": "Post",
     "posts_two": "Posts",
+    "posts_many": "Posts",
     "posts_other": "Posts",
     "followers_one": "Follower",
     "followers_two": "Followers",
+    "followers_many": "Followers",
     "followers_other": "Followers",
     "following_one": "Following",
     "following_two": "Following",
+    "following_many": "Following",
     "following_other": "Following",
     "editProfile": "Edit profile",
     "findPeople": "Find people",
@@ -161,6 +164,25 @@
     "votes": "{{n}} votes",
     "fromPeopleYouFollow": "From people you follow",
     "stale": "These details may be out of date."
+  },
+  "wishlist": {
+    "save": "Save to wishlist",
+    "saved": "Saved",
+    "privateNote": "Only you can see your wishlist.",
+    "tab": { "want": "Want to watch", "watched": "Watched" },
+    "add": "Add a title",
+    "cancel": "Cancel",
+    "markWatched": "Mark watched",
+    "backToWant": "Move back to Want",
+    "remove": "Remove",
+    "rateNow": "Rate it now",
+    "yourRating": "Your rating",
+    "via": "via {{name}}",
+    "from": { "post": "From a post", "discover": "From Discover", "search": "From search" },
+    "empty": {
+      "want": "Nothing here yet. Save titles from Home, a title page or search.",
+      "watched": "Nothing marked watched yet."
+    }
   },
   "lang": { "he": "Hebrew", "en": "English" },
   "notFound": {

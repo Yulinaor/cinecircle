@@ -185,5 +185,11 @@ function ProfilePosts({ username }: { username: string }) {
       ),
     getNextPageParam: (page) => page.next_cursor,
   })
-  return <PostList query={posts} empty={<p className="text-muted">{t('profile.noPosts')}</p>} />
+  return (
+    <PostList
+      query={posts}
+      scope={`${username}-${lang}`}
+      empty={<p className="text-muted">{t('profile.noPosts')}</p>}
+    />
+  )
 }

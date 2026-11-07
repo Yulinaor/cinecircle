@@ -83,16 +83,22 @@ describe('EditPostPage', () => {
     expect(await screen.findByText('POST PAGE')).toBeInTheDocument()
     expect(bodyOf(fake, 'PATCH /posts/5')).toEqual({ rating: 8.5 })
     const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey)
-    expect(keys).toEqual(expect.arrayContaining([['posts'], ['title'], ['profile']]))
+    // The wishlist shows your rating on a title, so it refetches too.
+    expect(keys).toEqual(
+      expect.arrayContaining([['posts'], ['title'], ['profile'], ['wishlist']]),
+    )
 
     // Back to the editor: delete asks first, then goes to the profile.
     await typist.click(screen.getByRole('link', { name: 'again' }))
     await typist.click(await screen.findByRole('button', { name: he.compose.delete }))
     expect(screen.getByText(he.compose.confirmDelete)).toBeInTheDocument()
     expect(fake.count('DELETE /posts/5')).toBe(0)
+    invalidate.mockClear()
     await typist.click(screen.getByRole('button', { name: he.compose.yes }))
     expect(await screen.findByText('PROFILE')).toBeInTheDocument()
     expect(fake.count('DELETE /posts/5')).toBe(1)
+    // A deleted post is no longer "Your rating" on the wishlist.
+    expect(invalidate.mock.calls.map(([filters]) => filters?.queryKey)).toContainEqual(['wishlist'])
   })
 
   it('Cancel keeps the post', async () => {

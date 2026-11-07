@@ -1,7 +1,8 @@
 import type { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query'
-import { useRef, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { PostPage } from '../api/types'
+import { useLoadMoreRetry } from '../api/useLoadMoreRetry'
 import { PostCard } from './PostCard'
 
 const BUTTON =
@@ -15,26 +16,17 @@ const BUTTON =
 export function PostList({
   query,
   empty,
+  scope,
 }: {
   query: UseInfiniteQueryResult<InfiniteData<PostPage>>
   /** Shown when the first page has no posts. */
   empty: ReactNode
+  /** Names the list shown (filter, user, language), so Retry never mixes up two lists. */
+  scope?: string
 }) {
   const { t } = useTranslation()
-  const { data, isError, isFetching, hasNextPage, fetchNextPage, refetch } = query
-  // Retry repeats whichever fetch failed: the next page, or a refetch of what is loaded.
-  const loadMoreFailed = useRef(false)
-
-  const loadMore = () => {
-    loadMoreFailed.current = true
-    void fetchNextPage().then((result) => {
-      loadMoreFailed.current = result.isError
-    })
-  }
-  const retry = () => {
-    if (loadMoreFailed.current && hasNextPage) loadMore()
-    else void refetch()
-  }
+  const { data, isError, isFetching, hasNextPage } = query
+  const { loadMore, retry } = useLoadMoreRetry(query, scope)
 
   const errorLine = isError && (
     <div role="alert" className="flex flex-col items-start gap-3">

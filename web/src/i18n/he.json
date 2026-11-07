@@ -141,12 +141,15 @@
   "profile": {
     "posts_one": "פוסט",
     "posts_two": "פוסטים",
+    "posts_many": "פוסטים",
     "posts_other": "פוסטים",
     "followers_one": "עוקב/ת",
     "followers_two": "עוקבים",
+    "followers_many": "עוקבים",
     "followers_other": "עוקבים",
     "following_one": "במעקב",
     "following_two": "במעקב",
+    "following_many": "במעקב",
     "following_other": "במעקב",
     "editProfile": "עריכת פרופיל",
     "findPeople": "חיפוש אנשים",
@@ -161,6 +164,25 @@
     "votes": "{{n}} הצבעות",
     "fromPeopleYouFollow": "מאנשים שבמעקב שלך",
     "stale": "ייתכן שהפרטים אינם מעודכנים."
+  },
+  "wishlist": {
+    "save": "שמירה לרשימה",
+    "saved": "נשמר ברשימה",
+    "privateNote": "הרשימה הזו גלויה רק לך.",
+    "tab": { "want": "רוצה לראות", "watched": "ראיתי" },
+    "add": "הוספת כותר",
+    "cancel": "ביטול",
+    "markWatched": "סימון כנצפה",
+    "backToWant": "החזרה ל״רוצה לראות״",
+    "remove": "הסרה",
+    "rateNow": "לדרג עכשיו",
+    "yourRating": "הדירוג שלך",
+    "via": "דרך {{name}}",
+    "from": { "post": "מפוסט", "discover": "מ״גלו״", "search": "מהחיפוש" },
+    "empty": {
+      "want": "עדיין אין כאן כלום. שמרו כותרים מהבית, מדף כותר או מהחיפוש.",
+      "watched": "עדיין לא סומנו כותרים כנצפים."
+    }
   },
   "lang": { "he": "עברית", "en": "אנגלית" },
   "notFound": {

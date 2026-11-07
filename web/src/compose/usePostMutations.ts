@@ -32,6 +32,9 @@ export function usePostMutations() {
       client.invalidateQueries({ queryKey: ['posts'] }),
       client.invalidateQueries({ queryKey: ['title'] }),
       client.invalidateQueries({ queryKey: ['profile'] }),
+      // The wishlist shows your post's rating ("Your rating"), and a new post marks a wanted
+      // title watched, server-side.
+      client.invalidateQueries({ queryKey: ['wishlist'] }),
     ])
 
   const create = useMutation({

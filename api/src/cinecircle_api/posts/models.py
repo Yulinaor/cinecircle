@@ -15,6 +15,7 @@ from cinecircle_api.people.models import UserCard
 
 if TYPE_CHECKING:
     from cinecircle_api.posts.repository import PostRow
+    from cinecircle_api.wishlist.repository import WishlistRow
 
 OPINION_MAX = 500  # code points, like Postgres char_length
 
@@ -78,6 +79,7 @@ class PostCard(BaseModel):
     created_at: datetime
     updated_at: datetime
     edited: bool
+    in_wishlist: bool  # the viewer's own list holds the title (plan P5): nobody else's
 
 
 class PostPage(BaseModel):
@@ -116,9 +118,27 @@ def _float(value: Decimal | None) -> float | None:
     return float(value) if value is not None else None
 
 
-def post_card(row: PostRow, lang: Locale) -> PostCard:
+def card_title(row: PostRow | WishlistRow, lang: Locale) -> CardTitle:
+    """The title half of a card: any row that carries the title columns and its genres."""
     name, name_lang = pick_text(row.name_he, row.name_en, lang)
     overview, overview_lang = pick_text(row.overview_he, row.overview_en, lang)
+    return CardTitle(
+        id=row.title_id,
+        media_type=row.media_type,
+        name=name,
+        name_lang=name_lang,
+        poster_url=poster_url(row.poster_path),
+        year_start=row.year_start,
+        runtime_min=row.runtime_min,
+        genres=[g.name_he if lang == "he" and g.name_he else g.name_en for g in row.genres],
+        overview=overview,
+        overview_lang=overview_lang,
+        imdb_rating=_float(row.imdb_rating),
+        tmdb_rating=_float(row.tmdb_rating),
+    )
+
+
+def post_card(row: PostRow, lang: Locale) -> PostCard:
     season = None
     if row.season_number > 0:
         season_name, season_name_lang = pick_text(row.season_name_he, row.season_name_en, lang)
@@ -136,20 +156,7 @@ def post_card(row: PostRow, lang: Locale) -> PostCard:
     return PostCard(
         id=row.id,
         author=row.author.card(),
-        title=CardTitle(
-            id=row.title_id,
-            media_type=row.media_type,
-            name=name,
-            name_lang=name_lang,
-            poster_url=poster_url(row.poster_path),
-            year_start=row.year_start,
-            runtime_min=row.runtime_min,
-            genres=[g.name_he if lang == "he" and g.name_he else g.name_en for g in row.genres],
-            overview=overview,
-            overview_lang=overview_lang,
-            imdb_rating=_float(row.imdb_rating),
-            tmdb_rating=_float(row.tmdb_rating),
-        ),
+        title=card_title(row, lang),
         season=season,
         rating=float(row.rating),
         opinion=row.opinion,
@@ -158,10 +165,13 @@ def post_card(row: PostRow, lang: Locale) -> PostCard:
         created_at=row.created_at,
         updated_at=row.updated_at,
         edited=row.updated_at > row.created_at,
+        in_wishlist=row.in_wishlist,
     )
 
 
 class TitlePage(TitleDetail):
-    """A title with the posts the viewer may see on it (plan P9)."""
+    """A title with the posts the viewer may see on it (plan P9) and whether the viewer's own
+    wishlist holds it (plan P5)."""
 
     posts: list[PostCard]
+    in_wishlist: bool

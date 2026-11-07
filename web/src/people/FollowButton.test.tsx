@@ -140,4 +140,14 @@ describe('FollowButton', () => {
     const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey)
     expect(keys).toEqual(expect.arrayContaining([['posts'], ['title']]))
   })
+
+  it('refreshes the wishlist, whose "via" links depend on who you follow', async () => {
+    const fake = fakeApi({ 'POST /follows/gal': { follow_state: 'requested' } })
+    const { client } = renderApp(<FollowButton username="gal" state="none" />, { api: fake.api })
+    const invalidate = vi.spyOn(client, 'invalidateQueries')
+    await userEvent.click(screen.getByRole('button', { name: he.follow.follow }))
+    await screen.findByRole('button', { name: he.follow.requested })
+    const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey)
+    expect(keys).toContainEqual(['wishlist'])
+  })
 })

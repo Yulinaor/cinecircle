@@ -60,6 +60,8 @@ export function FollowButton({
       // background (not awaited, so the button is usable again without waiting for them).
       void client.invalidateQueries({ queryKey: ['posts'] })
       void client.invalidateQueries({ queryKey: ['title'] })
+      // "via <person>" on the wishlist shows only while you can see that person's post.
+      void client.invalidateQueries({ queryKey: ['wishlist'] })
       await Promise.all([
         client.invalidateQueries({ queryKey: ['people'] }),
         client.invalidateQueries({ queryKey: ['connections'] }),
