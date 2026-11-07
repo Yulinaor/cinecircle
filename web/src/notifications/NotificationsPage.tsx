@@ -32,11 +32,23 @@ export function NotificationsPage() {
       ) : list.data.items.length === 0 ? (
         <p className="text-muted">{t('notifications.empty')}</p>
       ) : (
-        <ul className="flex flex-col gap-2">
-          {list.data.items.map((item) => (
-            <NotificationRow key={item.id} item={item} />
-          ))}
-        </ul>
+        <>
+          <ul className="flex flex-col gap-2">
+            {list.data.items.map((item) => (
+              <NotificationRow key={item.id} item={item} />
+            ))}
+          </ul>
+          {list.data.next_cursor !== null && (
+            <button
+              type="button"
+              onClick={() => void list.fetchNextPage()}
+              disabled={list.isFetchingNextPage}
+              className="min-h-11 rounded-xl border border-line bg-surface px-4 font-medium text-ink hover:bg-line disabled:opacity-60"
+            >
+              {t('common.loadMore')}
+            </button>
+          )}
+        </>
       )}
     </section>
   )

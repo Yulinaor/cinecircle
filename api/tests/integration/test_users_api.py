@@ -11,6 +11,16 @@ from tests.integration.conftest import (
 pytestmark = pytest.mark.integration
 
 CARD_KEYS = {"username", "display_name", "avatar_url", "follow_state"}
+FIXTURE_USERNAMES = frozenset({"gal", "dana", "noa", "ron"})
+
+
+def _search(client, q: str, *own: str) -> list[dict]:
+    """Search results limited to the fixture people and the users the test made itself (`own`),
+    so accounts left in the local database by manual runs cannot change the outcome."""
+    r = client.get("/users/search", params={"q": q})
+    assert r.status_code == 200
+    known = FIXTURE_USERNAMES | set(own)
+    return [item for item in r.json()["results"] if item["username"] in known]
 
 
 def _add_user(engine, username: str, display_name: str) -> None:
@@ -34,10 +44,11 @@ def _add_user(engine, username: str, display_name: str) -> None:
 
 
 def test_search_returns_card_fields_only(api):
-    r = api("noa").get("/users/search", params={"q": "gal"})
+    client = api("noa")
+    r = client.get("/users/search", params={"q": "gal"})
     assert r.status_code == 200
     assert set(r.json()) == {"results"}
-    results = r.json()["results"]
+    results = _search(client, "gal")
     assert [item["username"] for item in results] == ["gal"]
     assert set(results[0]) == CARD_KEYS
     assert results[0]["follow_state"] == "none"
@@ -46,8 +57,7 @@ def test_search_returns_card_fields_only(api):
 
 def test_search_follow_states(api):
     def states(who: str, q: str) -> dict[str, str]:
-        results = api(who).get("/users/search", params={"q": q}).json()["results"]
-        return {i["username"]: i["follow_state"] for i in results}
+        return {i["username"]: i["follow_state"] for i in _search(api(who), q)}
 
     assert states("dana", "ga") == {"gal": "following"}
     assert states("ron", "gal") == {"gal": "requested"}
@@ -55,7 +65,7 @@ def test_search_follow_states(api):
 
 
 def test_search_is_case_insensitive_and_trims(api):
-    results = api("noa").get("/users/search", params={"q": " DAN "}).json()["results"]
+    results = _search(api("noa"), " DAN ")
     assert [i["username"] for i in results] == ["dana"]
 
 
@@ -67,10 +77,10 @@ def test_search_escapes_wildcards(api, engine):
     _add_user(engine, "marks", "Marks")  # what "k\s" would match if "\s" meant "s"
     client = api("noa")
 
+    own = ("a_b", "axb", "pct100", "backslash", "marks")
+
     def usernames(q: str) -> list[str]:
-        r = client.get("/users/search", params={"q": q})
-        assert r.status_code == 200
-        return [i["username"] for i in r.json()["results"]]
+        return [i["username"] for i in _search(client, q, *own)]
 
     assert usernames("%%") == []
     assert usernames("__") == []
@@ -82,25 +92,38 @@ def test_search_escapes_wildcards(api, engine):
     assert usernames("k\\") == ["backslash"]  # a trailing backslash is not a dangling escape
 
 
-def test_search_matches_hebrew_display_name(api):
-    results = api("gal").get("/users/search", params={"q": "נוע"}).json()["results"]
+def _assert_hebrew_search_finds_noa(api) -> None:
+    results = _search(api("gal"), "נוע")
     assert [(i["username"], i["display_name"], i["follow_state"]) for i in results] == [
         ("noa", "נועה", "none")
     ]
+
+
+def test_search_matches_hebrew_display_name(api):
+    _assert_hebrew_search_finds_noa(api)
+
+
+def test_search_ignores_leftover_accounts(api, engine):
+    # A real account from a manual browser run whose display name also contains "נוע".
+    _add_user(engine, "noa_leftover", "נועה")
+    raw = api("gal").get("/users/search", params={"q": "נוע"}).json()["results"]
+    assert "noa_leftover" in {i["username"] for i in raw}  # the search does see it
+    _assert_hebrew_search_finds_noa(api)  # the test does not care
 
 
 def test_search_username_prefix_matches_come_first(api, engine):
     _add_user(engine, "zed", "Anna")  # only the display name matches
     _add_user(engine, "anna_b", "Bee")  # username prefix
     _add_user(engine, "banna", "Cee")  # username contains it, not as a prefix
-    results = api("noa").get("/users/search", params={"q": "ann"}).json()["results"]
+    results = _search(api("noa"), "ann", "zed", "anna_b", "banna")
     assert [i["username"] for i in results] == ["anna_b", "banna", "zed"]
 
 
 def test_search_limit_is_20(api, engine):
     for n in range(25):
         _add_user(engine, f"lim_{n:02d}", "Limit")
-    results = api("noa").get("/users/search", params={"q": "lim_"}).json()["results"]
+    own = tuple(f"lim_{n:02d}" for n in range(25))
+    results = _search(api("noa"), "lim_", *own)
     assert [i["username"] for i in results] == [f"lim_{n:02d}" for n in range(20)]
 
 

@@ -17,6 +17,8 @@ beforeEach(async () => {
   await setLocale('he')
 })
 
+const ERAN = { ...DANA, username: 'eran', display_name: 'Eran' }
+
 const request = (over: Partial<NotificationItem> = {}): NotificationItem => ({
   id: 1,
   type: 'follow_request',
@@ -33,6 +35,7 @@ function notifications(items: NotificationItem[]) {
     'GET /notifications': () => ({
       items: state.items,
       unread_count: state.items.filter((i) => !i.read).length,
+      next_cursor: null,
     }),
     'POST /notifications/read': () => {
       state.items = state.items.map((i) => ({ ...i, read: true }))
@@ -113,6 +116,31 @@ describe('NotificationsPage', () => {
     await userEvent.click(await screen.findByRole('button', { name: `${he.connections.decline} Dana` }))
     await vi.waitFor(() => expect(screen.queryByRole('button')).not.toBeInTheDocument())
     expect(fake.count('DELETE /follow-requests/dana')).toBe(1)
+  })
+
+  it('loads more notifications', async () => {
+    const fake = fakeApi({
+      'GET /notifications': { items: [request()], unread_count: 2, next_cursor: 'c1' },
+      'GET /notifications?cursor=c1': {
+        items: [request({ id: 2, type: 'follow_accepted', request_pending: false, actor: ERAN })],
+        unread_count: 2,
+        next_cursor: null,
+      },
+      'POST /notifications/read': () => undefined,
+    })
+    renderApp(<NotificationsPage />, { api: fake.api })
+    await userEvent.click(await screen.findByRole('button', { name: he.common.loadMore }))
+    expect(await screen.findByText('Eran אישר/ה את בקשת המעקב שלך')).toBeInTheDocument()
+    expect(screen.getByText('Dana ביקש/ה לעקוב אחריך')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: he.common.loadMore })).not.toBeInTheDocument()
+    expect(fake.count('GET /notifications?cursor=c1')).toBe(1)
+  })
+
+  it('has no Load more on the last page', async () => {
+    const fake = notifications([request()])
+    renderApp(<NotificationsPage />, { api: fake.api })
+    await screen.findByText('Dana ביקש/ה לעקוב אחריך')
+    expect(screen.queryByRole('button', { name: he.common.loadMore })).not.toBeInTheDocument()
   })
 
   it('shows an empty state', async () => {

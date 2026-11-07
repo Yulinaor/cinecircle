@@ -37,7 +37,8 @@
   },
   "common": {
     "error": "Something went wrong. Please try again.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "loadMore": "Load more"
   },
   "onboarding": {
     "title": "Create your profile",
