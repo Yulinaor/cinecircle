@@ -85,5 +85,24 @@
     "followRequest": "{{name}} asked to follow you",
     "followAccepted": "{{name}} accepted your request",
     "empty": "No notifications yet."
+  },
+  "post": {
+    "season": "Season {{n}}",
+    "wholeSeries": "Whole series",
+    "private": "Private",
+    "edited": "edited",
+    "spoiler": "This opinion contains a spoiler.",
+    "showSpoiler": "Show spoiler",
+    "edit": "Edit",
+    "english": "English",
+    "outOf": "/10",
+    "imdb": "IMDb",
+    "tmdb": "TMDB",
+    "minutes": "{{n}} min"
+  },
+  "notFound": {
+    "title": "Not found",
+    "body": "This page doesn't exist, or you can't see it.",
+    "home": "Back to Home"
   }
 }

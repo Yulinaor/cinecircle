@@ -85,5 +85,24 @@
     "followRequest": "{{name}} ביקש/ה לעקוב אחריך",
     "followAccepted": "{{name}} אישר/ה את בקשת המעקב שלך",
     "empty": "אין התראות עדיין."
+  },
+  "post": {
+    "season": "עונה {{n}}",
+    "wholeSeries": "כל הסדרה",
+    "private": "פרטי",
+    "edited": "נערך",
+    "spoiler": "הדעה הזו מכילה ספוילר.",
+    "showSpoiler": "הצגת הספוילר",
+    "edit": "עריכה",
+    "english": "אנגלית",
+    "outOf": "/10",
+    "imdb": "IMDb",
+    "tmdb": "TMDB",
+    "minutes": "{{n}} דק׳"
+  },
+  "notFound": {
+    "title": "לא נמצא",
+    "body": "הדף הזה לא קיים, או שאין לכם גישה אליו.",
+    "home": "חזרה לדף הבית"
   }
 }
