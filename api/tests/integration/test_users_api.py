@@ -163,32 +163,49 @@ def test_uppercase_username_path_resolves(api, gal_content):
 def test_posts_by_relation(api, gal_content):
     r = api("gal").get("/users/gal/posts")
     assert r.status_code == 200
-    assert set(r.json()) == {"posts"}
+    assert set(r.json()) == {"posts", "next_cursor"}
+    assert r.json()["next_cursor"] is None
     posts = r.json()["posts"]
     # Newest first; both rows share one created_at here, so the higher id leads.
     assert [p["id"] for p in posts] == [gal_content.private_post_id, gal_content.shared_post_id]
     assert [p["is_shared"] for p in posts] == [False, True]
     assert posts[1] == {
         "id": gal_content.shared_post_id,
+        "author": {
+            "username": "gal",
+            "display_name": "Gal",
+            "avatar_url": None,
+            "follow_state": "self",
+        },
         "title": {
             "id": gal_content.title_ids[0],
             "media_type": "movie",
             "name": "Title 1",
             "name_lang": "en",
             "poster_url": None,
+            "year_start": None,
+            "runtime_min": None,
+            "genres": [],
+            "overview": None,
+            "overview_lang": None,
+            "imdb_rating": None,
+            "tmdb_rating": None,
         },
-        "season_number": 0,
+        "season": None,
         "rating": 9.0,
         "opinion": GAL_SHARED_OPINION,
         "contains_spoilers": False,
         "is_shared": True,
         "created_at": posts[1]["created_at"],
+        "updated_at": posts[1]["created_at"],
+        "edited": False,
     }
     assert posts[0]["rating"] == 4.5 and posts[0]["opinion"] == GAL_PRIVATE_OPINION
 
     r = api("dana").get("/users/gal/posts")
     assert r.status_code == 200
     assert [p["id"] for p in r.json()["posts"]] == [gal_content.shared_post_id]
+    assert r.json()["posts"][0]["author"]["follow_state"] == "following"
     assert GAL_PRIVATE_OPINION not in r.text
 
     for who in ("noa", "ron"):
