@@ -29,6 +29,8 @@ export type Me = {
   id: string
   email: string | null
   profile: MyProfile | null
+  /** Rated at least one title or picked genres: Taste Match can be shown. */
+  taste_unlocked: boolean
 }
 
 export type NotificationItem = {
@@ -42,6 +44,16 @@ export type NotificationItem = {
 
 export type Lang = 'he' | 'en'
 export type MediaType = 'movie' | 'series'
+
+/**
+ * A personal Taste Match: `fit` is 0-100; `genres` are up to two localised genre names that fit
+ * the viewer; `agreement` is the % the viewer agrees with the post's author (posts only).
+ */
+export type Taste = {
+  fit: number
+  genres: string[]
+  agreement: number | null
+}
 
 export type CardTitle = {
   id: number
@@ -83,6 +95,8 @@ export type PostCard = {
   edited: boolean
   /** The viewer's own wishlist holds the title (nobody else's). */
   in_wishlist: boolean
+  /** Null on your own posts, or while Taste Match is still locked. */
+  taste: Taste | null
 }
 
 export type PostPage = {
@@ -135,8 +149,13 @@ export type TitleDetail = {
 }
 
 /** A title with the posts the viewer may see on it, newest first. */
-export type TitlePage = TitleDetail & { posts: PostCard[]; in_wishlist: boolean }
+export type TitlePage = TitleDetail & {
+  posts: PostCard[]
+  in_wishlist: boolean
+  taste: Taste | null
+}
 
+export type WishlistSort = 'recent' | 'fit'
 export type WishlistStatus = 'want' | 'watched'
 export type WishlistSource = 'post' | 'discover' | 'search'
 
@@ -160,9 +179,22 @@ export type WishlistItem = {
   added_at: string
   watched_at: string | null
   my_post: MyPost | null
+  taste: Taste | null
 }
 
 export type WishlistPage = {
   items: WishlistItem[]
   next_cursor: string | null
+}
+
+/** Taste quiz state: the 18 genre chips (in order) and the 10 quiz titles. */
+export type OnboardingState = {
+  done: boolean
+  genres: { key: string; picked: boolean }[]
+  quiz: { media_type: MediaType; tmdb_id: number; my_rating: number | null }[]
+}
+
+export type OnboardingBody = {
+  genres: string[]
+  ratings: { title_id: number; rating: number }[]
 }

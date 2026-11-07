@@ -12,6 +12,7 @@ from cinecircle_api.catalog.models import TitleDetail, poster_url
 from cinecircle_api.catalog.parse import Locale, MediaType, pick_text
 from cinecircle_api.pagination import BIGINT_MAX
 from cinecircle_api.people.models import UserCard
+from cinecircle_api.taste.models import Taste
 
 if TYPE_CHECKING:
     from cinecircle_api.posts.repository import PostRow
@@ -80,6 +81,7 @@ class PostCard(BaseModel):
     updated_at: datetime
     edited: bool
     in_wishlist: bool  # the viewer's own list holds the title (plan P5): nobody else's
+    taste: Taste | None  # the viewer's match with someone else's post; None on their own (P3)
 
 
 class PostPage(BaseModel):
@@ -138,7 +140,7 @@ def card_title(row: PostRow | WishlistRow, lang: Locale) -> CardTitle:
     )
 
 
-def post_card(row: PostRow, lang: Locale) -> PostCard:
+def post_card(row: PostRow, lang: Locale, taste: Taste | None = None) -> PostCard:
     season = None
     if row.season_number > 0:
         season_name, season_name_lang = pick_text(row.season_name_he, row.season_name_en, lang)
@@ -166,6 +168,7 @@ def post_card(row: PostRow, lang: Locale) -> PostCard:
         updated_at=row.updated_at,
         edited=row.updated_at > row.created_at,
         in_wishlist=row.in_wishlist,
+        taste=taste,
     )
 
 
@@ -175,3 +178,4 @@ class TitlePage(TitleDetail):
 
     posts: list[PostCard]
     in_wishlist: bool
+    taste: Taste | None  # the viewer's match with the title itself (P3); None when locked

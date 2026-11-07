@@ -5,6 +5,7 @@ import { Link } from 'react-router'
 import type { PostPage } from '../api/types'
 import { useApi } from '../api/useApi'
 import { useLang } from '../i18n/useLang'
+import { useMe } from '../me/useMe'
 import { postKeys } from '../posts/keys'
 import { PostList } from '../posts/PostList'
 
@@ -20,6 +21,7 @@ export function HomePage() {
   const api = useApi()
   const lang = useLang()
   const [type, setType] = useState<FeedType>('all')
+  const me = useMe()
 
   const feed = useInfiniteQuery({
     queryKey: postKeys.feed(type, lang),
@@ -35,6 +37,17 @@ export function HomePage() {
   return (
     <section className="mx-auto flex w-full max-w-xl flex-col gap-4 px-4 py-6">
       <h1 className="text-2xl font-extrabold">{t('nav.home')}</h1>
+      {me.data?.taste_unlocked === false && (
+        <div className="flex flex-col items-start gap-2 rounded-2xl border border-line bg-accent-soft p-4">
+          <p className="text-ink">{t('taste.unlock')}</p>
+          <Link
+            to="/taste"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-accent px-4 font-semibold text-white hover:opacity-90"
+          >
+            {t('taste.unlockCta')}
+          </Link>
+        </div>
+      )}
       <div className="flex flex-wrap gap-2">
         {FILTERS.map((value) => (
           <button

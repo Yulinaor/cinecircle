@@ -19,8 +19,11 @@ from cinecircle_api.catalog.service import (
     TitleService,
 )
 from cinecircle_api.db import UserDb
+from cinecircle_api.events import repository as events
 from cinecircle_api.posts import repository as posts_repository
-from cinecircle_api.posts.models import TitlePage, post_card
+from cinecircle_api.posts.models import TitlePage
+from cinecircle_api.taste.cards import post_cards, title_taste
+from cinecircle_api.taste.context import TasteContext
 from cinecircle_api.wishlist import repository as wishlist_repository
 
 router = APIRouter(prefix="/titles", tags=["titles"])
@@ -77,12 +80,19 @@ def by_id(
     service: Service, db: UserDb, title_id: Annotated[int, Path(ge=1)], lang: Lang = "he"
 ) -> TitlePage:
     """The catalogue entry plus the posts on it the viewer may see (plan P9) and the viewer's own
-    `in_wishlist` flag. The catalogue part needs no profile; a viewer without one has no posts to
-    see, so RLS returns none, and `in_wishlist` is False."""
+    `in_wishlist` flag, and the viewer's Taste Match with the title (plan P3; None while locked).
+    The catalogue part needs no profile; a viewer without one has no posts to see, so RLS returns
+    none, `in_wishlist` is False and `taste` is None."""
     detail = _detail(lambda: service.get(title_id), lang)
     rows = posts_repository.title_posts(db, detail.id)
+    ctx = TasteContext.load(db)  # a viewer with nothing of their own is locked: no taste, no error
+    taste = title_taste(db, ctx, detail.id, lang)
+    if taste is not None:  # a score was shown (plan P9)
+        props = {"fit": taste.fit, "surface": "title"}
+        events.log(db, events.Event("title_viewed", detail.id, props=props))
     return TitlePage(
         **detail.model_dump(),
-        posts=[post_card(row, lang) for row in rows],
+        posts=post_cards(db, rows, lang, ctx),
         in_wishlist=wishlist_repository.in_wishlist(db, detail.id),
+        taste=taste,
     )

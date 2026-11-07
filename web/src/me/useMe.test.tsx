@@ -11,6 +11,7 @@ const meOf = (id: string, display_name: string): Me => ({
   id,
   email: null,
   profile: { username: id, display_name, avatar_url: null, bio: null, locale: 'en' },
+  taste_unlocked: true,
 })
 
 function SaveButton() {

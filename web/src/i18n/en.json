@@ -66,7 +66,8 @@
     "bioCount": "{{length}}/{{max}}",
     "save": "Save",
     "saved": "Saved",
-    "language": "Language"
+    "language": "Language",
+    "tasteQuiz": "Taste quiz"
   },
   "follow": { "follow": "Follow", "requested": "Requested", "following": "Following" },
   "people": {
@@ -165,11 +166,53 @@
     "fromPeopleYouFollow": "From people you follow",
     "stale": "These details may be out of date."
   },
+  "taste": {
+    "match": "{{pct}}% match",
+    "genres_one": "{{a}} fits you",
+    "genres_two": "{{a}} & {{b}} fit you",
+    "agree": "you agree with {{name}} {{pct}}% of the time",
+    "basedOnYou": "Based on your ratings",
+    "unlock": "Rate a few titles to unlock Taste Match",
+    "unlockCta": "Take the taste quiz"
+  },
+  "quiz": {
+    "title": "What do you like to watch?",
+    "private": "Your quiz ratings are private — only you can see them.",
+    "genresHint": "Pick 3–5 genres",
+    "titlesHeading": "Rate titles you've seen",
+    "notSeen": "Haven't seen it",
+    "yourRating": "Your rating",
+    "progress": "{{count}} of 5 rated",
+    "progressEnough": "{{count}} rated — enough for Taste Match",
+    "finish": "Done",
+    "skip": "Skip for now",
+    "genre": {
+      "action": "Action",
+      "adventure": "Adventure",
+      "animation": "Animation",
+      "comedy": "Comedy",
+      "crime": "Crime",
+      "documentary": "Documentary",
+      "drama": "Drama",
+      "family": "Family",
+      "fantasy": "Fantasy",
+      "history": "History",
+      "horror": "Horror",
+      "music": "Music",
+      "mystery": "Mystery",
+      "romance": "Romance",
+      "scifi": "Science fiction",
+      "thriller": "Thriller",
+      "war": "War",
+      "western": "Western"
+    }
+  },
   "wishlist": {
     "save": "Save to wishlist",
     "saved": "Saved",
     "privateNote": "Only you can see your wishlist.",
     "tab": { "want": "Want to watch", "watched": "Watched" },
+    "sort": { "recent": "Newest", "fit": "Best match" },
     "add": "Add a title",
     "cancel": "Cancel",
     "markWatched": "Mark watched",

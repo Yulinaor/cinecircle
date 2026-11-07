@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import type { PostCard as PostCardData } from '../api/types'
 import { LangLabel } from '../i18n/LangLabel'
 import { Avatar } from '../people/Avatar'
+import { TasteLine } from '../taste/TasteLine'
 import { SaveButton } from '../wishlist/SaveButton'
 import { useSeasonName } from './seasonName'
 
@@ -93,6 +94,8 @@ export function PostCard({ post }: { post: PostCardData }) {
           )}
         </div>
       </div>
+
+      {post.taste && <TasteLine taste={post.taste} authorName={author.display_name} />}
 
       {post.opinion &&
         (hideOpinion ? (

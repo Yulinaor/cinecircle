@@ -91,11 +91,16 @@ _AFTER_WANT = " AND (w.added_at, w.title_id) < (:c_at, :c_id)"
 _AFTER_WATCHED = " AND (w.watched_at, w.title_id) < (:c_at, :c_id)"
 _BY_ADDED = " ORDER BY w.added_at DESC, w.title_id DESC LIMIT :limit"
 _BY_WATCHED = " ORDER BY w.watched_at DESC, w.title_id DESC LIMIT :limit"
+_ALL_BY_ADDED = " ORDER BY w.added_at DESC, w.title_id DESC"
+_ALL_BY_WATCHED = " ORDER BY w.watched_at DESC, w.title_id DESC"
+_STATUS_OF = sa.text(
+    "SELECT status FROM app.wishlist_items WHERE owner_id = auth.uid() AND title_id = :title_id"
+)
 # ON CONFLICT DO NOTHING: saving twice keeps the first row (plan P4). watched_at and the source
 # check are the database's job (triggers). The explicit owner is belt and braces beside RLS.
 _INSERT = sa.text(
-    "INSERT INTO app.wishlist_items (owner_id, title_id, source, source_post_id)"
-    " VALUES (auth.uid(), :title_id, :source, :source_post_id)"
+    "INSERT INTO app.wishlist_items (owner_id, title_id, source, source_post_id, fit_at_save)"
+    " VALUES (auth.uid(), :title_id, :source, :source_post_id, :fit)"
     " ON CONFLICT (owner_id, title_id) DO NOTHING"
 )
 _SET_STATUS = sa.text(
@@ -143,13 +148,29 @@ def list_items(
     return [wishlist_row(row) for row in conn.execute(sa.text(query), params)]
 
 
-def save(conn: Connection, data: SaveTitle) -> bool:
-    """Put the title on the caller's list. True when a row was added, False when the title was
-    already there (its first source stays). The savepoint keeps an expected violation from
-    poisoning the request transaction."""
+def list_all(conn: Connection, status: WishlistStatus) -> list[WishlistRow]:
+    """All of the caller's items with this status, newest first. For the sort by Taste Match,
+    which scores every item (plan P11); wishlists are small."""
+    watched = status == "watched"
+    query = (
+        _SELECT + (_WATCHED if watched else _WANT) + (_ALL_BY_WATCHED if watched else _ALL_BY_ADDED)
+    )
+    return [wishlist_row(row) for row in conn.execute(sa.text(query))]
+
+
+def status_of(conn: Connection, title_id: int) -> WishlistStatus | None:
+    """The status of the caller's item on the title, or None when it is not on their list."""
+    return conn.scalar(_STATUS_OF, {"title_id": title_id})
+
+
+def save(conn: Connection, data: SaveTitle, fit: int | None) -> bool:
+    """Put the title on the caller's list, remembering the Taste Match `fit` they saw (None when
+    they saw none; there is no UPDATE grant on it, so it is set here). True when a row was added,
+    False when the title was already there (its first source and fit stay). The savepoint keeps
+    an expected violation from poisoning the request transaction."""
     try:
         with conn.begin_nested():
-            return conn.execute(_INSERT, data.model_dump()).rowcount > 0
+            return conn.execute(_INSERT, {**data.model_dump(), "fit": fit}).rowcount > 0
     except IntegrityError as exc:
         constraint = getattr(getattr(exc.orig, "diag", None), "constraint_name", None)
         if constraint == _SOURCE_VALID:
@@ -174,7 +195,7 @@ def remove(conn: Connection, title_id: int) -> bool:
     return conn.execute(_DELETE, {"title_id": title_id}).rowcount > 0
 
 
-def mark_watched_on_post(conn: Connection, title_id: int) -> None:
+def mark_watched_on_post(conn: Connection, title_id: int) -> bool:
     """The caller posted on the title: their `want` item on it becomes `watched`, in the same
-    transaction as the post (plan P9). A no-op when there is no such item."""
-    conn.execute(_MARK_WATCHED, {"title_id": title_id})
+    transaction as the post (plan P9). True when an item changed, False when there was none."""
+    return conn.execute(_MARK_WATCHED, {"title_id": title_id}).rowcount > 0

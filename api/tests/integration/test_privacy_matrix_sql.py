@@ -87,6 +87,11 @@ PROBES |= {
     ),
     "wishlist_rls_only": "SELECT count(*) > 0 FROM app.wishlist_items WHERE title_id = :title2",
 }
+SEES |= {"genre_prefs": {"gal"}, "events": {"gal"}}  # Taste Match inputs and logs (Phase 5)
+PROBES |= {
+    "genre_prefs": "SELECT count(*) > 0 FROM app.user_genre_prefs WHERE user_id = :gal",
+    "events": "SELECT count(*) > 0 FROM app.events WHERE user_id = :gal",
+}
 CONTENT_TABLES = ["posts", "wishlist_items", "user_genre_prefs", "events"]
 
 

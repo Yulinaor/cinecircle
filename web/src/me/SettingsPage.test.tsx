@@ -38,6 +38,12 @@ describe('SettingsPage', () => {
     expect(auth.signOut).toHaveBeenCalled()
   })
 
+  it('links to the taste quiz', async () => {
+    renderApp(<SettingsPage />, { api: fakeMeApi().api })
+    const link = await screen.findByRole('link', { name: he.settings.tasteQuiz })
+    expect(link).toHaveAttribute('href', '/taste')
+  })
+
   it('caps the bio at 300 characters', async () => {
     renderApp(<SettingsPage />, { api: fakeMeApi().api })
     expect(await screen.findByLabelText(he.settings.bio)).toHaveAttribute('maxlength', '300')

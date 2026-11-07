@@ -2,7 +2,7 @@
 and fall back to the cached row when TMDB is down."""
 
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
@@ -116,6 +116,27 @@ class TitleService:
         name_he, overview_he = parse_season_text(raw)
         with self._engine.begin() as conn:
             repo.update_season_text(conn, title_id, season_number, name_he, overview_he)
+
+    def ensure_genres(self, ids: Iterable[int]) -> set[int]:
+        """Make sure the genre rows for `ids` exist, fetching TMDB's lists once when any are
+        missing. Returns the ids present afterwards: ones TMDB does not list are dropped.
+
+        Raises CatalogUnavailable when genres are missing and TMDB is absent or failing.
+        """
+        wanted = set(ids)
+        with self._engine.connect() as conn:
+            missing = repo.missing_genre_ids(conn, wanted)
+        if not missing:
+            return wanted
+        if self._tmdb is None:
+            raise CatalogUnavailable
+        try:
+            rows = self._genre_rows()
+        except ExternalApiError:
+            raise CatalogUnavailable from None
+        with self._engine.begin() as conn:
+            repo.upsert_genres(conn, rows)
+        return wanted - (missing - {row.id for row in rows})
 
     def _serve(self, row: repo.TitleRow) -> CachedTitle:
         now = self._now()

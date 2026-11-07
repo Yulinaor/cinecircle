@@ -140,4 +140,45 @@ describe('HomePage', () => {
     await userEvent.click(screen.getByRole('button', { name: he.common.retry }))
     expect(await screen.findByText('ראשון')).toBeInTheDocument()
   })
+
+  describe('taste unlock hint', () => {
+    const meWith = (taste_unlocked: boolean) => ({
+      id: 'user-1',
+      email: null,
+      profile: null,
+      taste_unlocked,
+    })
+
+    it('invites a locked user to the quiz', async () => {
+      const fake = fakeApi({
+        'GET /feed?type=all&lang=he': page([]),
+        'GET /me': meWith(false),
+      })
+      renderApp(<HomePage />, { api: fake.api })
+      expect(await screen.findByText(he.taste.unlock)).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: he.taste.unlockCta })).toHaveAttribute(
+        'href',
+        '/taste',
+      )
+    })
+
+    it('shows no hint once unlocked', async () => {
+      const fake = fakeApi({
+        'GET /feed?type=all&lang=he': page([]),
+        'GET /me': meWith(true),
+      })
+      renderApp(<HomePage />, { api: fake.api })
+      await screen.findByText(he.feed.empty)
+      await vi.waitFor(() => expect(fake.log()).toContain('GET /me'))
+      expect(screen.queryByText(he.taste.unlock)).not.toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: he.taste.unlockCta })).not.toBeInTheDocument()
+    })
+
+    it('shows no hint before the account has loaded', async () => {
+      const fake = fakeApi({ 'GET /feed?type=all&lang=he': page([]) })
+      renderApp(<HomePage />, { api: fake.api })
+      await screen.findByText(he.feed.empty)
+      expect(screen.queryByText(he.taste.unlock)).not.toBeInTheDocument()
+    })
+  })
 })

@@ -1,6 +1,6 @@
 import { vi } from 'vitest'
 import { ApiError } from '../api/client'
-import type { PostCard, WishlistItem } from '../api/types'
+import type { OnboardingState, PostCard, TitleDetail, WishlistItem } from '../api/types'
 import type { ApiCall } from '../api/useApi'
 
 type Init = { method?: string; body?: unknown } | undefined
@@ -61,6 +61,7 @@ export const POST_CARD: PostCard = {
   updated_at: '2026-11-01T10:00:00+00:00',
   edited: false,
   in_wishlist: false,
+  taste: null,
 }
 
 /** Dana's post on a movie, saved from that post and still wanted; no rating of your own yet. */
@@ -72,4 +73,76 @@ export const WISHLIST_ITEM: WishlistItem = {
   added_at: '2026-11-02T10:00:00+00:00',
   watched_at: null,
   my_post: null,
+  taste: null,
+}
+
+/** The 18 genre chip keys, in the order `GET /onboarding` lists them. */
+export const GENRE_KEYS = [
+  'action',
+  'adventure',
+  'animation',
+  'comedy',
+  'crime',
+  'documentary',
+  'drama',
+  'family',
+  'fantasy',
+  'history',
+  'horror',
+  'music',
+  'mystery',
+  'romance',
+  'scifi',
+  'thriller',
+  'war',
+  'western',
+] as const
+
+const QUIZ_POOL = [
+  ['movie', 278],
+  ['movie', 155],
+  ['movie', 27205],
+  ['movie', 597],
+  ['movie', 13],
+  ['movie', 671],
+  ['series', 1668],
+  ['series', 1396],
+  ['series', 1399],
+  ['series', 66732],
+] as const
+
+/** A fresh quiz: nothing picked, nothing rated. */
+export const ONBOARDING_STATE: OnboardingState = {
+  done: false,
+  genres: GENRE_KEYS.map((key) => ({ key, picked: false })),
+  quiz: QUIZ_POOL.map(([media_type, tmdb_id]) => ({ media_type, tmdb_id, my_rating: null })),
+}
+
+/** `GET /titles/tmdb/...` routes for every quiz title; the title id is its TMDB id + 1000. */
+export function quizTitleRoutes(lang: 'he' | 'en' = 'he'): Record<string, TitleDetail> {
+  return Object.fromEntries(
+    QUIZ_POOL.map(([media_type, tmdb_id]) => [
+      `GET /titles/tmdb/${media_type}/${tmdb_id}?lang=${lang}`,
+      {
+        id: tmdb_id + 1000,
+        tmdb_id,
+        media_type,
+        imdb_id: null,
+        name: `Quiz ${tmdb_id}`,
+        name_lang: lang,
+        overview: null,
+        overview_lang: null,
+        year_start: 1999,
+        year_end: null,
+        runtime_min: null,
+        season_count: null,
+        poster_url: null,
+        genres: [],
+        ratings: { imdb: null, rotten_tomatoes: null, metacritic: null, tmdb: null },
+        seasons: [],
+        stale: false,
+        fetched_at: '2026-11-01T10:00:00+00:00',
+      } satisfies TitleDetail,
+    ]),
+  )
 }

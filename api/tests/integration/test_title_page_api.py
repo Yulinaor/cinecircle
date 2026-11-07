@@ -31,7 +31,7 @@ def test_title_page_posts(api, gal_content):
 def test_title_page_keeps_the_title_detail(api, gal_content):
     body = api("dana").get(f"/titles/{gal_content.title_ids[0]}").json()
     assert body["id"] == gal_content.title_ids[0] and body["name"] == "Title 1"
-    assert {"tmdb_id", "ratings", "seasons", "stale", "posts", "in_wishlist"} <= set(body)
+    assert {"tmdb_id", "ratings", "seasons", "stale", "posts", "in_wishlist", "taste"} <= set(body)
 
 
 def test_title_page_without_profile(api, gal_content):

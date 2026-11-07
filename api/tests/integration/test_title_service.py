@@ -260,3 +260,24 @@ def test_refresh_keeps_season_hebrew(world):
     assert tmdb.calls["title_details"] == 2
     after = _season_one(service, title.id)
     assert after.name_he == filled.name_he and after.overview_he == filled.overview_he
+
+
+def test_ensure_genres_fetches_once(world):
+    service, tmdb, _, _ = world
+    assert service.ensure_genres([28, 10759, 18]) == {28, 10759, 18}
+    assert tmdb.calls["genre_list"] == 4
+    assert service.ensure_genres([28, 18]) == {28, 18}  # all present now
+    assert tmdb.calls["genre_list"] == 4
+    assert service.ensure_genres([]) == set()
+    assert service.ensure_genres([28, 424242]) == {28}  # TMDB lists no 424242: dropped
+    assert tmdb.calls["genre_list"] == 8
+
+
+def test_ensure_genres_unavailable(world, engine):
+    service, tmdb, _, _ = world
+    tmdb.fail = True
+    with pytest.raises(CatalogUnavailable):
+        service.ensure_genres([28])
+    assert service.ensure_genres([]) == set()  # nothing to look up, nothing to fail
+    with pytest.raises(CatalogUnavailable):
+        TitleService(engine, None, None).ensure_genres([28])

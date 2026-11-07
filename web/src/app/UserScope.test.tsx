@@ -21,7 +21,7 @@ beforeEach(async () => {
 const sessionOf = (id: string) => ({ access_token: `token-${id}`, user: { id } }) as Session
 
 function me(id: string, profile: Partial<MyProfile>): Me {
-  return { id, email: null, profile: { ...PROFILE, ...profile } }
+  return { id, email: null, profile: { ...PROFILE, ...profile }, taste_unlocked: true }
 }
 
 /**
