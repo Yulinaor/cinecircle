@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import InvalidRequestError
 
-from cinecircle_api.db import UserDb, act_as
+from cinecircle_api.db import UserDb, act_as, in_user_transaction
 from cinecircle_api.main import create_app
 from tests.integration.conftest import URL, claims_for
 from tests.tokens import auth_settings, make_token
@@ -25,6 +25,10 @@ def build_client(user, *, raise_server_exceptions: bool = False) -> TestClient:
     def who(db: UserDb) -> dict:
         uid, role = db.execute(_WHO).one()
         return {"uid": uid, "role": role}
+
+    @router.get("/_t/flag")
+    def flag(db: UserDb) -> dict:
+        return {"inside": in_user_transaction()}
 
     @router.post("/_t/rename-then-fail")
     def rename_then_fail(db: UserDb) -> dict:
@@ -119,3 +123,11 @@ def test_stale_session_level_sub_cannot_override_the_token_user(people, engine):
             conn.rollback()
             conn.execute(sa.text("RESET request.jwt.claim.sub"))
             conn.commit()
+
+
+def test_user_db_routes_raise_the_user_transaction_flag(people):
+    client = build_client(people["dana"])
+    assert in_user_transaction() is False
+    assert client.get("/_t/flag").json() == {"inside": True}
+    assert client.get("/_t/flag").json() == {"inside": True}
+    assert in_user_transaction() is False

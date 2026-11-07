@@ -2,6 +2,8 @@
 
 import json
 from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
+from contextvars import ContextVar
 from typing import Annotated, Any, Literal
 
 import sqlalchemy as sa
@@ -9,7 +11,7 @@ from fastapi import Depends, Request
 from sqlalchemy import Connection, Engine
 from sqlalchemy.exc import OperationalError
 
-from cinecircle_api.auth import CurrentUser
+from cinecircle_api.auth import Claims, CurrentUser
 
 DbStatus = Literal["ok", "unreachable", "schema_missing"]
 
@@ -50,17 +52,65 @@ def get_engine(request: Request) -> Engine:
     return request.app.state.engine
 
 
-def user_session(request: Request, claims: CurrentUser) -> Iterator[Connection]:
-    """One transaction per request, running as the signed-in user so RLS filters every query.
+class _Open:
+    """How many user transactions a request has open: a cell the context variable points at."""
 
-    Commits when the handler returns and rolls back when it raises. Role and claims are
+    count = 0
+
+
+_OPEN: ContextVar[_Open | None] = ContextVar("open_user_transactions", default=None)
+
+
+async def request_scope() -> None:
+    """Dependency: give the request its cell for `in_user_transaction`.
+
+    An async dependency runs in the request's own context, while sync dependencies and handlers
+    run in worker threads on copies of it. A copy keeps pointing at the same cell, but a value set
+    from inside a worker thread would be lost with its copy, so the cell is made here.
+    """
+    _OPEN.set(_Open())
+
+
+RequestScope = Annotated[None, Depends(request_scope)]
+
+
+def in_user_transaction() -> bool:
+    """True while the current request has a `user_transaction` open (a probe for tests: TMDB and
+    OMDb must never be called from in here, plan Global Constraints)."""
+    cell = _OPEN.get()
+    return cell is not None and cell.count > 0
+
+
+@contextmanager
+def user_transaction(request: Request, claims: Claims) -> Iterator[Connection]:
+    """One transaction running as the signed-in user, so RLS filters every query in it.
+
+    Commits when the block ends and rolls back when it raises. Role and claims are
     transaction-local, so nothing leaks to the next request on the pooled connection.
 
-    A commit()/rollback() inside the handler is not an escape hatch: SQLAlchemy refuses any
+    A commit()/rollback() inside the block is not an escape hatch: SQLAlchemy refuses any
     further statement inside the `begin()` block, so nothing can run later as postgres.
+
+    A route that calls this itself declares `RequestScope`, so `in_user_transaction` works there.
     """
+    cell = _OPEN.get()
+    if cell is None:  # outside a request (a script, a test): this context gets its own cell
+        cell = _Open()
+        _OPEN.set(cell)
     with request.app.state.engine.begin() as conn:
         act_as(conn, claims.raw)
+        cell.count += 1
+        try:
+            yield conn
+        finally:
+            cell.count -= 1
+
+
+def user_session(
+    request: Request, claims: CurrentUser, _scope: RequestScope
+) -> Iterator[Connection]:
+    """One `user_transaction` per request, for the handler to use as `UserDb`."""
+    with user_transaction(request, claims) as conn:
         yield conn
 
 

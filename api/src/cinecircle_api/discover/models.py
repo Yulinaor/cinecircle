@@ -1,12 +1,17 @@
-"""Discover's response pieces: the P4 name rule and the attributed external review."""
+"""Discover's response pieces: the P4 name rule, the Discover page and the attributed external
+review. Nothing here has a field for another CineCircle user or their content (spec 00 R4.3): the
+only personal parts of a page are each item's `taste` and the `seed` of a "because" section, both
+computed from the viewer's own data."""
 
 import re
 from collections.abc import Mapping
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel
 
-from cinecircle_api.catalog.parse import ListItem, Locale
+from cinecircle_api.catalog.parse import ListItem, Locale, MediaType
+from cinecircle_api.taste.models import Taste
 
 _HEBREW_LETTER = re.compile("[֐-׿]")
 
@@ -36,3 +41,46 @@ class ExternalReview(BaseModel):
 
 class ReviewsPage(BaseModel):
     reviews: list[ExternalReview]
+
+
+class GenreChip(BaseModel):
+    id: int
+    name: str
+
+
+class DiscoverItem(BaseModel):
+    """An external title (a TMDB list item); the web labels each rating with its source."""
+
+    tmdb_id: int
+    media_type: MediaType
+    name: str
+    name_lang: Locale
+    poster_url: str | None
+    year: int | None
+    genres: list[GenreChip]
+    tmdb_rating: float | None
+    imdb_rating: float | None  # only when the title is already cached in the catalogue
+    taste: Taste | None  # the viewer's own Taste Match with this title; None while locked
+
+
+class Seed(BaseModel):
+    """The viewer's own rating that a "because" section is built on."""
+
+    title_id: int
+    name: str
+    name_lang: Locale
+    rating: float
+
+
+class DiscoverSection(BaseModel):
+    key: Literal["trending", "top_rated", "because"]
+    seed: Seed | None  # only on "because"
+    items: list[DiscoverItem]
+
+
+class DiscoverPage(BaseModel):
+    type: MediaType
+    sections: list[DiscoverSection]
+    genres: list[GenreChip]  # every genre of every item, before the `genre` filter
+    stale: bool  # some list is older than its refresh time because TMDB could not be reached
+    fetched_at: datetime | None  # the oldest list served; None when no list was needed

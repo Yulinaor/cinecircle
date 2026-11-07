@@ -31,6 +31,8 @@ ENDPOINTS = [
     "/wishlist",
     "/wishlist?status=watched",
     "/onboarding",
+    "/discover",
+    "/discover?type=series",
 ]
 EXPECT = {  # (viewer, path) -> status; every pair not listed is 200
     ("noa", "/users/gal/posts"): 404,

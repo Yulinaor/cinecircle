@@ -11,7 +11,13 @@ import sqlalchemy as sa
 from sqlalchemy import Connection
 
 EventType = Literal[
-    "post_created", "post_viewed", "title_viewed", "saved", "watched", "onboarding_done"
+    "post_created",
+    "post_viewed",
+    "title_viewed",
+    "saved",
+    "watched",
+    "onboarding_done",
+    "discover_opened",
 ]
 
 _INSERT = "INSERT INTO app.events (user_id, event_type, title_id, post_id, props) VALUES "

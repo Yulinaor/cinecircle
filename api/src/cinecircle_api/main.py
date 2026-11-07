@@ -18,6 +18,7 @@ from cinecircle_api.catalog.tmdb_client import TmdbClient
 from cinecircle_api.db import make_engine
 from cinecircle_api.discover.service import DiscoverService
 from cinecircle_api.routes import (
+    discover,
     feed,
     follows,
     health,
@@ -111,4 +112,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(feed.router, dependencies=[Depends(current_claims)])
     app.include_router(wishlist.router, dependencies=[Depends(current_claims)])
     app.include_router(onboarding.router, dependencies=[Depends(current_claims)])
+    app.include_router(discover.router, dependencies=[Depends(current_claims)])
     return app

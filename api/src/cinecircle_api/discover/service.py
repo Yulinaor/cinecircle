@@ -5,7 +5,7 @@ A TMDB failure serves what is cached; with nothing cached a list is left out and
 has no reviews. No TMDB call is made while a database transaction is open."""
 
 import logging
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
@@ -14,6 +14,7 @@ from sqlalchemy import Engine
 from cinecircle_api.catalog._http import deadline
 from cinecircle_api.catalog.errors import ExternalApiError
 from cinecircle_api.catalog.parse import (
+    GenreRow,
     ListItem,
     Locale,
     MediaType,
@@ -146,6 +147,11 @@ class DiscoverService:
             )
             for key, primary, names_en in loaded
         ]
+
+    def genre_rows(self, ids: Iterable[int]) -> dict[int, GenreRow]:
+        """The genres of app.genres among `ids`; an id TMDB never listed is simply absent."""
+        with self._engine.connect() as conn:
+            return repo.genre_rows(conn, ids)
 
     def _ensure_genres(self, loaded: list[tuple[ListKey, _Loaded, dict[int, str | None]]]) -> None:
         ids = {g for _, p, _ in loaded for i in p.items for g in i.genre_ids}

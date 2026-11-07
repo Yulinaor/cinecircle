@@ -9,7 +9,7 @@ from datetime import datetime
 import sqlalchemy as sa
 from sqlalchemy import Connection
 
-from cinecircle_api.catalog.parse import MediaType, ReviewRecord
+from cinecircle_api.catalog.parse import GenreRow, MediaType, ReviewRecord
 
 
 @dataclass(frozen=True)
@@ -63,6 +63,18 @@ def imdb_ratings(
         {"mt": media_type, "ids": ids},
     )
     return {r.tmdb_id: None if r.imdb_rating is None else float(r.imdb_rating) for r in rows}
+
+
+def genre_rows(conn: Connection, ids: Iterable[int]) -> dict[int, GenreRow]:
+    """id -> GenreRow for the genre ids app.genres knows (unknown ids are absent)."""
+    wanted = list(set(ids))
+    if not wanted:
+        return {}
+    rows = conn.execute(
+        sa.text("SELECT id, name_en, name_he FROM app.genres WHERE id = ANY(:ids)"),
+        {"ids": wanted},
+    )
+    return {r.id: GenreRow(r.id, r.name_en, r.name_he) for r in rows}
 
 
 @dataclass(frozen=True)
