@@ -36,7 +36,10 @@ export function usePostMutations() {
 
   const create = useMutation({
     mutationFn: (post: NewPost) => api<PostCard>('/posts', { method: 'POST', body: post }),
-    onSuccess: invalidate,
+    // A new post also marks a wanted title watched, server-side.
+    onSuccess: async () => {
+      await Promise.all([invalidate(), client.invalidateQueries({ queryKey: ['wishlist'] })])
+    },
   })
   const update = useMutation({
     mutationFn: ({ id, changes }: { id: number; changes: PostChanges }) =>

@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import type { PostCard as PostCardData } from '../api/types'
 import { LangLabel } from '../i18n/LangLabel'
 import { Avatar } from '../people/Avatar'
+import { SaveButton } from '../wishlist/SaveButton'
 import { useSeasonName } from './seasonName'
 
 const BADGE = 'rounded-full bg-accent-soft px-2 py-0.5 text-xs font-semibold text-accent'
@@ -120,13 +121,20 @@ export function PostCard({ post }: { post: PostCardData }) {
         </div>
       )}
 
-      {isAuthor && (
+      {isAuthor ? (
         <Link
           to={`/posts/${post.id}/edit`}
           className="inline-flex min-h-11 items-center self-start font-medium text-accent hover:underline"
         >
           {t('post.edit')}
         </Link>
+      ) : (
+        <SaveButton
+          titleId={title.id}
+          saved={post.in_wishlist}
+          source="post"
+          sourcePostId={post.id}
+        />
       )}
     </article>
   )

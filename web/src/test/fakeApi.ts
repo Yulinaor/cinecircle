@@ -1,6 +1,6 @@
 import { vi } from 'vitest'
 import { ApiError } from '../api/client'
-import type { PostCard } from '../api/types'
+import type { PostCard, WishlistItem } from '../api/types'
 import type { ApiCall } from '../api/useApi'
 
 type Init = { method?: string; body?: unknown } | undefined
@@ -60,4 +60,16 @@ export const POST_CARD: PostCard = {
   created_at: '2026-11-01T10:00:00+00:00',
   updated_at: '2026-11-01T10:00:00+00:00',
   edited: false,
+  in_wishlist: false,
+}
+
+/** Dana's post on a movie, saved from that post and still wanted; no rating of your own yet. */
+export const WISHLIST_ITEM: WishlistItem = {
+  title: POST_CARD.title,
+  status: 'want',
+  source: 'post',
+  via: { post_id: 7, author: { ...DANA } },
+  added_at: '2026-11-02T10:00:00+00:00',
+  watched_at: null,
+  my_post: null,
 }

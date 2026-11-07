@@ -11,6 +11,7 @@ import { titleKey } from '../posts/keys'
 import { PostCard } from '../posts/PostCard'
 import { useSeasonName } from '../posts/seasonName'
 import { parsePostId } from '../posts/usePost'
+import { SaveButton } from '../wishlist/SaveButton'
 import { ExternalRatings } from './ExternalRatings'
 
 /** `/titles/:id`. A malformed id, or a title the API says is missing, is Not found. */
@@ -116,12 +117,15 @@ function TitleBody({ title }: { title: TitlePageData }) {
 
       {title.seasons.length > 0 && <Seasons seasons={title.seasons} />}
 
-      <Link
-        to={`/post?title=${title.id}`}
-        className="inline-flex min-h-11 items-center justify-center rounded-xl bg-accent px-4 font-semibold text-white hover:opacity-90"
-      >
-        {t('title.postAbout')}
-      </Link>
+      <div className="flex flex-wrap items-start gap-3">
+        <Link
+          to={`/post?title=${title.id}`}
+          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-accent px-4 font-semibold text-white hover:opacity-90"
+        >
+          {t('title.postAbout')}
+        </Link>
+        <SaveButton titleId={title.id} saved={title.in_wishlist} source="search" />
+      </div>
 
       {title.posts.length > 0 && (
         <>

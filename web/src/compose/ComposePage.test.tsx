@@ -326,7 +326,7 @@ describe('ComposePage', () => {
     expect(fake.calls).not.toHaveBeenCalled()
   })
 
-  it('refreshes posts, titles and profiles after posting', async () => {
+  it('refreshes posts, titles, profiles and the wishlist after posting', async () => {
     const { client } = setup({})
     const invalidate = vi.spyOn(client, 'invalidateQueries')
     await search('odyssey', 'The Odyssey')
@@ -334,7 +334,7 @@ describe('ComposePage', () => {
     await typist.click(post())
     await screen.findByText('HOME')
     const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey)
-    expect(keys).toEqual(expect.arrayContaining([['posts'], ['title'], ['profile']]))
+    expect(keys).toEqual(expect.arrayContaining([['posts'], ['title'], ['profile'], ['wishlist']]))
   })
 })
 

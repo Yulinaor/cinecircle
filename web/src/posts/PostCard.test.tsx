@@ -179,4 +179,24 @@ describe('PostCard', () => {
     const card = screen.getByRole('article')
     expect(within(card).queryByText(/IMDb|TMDB/)).not.toBeInTheDocument()
   })
+
+  it('offers Save to the viewer, reflecting their own wishlist, but not to the author', () => {
+    const { unmount } = show(POST_CARD)
+    expect(screen.getByRole('button', { name: he.wishlist.save })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
+    unmount()
+
+    const saved = show({ ...POST_CARD, in_wishlist: true })
+    expect(screen.getByRole('button', { name: he.wishlist.saved })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    saved.unmount()
+
+    show(AS_AUTHOR)
+    expect(screen.queryByRole('button', { name: he.wishlist.save })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: he.wishlist.saved })).not.toBeInTheDocument()
+  })
 })

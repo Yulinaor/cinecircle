@@ -81,6 +81,8 @@ export type PostCard = {
   created_at: string
   updated_at: string
   edited: boolean
+  /** The viewer's own wishlist holds the title (nobody else's). */
+  in_wishlist: boolean
 }
 
 export type PostPage = {
@@ -133,4 +135,34 @@ export type TitleDetail = {
 }
 
 /** A title with the posts the viewer may see on it, newest first. */
-export type TitlePage = TitleDetail & { posts: PostCard[] }
+export type TitlePage = TitleDetail & { posts: PostCard[]; in_wishlist: boolean }
+
+export type WishlistStatus = 'want' | 'watched'
+export type WishlistSource = 'post' | 'discover' | 'search'
+
+/** The post an item was saved from, while the owner can still see it. */
+export type WishlistVia = {
+  post_id: number
+  author: UserCard
+}
+
+/** The owner's newest post on the title, any season. */
+export type MyPost = {
+  id: number
+  rating: number
+}
+
+export type WishlistItem = {
+  title: CardTitle
+  status: WishlistStatus
+  source: WishlistSource
+  via: WishlistVia | null
+  added_at: string
+  watched_at: string | null
+  my_post: MyPost | null
+}
+
+export type WishlistPage = {
+  items: WishlistItem[]
+  next_cursor: string | null
+}

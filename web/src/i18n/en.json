@@ -141,12 +141,15 @@
   "profile": {
     "posts_one": "Post",
     "posts_two": "Posts",
+    "posts_many": "Posts",
     "posts_other": "Posts",
     "followers_one": "Follower",
     "followers_two": "Followers",
+    "followers_many": "Followers",
     "followers_other": "Followers",
     "following_one": "Following",
     "following_two": "Following",
+    "following_many": "Following",
     "following_other": "Following",
     "editProfile": "Edit profile",
     "findPeople": "Find people",
@@ -161,6 +164,10 @@
     "votes": "{{n}} votes",
     "fromPeopleYouFollow": "From people you follow",
     "stale": "These details may be out of date."
+  },
+  "wishlist": {
+    "save": "Save to wishlist",
+    "saved": "Saved"
   },
   "lang": { "he": "Hebrew", "en": "English" },
   "notFound": {
