@@ -18,6 +18,9 @@ ENDPOINTS = [
     "/me/follow-requests",
     "/notifications",
     "/titles/{title_id}",
+    "/titles/{title2}",
+    "/feed",
+    "/feed?type=movie",
     "/posts/{shared}",
     "/posts/{private}",
 ]
@@ -41,6 +44,7 @@ CARD_KEYS = {"username", "display_name", "avatar_url", "follow_state"}
 def _url(path: str, content) -> str:
     return path.format(
         title_id=content.title_ids[0],
+        title2=content.title_ids[1],
         shared=content.shared_post_id,
         private=content.private_post_id,
     )

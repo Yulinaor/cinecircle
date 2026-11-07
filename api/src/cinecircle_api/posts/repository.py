@@ -13,8 +13,8 @@ import sqlalchemy as sa
 from sqlalchemy import Connection
 from sqlalchemy.exc import IntegrityError
 
-from cinecircle_api.catalog.parse import GenreRow, MediaType
-from cinecircle_api.pagination import Cursor
+from cinecircle_api.catalog.parse import GenreRow, MediaType, TypeFilter
+from cinecircle_api.pagination import PAGE_SIZE, Cursor
 from cinecircle_api.people.repository import CardRow, card_join_follow, follow_state_sql
 from cinecircle_api.posts.models import CreatePost
 
@@ -106,9 +106,15 @@ _AUTHOR_FIELDS = ("id", "username", "display_name", "avatar_url", "follow_state"
 _GET = sa.text(POST_SELECT + " WHERE p.id = :id")
 _NEWEST_FIRST = " ORDER BY p.created_at DESC, p.id DESC LIMIT :limit"
 _AFTER = " AND (p.created_at, p.id) < (:c_at, :c_id)"
-_AUTHOR = POST_SELECT + " WHERE p.author_id = :author_id"
-_AUTHOR_POSTS = sa.text(_AUTHOR + _NEWEST_FIRST)
-_AUTHOR_POSTS_AFTER = sa.text(_AUTHOR + _AFTER + _NEWEST_FIRST)
+_BY_AUTHOR = " WHERE p.author_id = :author_id"
+_BY_TITLE = " WHERE p.title_id = :title_id"
+# Home (plan P4): shared posts of the caller and of accepted followees. The explicit author
+# filter lets the planner use posts_feed_idx; RLS stays the lock.
+_FEED = (
+    " WHERE p.is_shared AND (p.author_id = auth.uid() OR p.author_id IN ("
+    "SELECT followee_id FROM app.follows WHERE follower_id = auth.uid() AND status = 'accepted'))"
+)
+_OF_TYPE = " AND t.media_type = :media_type"
 _INSERT = sa.text(
     "INSERT INTO app.posts"
     " (author_id, title_id, season_number, rating, opinion, contains_spoilers, is_shared)"
@@ -142,16 +148,38 @@ def get_post(conn: Connection, post_id: int) -> PostRow | None:
     return post_row(row) if row else None
 
 
+def _newest_first(
+    conn: Connection, where: str, params: dict[str, Any], after: Cursor | None, limit: int
+) -> list[PostRow]:
+    """`where` is one of the fixed fragments above, never user text; values go in `params`."""
+    query = POST_SELECT + where
+    params = {**params, "limit": limit}
+    if after is not None:
+        query += _AFTER
+        params |= {"c_at": after.created_at, "c_id": after.id}
+    return [post_row(row) for row in conn.execute(sa.text(query + _NEWEST_FIRST), params)]
+
+
+def feed(
+    conn: Connection, type_filter: TypeFilter, after: Cursor | None, limit: int
+) -> list[PostRow]:
+    """The caller's Home: shared posts by the caller and the people they follow, newest first."""
+    where, params = _FEED, {}
+    if type_filter != "all":
+        where, params = where + _OF_TYPE, {"media_type": type_filter}
+    return _newest_first(conn, where, params, after, limit)
+
+
 def author_posts(
     conn: Connection, author_id: UUID, after: Cursor | None, limit: int
 ) -> list[PostRow]:
     """The author's posts the caller may see, newest first, after the `after` cursor."""
-    params: dict[str, Any] = {"author_id": author_id, "limit": limit}
-    query = _AUTHOR_POSTS
-    if after is not None:
-        query = _AUTHOR_POSTS_AFTER
-        params |= {"c_at": after.created_at, "c_id": after.id}
-    return [post_row(row) for row in conn.execute(query, params)]
+    return _newest_first(conn, _BY_AUTHOR, {"author_id": author_id}, after, limit)
+
+
+def title_posts(conn: Connection, title_id: int, limit: int = PAGE_SIZE) -> list[PostRow]:
+    """Posts on the title the caller may see (their own, plus followees' shared), newest first."""
+    return _newest_first(conn, _BY_TITLE, {"title_id": title_id}, None, limit)
 
 
 def create_post(conn: Connection, data: CreatePost) -> int:

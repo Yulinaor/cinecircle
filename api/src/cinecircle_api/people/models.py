@@ -24,7 +24,10 @@ class UserCard(BaseModel):
 
 class UserDetails(BaseModel):
     bio: str | None
-    post_count: int
+    post_count: int  # shared posts
+    # Accepted follow rows; only the owner sees them (the lists are owner-only too, plan P10).
+    followers_count: int | None = None
+    following_count: int | None = None
 
 
 class UserProfile(UserCard):

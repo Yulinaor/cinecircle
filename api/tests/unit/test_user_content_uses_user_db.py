@@ -20,7 +20,7 @@ def _user_content_modules() -> list[Path]:
     ]
     modules += [
         PACKAGE / "routes" / f"{name}.py"
-        for name in ("me", "users", "follows", "notifications", "posts")
+        for name in ("me", "users", "follows", "notifications", "posts", "feed", "titles")
     ]
     return modules
 
@@ -38,6 +38,8 @@ def test_guard_covers_the_user_content_modules():
         "routes/follows.py",
         "routes/notifications.py",
         "routes/posts.py",
+        "routes/feed.py",
+        "routes/titles.py",
     } <= names
 
 

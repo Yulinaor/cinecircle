@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Annotated
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, Strict, field_validator
 
-from cinecircle_api.catalog.models import poster_url
+from cinecircle_api.catalog.models import TitleDetail, poster_url
 from cinecircle_api.catalog.parse import Locale, MediaType, pick_text
 from cinecircle_api.pagination import BIGINT_MAX
 from cinecircle_api.people.models import UserCard
@@ -159,3 +159,9 @@ def post_card(row: PostRow, lang: Locale) -> PostCard:
         updated_at=row.updated_at,
         edited=row.updated_at > row.created_at,
     )
+
+
+class TitlePage(TitleDetail):
+    """A title with the posts the viewer may see on it (plan P9)."""
+
+    posts: list[PostCard]

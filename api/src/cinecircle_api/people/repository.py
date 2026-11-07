@@ -158,6 +158,12 @@ _DETAILS = sa.text(
     "               WHERE po.author_id = d.user_id AND po.is_shared) AS post_count"
     " FROM app.profile_details d WHERE d.user_id = :user_id"
 )
+_FOLLOW_COUNTS = sa.text(
+    "SELECT count(*) FILTER (WHERE followee_id = auth.uid()) AS followers,"
+    "       count(*) FILTER (WHERE follower_id = auth.uid()) AS following"
+    " FROM app.follows"
+    " WHERE status = 'accepted' AND (followee_id = auth.uid() OR follower_id = auth.uid())"
+)
 _CAN_SEE = sa.text("SELECT (:user_id = auth.uid()) OR app.follows_approved(:user_id)")
 
 
@@ -183,6 +189,12 @@ def get_details(conn: Connection, user_id: UUID) -> tuple[str | None, int] | Non
     """(bio, number of shared posts), or None when RLS hides this person's details."""
     row = conn.execute(_DETAILS, {"user_id": user_id}).one_or_none()
     return (row.bio, row.post_count) if row else None
+
+
+def follow_counts(conn: Connection) -> tuple[int, int]:
+    """(accepted followers, accepted followees) of the caller."""
+    row = conn.execute(_FOLLOW_COUNTS).one()
+    return row.followers, row.following
 
 
 def can_see_content(conn: Connection, user_id: UUID) -> bool:

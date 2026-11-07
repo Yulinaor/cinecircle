@@ -36,7 +36,12 @@ def search(db: UserDb, q: SearchQuery) -> SearchUsersResponse:
 def get_user(db: UserDb, username: Username) -> UserProfile:
     card = card_or_404(db, username)
     found = repository.get_details(db, card.id)  # None when RLS hides it from this viewer
-    details = UserDetails(bio=found[0], post_count=found[1]) if found else None
+    details = None
+    if found:
+        counts = repository.follow_counts(db) if card.follow_state == "self" else (None, None)
+        details = UserDetails(
+            bio=found[0], post_count=found[1], followers_count=counts[0], following_count=counts[1]
+        )
     return UserProfile(**card.card().model_dump(), details=details)
 
 

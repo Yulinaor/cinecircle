@@ -119,12 +119,16 @@ def test_user_profile_by_relation(api, gal_content):
         return r.json()
 
     details = {"bio": GAL_BIO, "post_count": 1}  # post_count counts shared posts only
+    no_counts = {"followers_count": None, "following_count": None}  # counts are owner-only
     gal = view("gal")
-    assert (gal["follow_state"], gal["details"]) == ("self", details)
+    assert (gal["follow_state"], gal["details"]) == (
+        "self",
+        details | {"followers_count": 1, "following_count": 1},
+    )
     assert set(gal) == CARD_KEYS | {"details"}
     assert (gal["username"], gal["display_name"]) == ("gal", "Gal")
     dana = view("dana")
-    assert (dana["follow_state"], dana["details"]) == ("following", details)
+    assert (dana["follow_state"], dana["details"]) == ("following", details | no_counts)
     noa = view("noa")
     assert (noa["follow_state"], noa["details"]) == ("none", None)
     ron = view("ron")
@@ -142,8 +146,22 @@ def test_followed_user_details_visible_one_way_only(api, gal_content):
     # Gal follows Noa (accepted): Gal sees Noa's details, Noa still sees nothing of Gal's.
     body = api("gal").get("/users/noa").json()
     assert body["follow_state"] == "following"
-    assert body["details"] == {"bio": None, "post_count": 0}
+    assert body["details"] == {
+        "bio": None,
+        "post_count": 0,
+        "followers_count": None,  # counts are the owner's alone, even for a followed profile
+        "following_count": None,
+    }
     assert api("noa").get("/users/gal").json()["details"] is None
+
+
+def test_counts_owner_only(api, gal_content):
+    # Dana follows Gal, Ron's request is still pending, and Gal follows Noa.
+    gal = api("gal").get("/users/gal").json()["details"]
+    assert (gal["followers_count"], gal["following_count"]) == (1, 1)  # accepted rows only
+    dana = api("dana").get("/users/gal").json()["details"]
+    assert "followers_count" in dana and "following_count" in dana  # present, null: not omitted
+    assert (dana["followers_count"], dana["following_count"]) == (None, None)
 
 
 def test_unknown_user_404(api):

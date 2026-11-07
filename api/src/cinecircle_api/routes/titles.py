@@ -18,6 +18,9 @@ from cinecircle_api.catalog.service import (
     TitleNotFound,
     TitleService,
 )
+from cinecircle_api.db import UserDb
+from cinecircle_api.posts import repository as posts_repository
+from cinecircle_api.posts.models import TitlePage, post_card
 
 router = APIRouter(prefix="/titles", tags=["titles"])
 
@@ -69,5 +72,11 @@ def by_tmdb(
 
 
 @router.get("/{title_id}")
-def by_id(service: Service, title_id: Annotated[int, Path(ge=1)], lang: Lang = "he") -> TitleDetail:
-    return _detail(lambda: service.get(title_id), lang)
+def by_id(
+    service: Service, db: UserDb, title_id: Annotated[int, Path(ge=1)], lang: Lang = "he"
+) -> TitlePage:
+    """The catalogue entry plus the posts on it the viewer may see (plan P9). The catalogue part
+    needs no profile; a viewer without one has no posts to see, so RLS returns none."""
+    detail = _detail(lambda: service.get(title_id), lang)
+    rows = posts_repository.title_posts(db, detail.id)
+    return TitlePage(**detail.model_dump(), posts=[post_card(row, lang) for row in rows])
