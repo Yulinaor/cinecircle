@@ -76,6 +76,17 @@ PROBES |= {
     "title_page_private": TITLE_SQL.format(title=":title2") + " AND p.id = :private",
     "private_in_feed": FEED_SQL + " AND p.id = :private",
 }
+SEES |= {
+    "wishlist_on_title": {"gal"},  # the in_wishlist probe (P5) for title_ids[1]
+    "wishlist_rls_only": {"gal"},  # no owner filter at all: RLS alone hides Gal's row
+}
+PROBES |= {
+    "wishlist_on_title": (
+        "SELECT EXISTS (SELECT 1 FROM app.wishlist_items w"
+        " WHERE w.owner_id = auth.uid() AND w.title_id = :title2)"
+    ),
+    "wishlist_rls_only": "SELECT count(*) > 0 FROM app.wishlist_items WHERE title_id = :title2",
+}
 CONTENT_TABLES = ["posts", "wishlist_items", "user_genre_prefs", "events"]
 
 
@@ -131,9 +142,9 @@ GRANTS = {  # table: (insert columns, update columns, delete); never a whole-tab
         True,
     ),
     "wishlist_items": (
-        # no added_at (server clock) and no watched_at (set later, by UPDATE)
+        # no added_at (server clock) and no watched_at (the trigger's)
         {"owner_id", "title_id", "source", "source_post_id", "status", "fit_at_save"},
-        {"status", "watched_at"},
+        {"status"},  # watched_at: the trigger's
         True,
     ),
     "user_genre_prefs": ({"user_id", "genre_id"}, set(), True),
@@ -342,7 +353,7 @@ def test_owner_can_manage_own_content(people, gal_content, engine):
         assert (
             run(
                 conn,
-                "UPDATE app.wishlist_items SET status = 'watched', watched_at = now()"
+                "UPDATE app.wishlist_items SET status = 'watched'"
                 " WHERE owner_id = :a AND title_id = :t",
                 a=gal.id,
                 t=second,
