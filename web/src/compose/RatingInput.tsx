@@ -67,6 +67,11 @@ export function RatingInput({
             const next = valid(Number(e.target.value))
             if (next !== null) onChange(next)
           }}
+          // A tap that lands on the resting spot changes nothing, so no change event fires:
+          // the click is what sets the value then.
+          onClick={(e) => {
+            if (value === null) emit(Number(e.currentTarget.value))
+          }}
           className={`min-h-11 min-w-0 flex-1 accent-accent ${value === null ? 'opacity-50' : ''}`}
         />
         <button

@@ -69,6 +69,18 @@ describe('RatingInput', () => {
     expect(spy).toHaveBeenLastCalledWith(5)
   })
 
+  it('a tap on the resting position of the unset slider sets that value', () => {
+    const spy = vi.fn()
+    render(<Harness spy={spy} />)
+    // No change event: the native value did not move from 5.5.
+    fireEvent.click(slider())
+    expect(spy).toHaveBeenCalledExactlyOnceWith(5.5)
+    expect(slider()).toHaveAttribute('aria-valuetext', '5.5')
+    // Once set, a click alone changes nothing.
+    fireEvent.click(slider())
+    expect(spy).toHaveBeenCalledTimes(1)
+  })
+
   it('never emits a value outside 1–10 or off the half-step grid', async () => {
     const spy = vi.fn()
     render(<Harness start={9.5} spy={spy} />)
