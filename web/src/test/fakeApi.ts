@@ -4,6 +4,7 @@ import type {
   DiscoverItem,
   DiscoverPage,
   ExternalReview,
+  MyStats,
   OnboardingState,
   PostCard,
   TitleDetail,
@@ -202,4 +203,42 @@ export const DISCOVER_PAGE: DiscoverPage = {
   ],
   stale: false,
   fetched_at: null,
+}
+
+/** Twelve rated titles: a spread of ratings, three genres, 9 compared with IMDb (+0.8 on average). */
+export const MY_STATS: MyStats = {
+  rated: 12,
+  distribution: [0, 0, 1, 1, 2, 2, 3, 2, 1, 0].map((count, i) => ({ rating: i + 1, count })),
+  genres: [
+    { id: 18, name: 'דרמה', count: 3, mean: 7.8 },
+    { id: 35, name: 'קומדיה', count: 2, mean: 6.5 },
+  ],
+  imdb: {
+    compared: 9,
+    mean_gap: 0.8,
+    buckets: [
+      { key: 'much_lower', count: 0 },
+      { key: 'lower', count: 1 },
+      { key: 'same', count: 3 },
+      { key: 'higher', count: 4 },
+      { key: 'much_higher', count: 1 },
+    ],
+  },
+  agreement: [
+    { username: 'gal', display_name: 'Gal', avatar_url: null, agreement: 74, common: 5 },
+    { username: 'ron', display_name: 'Ron', avatar_url: null, agreement: 60, common: 3 },
+  ],
+}
+
+/** A brand-new owner: nothing rated, so every chart is empty. */
+export const EMPTY_STATS: MyStats = {
+  rated: 0,
+  distribution: MY_STATS.distribution.map(({ rating }) => ({ rating, count: 0 })),
+  genres: [],
+  imdb: {
+    compared: 0,
+    mean_gap: null,
+    buckets: MY_STATS.imdb.buckets.map(({ key }) => ({ key, count: 0 })),
+  },
+  agreement: [],
 }

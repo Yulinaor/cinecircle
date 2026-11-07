@@ -247,3 +247,36 @@ export type ExternalReview = {
 }
 
 export type ReviewsPage = { reviews: ExternalReview[] }
+
+export type RatingBucket = { rating: number; count: number }
+
+export type GenreStat = { id: number; name: string; count: number; mean: number }
+
+export type ImdbBucketKey = 'much_lower' | 'lower' | 'same' | 'higher' | 'much_higher'
+
+export type ImdbStats = {
+  compared: number
+  /** Mean of (my rating - IMDb), one decimal; null when nothing was compared. */
+  mean_gap: number | null
+  /** Always five, lowest gap first. */
+  buckets: { key: ImdbBucketKey; count: number }[]
+}
+
+export type AgreementRow = {
+  username: string
+  display_name: string
+  avatar_url: string | null
+  /** 0-100. */
+  agreement: number
+  /** Titles both rated, at least 3. */
+  common: number
+}
+
+/** `GET /me/stats`: the owner's own numbers, never anyone else's. */
+export type MyStats = {
+  rated: number
+  distribution: RatingBucket[]
+  genres: GenreStat[]
+  imdb: ImdbStats
+  agreement: AgreementRow[]
+}

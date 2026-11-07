@@ -108,6 +108,26 @@ describe('ProfilePage', () => {
     expect(await screen.findByText(he.profile.noPosts)).toBeInTheDocument()
   })
 
+  it('own profile links to My Stats, and only the own profile does', async () => {
+    renderAt('/profile', {
+      'GET /users/gal_b': ownProfile,
+      'GET /users/gal_b/posts?lang=he': page([]),
+    })
+    expect(await screen.findByRole('link', { name: he.profile.stats })).toHaveAttribute('href', '/stats')
+  })
+
+  it('another profile has no My Stats link', async () => {
+    renderAt('/u/gal', {
+      'GET /users/gal': galProfile({
+        follow_state: 'following',
+        details: { bio: null, post_count: 1, followers_count: null, following_count: null },
+      }),
+      'GET /users/gal/posts?lang=he': page([]),
+    })
+    expect(await screen.findByText(he.profile.noPosts)).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: he.profile.stats })).toBeNull()
+  })
+
   it('follower sees bio, post count and posts', async () => {
     const { fake } = renderAt('/u/gal', {
       'GET /users/gal': galProfile({
