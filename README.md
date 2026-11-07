@@ -9,7 +9,7 @@ CineCircle is a private, follow-based app for movie and TV recommendations.
 
 The interface is in Hebrew (right-to-left) and English.
 
-> **Status:** Phase 6 (Discover) is done. Discover lists external titles only (Trending this week, Top rated and "Because you rated X"), each with your Taste Match %, and title pages show attributed TMDB reviews. Phase 5 (Taste Match + onboarding) is done. Posts, title pages and wishlist items show a personal Taste Match % with a one-line reason, and new users can answer a short taste quiz after sign-up. Phase 4 (Wishlist) is done. Titles can be saved to a private wishlist from post cards, title pages and the Wishlist screen, then moved from Want to Watched and rated with Rate it now. Phase 3 (posts, Home, profiles). People post a movie, a whole series or one season with a rating from 1 to 10 in half steps, an opinion, a spoiler flag and share-or-private; edit and delete their posts; see a Home feed of their own and their approved followees' shared posts; open profiles (locked for non-followers: name, avatar and Follow only); and open title pages with external ratings and posts from people they follow. Phase 2 sign-in, follows with approval and notifications, and the Phase 1 catalogue, stay as they were. See the [roadmap](docs/spec/04-roadmap-and-learning-track.md).
+> **Status:** Phase 7 (Data & analytics) is done. My Stats (`/stats`) shows four charts from your own data, and a deterministic fake dataset with notebooks lets you explore the data locally. Phase 6 (Discover) is done. Discover lists external titles only (Trending this week, Top rated and "Because you rated X"), each with your Taste Match %, and title pages show attributed TMDB reviews. Phase 5 (Taste Match + onboarding) is done. Posts, title pages and wishlist items show a personal Taste Match % with a one-line reason, and new users can answer a short taste quiz after sign-up. Phase 4 (Wishlist) is done. Titles can be saved to a private wishlist from post cards, title pages and the Wishlist screen, then moved from Want to Watched and rated with Rate it now. Phase 3 (posts, Home, profiles). People post a movie, a whole series or one season with a rating from 1 to 10 in half steps, an opinion, a spoiler flag and share-or-private; edit and delete their posts; see a Home feed of their own and their approved followees' shared posts; open profiles (locked for non-followers: name, avatar and Follow only); and open title pages with external ratings and posts from people they follow. Phase 2 sign-in, follows with approval and notifications, and the Phase 1 catalogue, stay as they were. See the [roadmap](docs/spec/04-roadmap-and-learning-track.md).
 
 ## Prerequisites
 
@@ -58,6 +58,8 @@ Without keys the API still starts and `/health` works; the `/titles` endpoints a
 **Taste Match.** Every post from someone you follow, every title page and every wishlist item shows a personal Taste Match % with a one-line reason; it uses only your own ratings, the shared posts you can already see, and catalogue data; the onboarding taste quiz (pick 3–5 genres, rate well-known titles) stores private ratings only you can see.
 
 **Discover.** External titles only, never CineCircle user content: Trending this week, Top rated and "Because you rated X" come from TMDB, each labelled with its source (TMDB / IMDb) and your own Taste Match. Title pages show attributed TMDB reviews, and Settings → About carries the TMDB notice.
+
+**My Stats.** The `/stats` page, linked from your own profile, shows four charts built only from your own data: your ratings distribution, your top genres, you vs. IMDb, and which followed account you agree with most. The data is owner-only (`GET /me/stats`).
 
 ### Sign-in setup
 
@@ -110,12 +112,29 @@ To stop the database: `npm run db:stop`. To rebuild it from the migrations: `npm
 
 GitHub Actions runs the same checks on every push (`.github/workflows/ci.yml`).
 
+## Fake data and notebooks
+
+| Command | What it does |
+|---|---|
+| `npm run fake:load` | Loads a deterministic fake dataset (seed 7: 50 users, 300 titles, 3,000 ratings, follows, wishlist items and events) into the **local** database. The loader refuses any non-local host. |
+| `npm run fake:wipe` | Removes the fake dataset. |
+| `npm run analysis:run` | Loads the fake dataset, then executes the notebooks in `analysis/` in place. |
+
+The notebooks need the optional uv dependency group `analysis` (pandas, matplotlib, jupyter), which `analysis:run` uses. To open them interactively: `uv --directory api run --group analysis jupyter lab ../analysis`.
+
+Notebooks read fake users only. Analysing real users would need a privacy policy and anonymisation first. Findings are in `analysis/README.md`.
+
+Fake users are data only: their emails end in `@fake.cinecircle.local`, they have no passwords and they can't sign in.
+
+The integration test suite wipes the fake data at the start of each run. Run `npm run fake:load` again afterwards if you want it back.
+
 ## Project layout
 
 ```
 api/        FastAPI service (Python, SQLAlchemy Core)
 web/        React + Vite + TypeScript + Tailwind
 supabase/   Supabase CLI config and SQL migrations
+analysis/   Notebooks on the fake dataset (Phase 7)
 docs/spec/  Product spec (approved) — start with 00-rules-source-of-truth.md
 docs/superpowers/plans/  Implementation plans, one per phase
 ```
