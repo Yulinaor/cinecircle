@@ -458,17 +458,31 @@ def _record_transactions(tmdb) -> list[tuple[str, bool]]:
     return seen
 
 
-def test_no_tmdb_call_inside_a_user_transaction(api, spec):
+def test_no_tmdb_call_inside_a_user_transaction(api, spec, engine):
     dana = api("dana")  # the spec Dana has rated 9s and 10s: she has seeds
     seen = _record_transactions(_tmdb(dana))
+    with engine.begin() as conn:  # a stale row makes GET /titles/{id} refetch from TMDB
+        conn.execute(
+            sa.text("UPDATE app.titles SET fetched_at = now() - interval '31 days' WHERE id = :id"),
+            {"id": spec.odyssey_title_id},
+        )
 
     r = dana.get("/discover")  # cold cache, lang he: both locales are fetched
     assert r.status_code == 200 and _sections(r.json(), "because")
     r = dana.get(f"/titles/{spec.odyssey_title_id}/reviews")
     assert r.status_code == 200 and r.json()["reviews"]
+    r = dana.get(f"/titles/{spec.odyssey_title_id}")
+    assert r.status_code == 200
 
     called = {name for name, _ in seen}
-    assert {"trending", "top_rated", "recommendations", "genre_list", "reviews"} <= called
+    assert {
+        "trending",
+        "top_rated",
+        "recommendations",
+        "genre_list",
+        "reviews",
+        "title_details",
+    } <= called
     assert [call for call in seen if call[1]] == []
 
 
