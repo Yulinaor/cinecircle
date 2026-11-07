@@ -113,6 +113,9 @@ export function ProfilePage({ username }: { username: string }) {
               <Link to="/settings" className={LINK}>
                 {t('profile.editProfile')}
               </Link>
+              <Link to="/stats" className={LINK}>
+                {t('profile.stats')}
+              </Link>
               <Link to="/connections" className={LINK}>
                 {t('profile.connections')}
               </Link>

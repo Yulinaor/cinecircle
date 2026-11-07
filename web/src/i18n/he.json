@@ -155,6 +155,7 @@
     "editProfile": "עריכת פרופיל",
     "findPeople": "חיפוש אנשים",
     "connections": "חיבורים",
+    "stats": "הסטטיסטיקה שלי",
     "locked": "החשבון פרטי. עקבו כדי לראות את הפוסטים.",
     "noPosts": "אין פוסטים עדיין."
   },
@@ -205,6 +206,47 @@
       "thriller": "מותחן",
       "war": "מלחמה",
       "western": "מערבון"
+    }
+  },
+  "stats": {
+    "title": "הסטטיסטיקה שלי",
+    "privateNote": "רק את/ה רואה את הסטטיסטיקה שלך.",
+    "rated_one": "דירגת כותר אחד",
+    "rated_two": "דירגת {{count}} כותרים",
+    "rated_many": "דירגת {{count}} כותרים",
+    "rated_other": "דירגת {{count}} כותרים",
+    "empty": "דרגו כמה כותרים כדי לראות את הסטטיסטיקה שלכם.",
+    "cta": "לפרסום דירוג",
+    "distribution": { "title": "הדירוגים שלך" },
+    "genres": {
+      "title": "הז׳אנרים המובילים",
+      "detail_one": "כותר אחד · ממוצע {{mean}}",
+      "detail_two": "{{count}} כותרים · ממוצע {{mean}}",
+      "detail_many": "{{count}} כותרים · ממוצע {{mean}}",
+      "detail_other": "{{count}} כותרים · ממוצע {{mean}}"
+    },
+    "imdb": {
+      "title": "את/ה מול IMDb",
+      "higher": "בממוצע הדירוג שלך גבוה ב־{{gap}} מ־IMDb",
+      "lower": "בממוצע הדירוג שלך נמוך ב־{{gap}} מ־IMDb",
+      "same": "בממוצע הדירוג שלך דומה ל־IMDb",
+      "compared_one": "על סמך כותר אחד עם דירוג IMDb",
+      "compared_two": "על סמך {{count}} כותרים עם דירוג IMDb",
+      "compared_many": "על סמך {{count}} כותרים עם דירוג IMDb",
+      "compared_other": "על סמך {{count}} כותרים עם דירוג IMDb",
+      "empty": "לאף כותר שדירגת אין עדיין דירוג IMDb.",
+      "bucket": {
+        "much_lower": "נמוך בהרבה",
+        "lower": "נמוך",
+        "same": "בערך אותו דבר",
+        "higher": "גבוה",
+        "much_higher": "גבוה בהרבה"
+      }
+    },
+    "agreement": {
+      "title": "עם מי את/ה הכי מסכים/ה",
+      "detail": "{{agreement}}% הסכמה · {{count}} כותרים משותפים",
+      "empty": "דרגו כותרים שגם אנשים שאתם עוקבים אחריהם דירגו כדי לראות עם מי אתם מסכימים."
     }
   },
   "wishlist": {

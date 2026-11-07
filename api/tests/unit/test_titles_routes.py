@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 from datetime import UTC, datetime
 from decimal import Decimal
 
@@ -7,7 +8,6 @@ from fastapi.testclient import TestClient
 from cinecircle_api.catalog.parse import GenreRow, SearchResult
 from cinecircle_api.catalog.repository import SeasonRow, TitleRow
 from cinecircle_api.catalog.service import CachedTitle, CatalogUnavailable, TitleNotFound
-from cinecircle_api.db import user_session
 from cinecircle_api.main import create_app
 from cinecircle_api.routes import titles as titles_route
 from tests.tokens import auth_settings, make_token
@@ -86,7 +86,7 @@ def client(stub, monkeypatch):
     app.state.title_service = stub
     # /titles/{id} also reads the viewer's posts and wishlist; these tests are about the
     # catalogue part (and the viewer's taste is stubbed out).
-    app.dependency_overrides[user_session] = lambda: None
+    monkeypatch.setattr(titles_route, "user_transaction", lambda request, claims: nullcontext())
     monkeypatch.setattr(titles_route.posts_repository, "title_posts", lambda conn, title_id: [])
     monkeypatch.setattr(
         titles_route.wishlist_repository, "in_wishlist", lambda conn, title_id: False

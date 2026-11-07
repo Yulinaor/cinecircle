@@ -9,6 +9,7 @@ import pytest
 import sqlalchemy as sa
 from fastapi.testclient import TestClient
 
+from cinecircle_analysis import load as fake_load
 from cinecircle_api.catalog.parse import GenreRow
 from cinecircle_api.catalog.service import TitleService
 from cinecircle_api.db import act_as, make_engine
@@ -29,6 +30,13 @@ _TRUNCATE = sa.text(
 @pytest.fixture(scope="session")
 def engine() -> sa.Engine:
     return make_engine(URL)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _no_fake_data(engine) -> None:
+    """Fake rows (`npm run fake:load`) would break "count every profile" tests, and the catalogue
+    truncation below cascades into them anyway: start the session without them (plan P9)."""
+    fake_load.wipe(engine)
 
 
 @pytest.fixture

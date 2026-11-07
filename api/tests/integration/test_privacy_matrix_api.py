@@ -18,6 +18,7 @@ ENDPOINTS = [
     "/users/gal/posts",
     "/users/search?q=gal",
     "/me",
+    "/me/stats",
     "/me/followers",
     "/me/following",
     "/me/follow-requests",

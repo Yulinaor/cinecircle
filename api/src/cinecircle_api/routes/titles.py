@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request
 from pydantic import StringConstraints
 
+from cinecircle_api.auth import CurrentUser
 from cinecircle_api.catalog.models import (
     SearchResponse,
     TitleDetail,
@@ -18,7 +19,7 @@ from cinecircle_api.catalog.service import (
     TitleNotFound,
     TitleService,
 )
-from cinecircle_api.db import UserDb
+from cinecircle_api.db import user_transaction
 from cinecircle_api.discover.models import ExternalReview, ReviewsPage
 from cinecircle_api.discover.service import DiscoverService
 from cinecircle_api.events import repository as events
@@ -86,25 +87,33 @@ def by_tmdb(
 
 @router.get("/{title_id}")
 def by_id(
-    service: Service, db: UserDb, title_id: Annotated[int, Path(ge=1)], lang: Lang = "he"
+    service: Service,
+    request: Request,
+    claims: CurrentUser,
+    title_id: Annotated[int, Path(ge=1)],
+    lang: Lang = "he",
 ) -> TitlePage:
     """The catalogue entry plus the posts on it the viewer may see (plan P9) and the viewer's own
     `in_wishlist` flag, and the viewer's Taste Match with the title (plan P3; None while locked).
     The catalogue part needs no profile; a viewer without one has no posts to see, so RLS returns
-    none, `in_wishlist` is False and `taste` is None."""
+    none, `in_wishlist` is False and `taste` is None.
+
+    The catalogue entry is fetched first (it may call TMDB), with no transaction open; the user's
+    transaction then opens once, for everything that is the viewer's own."""
     detail = _detail(lambda: service.get(title_id), lang)
-    rows = posts_repository.title_posts(db, detail.id)
-    ctx = TasteContext.load(db)  # a viewer with nothing of their own is locked: no taste, no error
-    taste = title_taste(db, ctx, detail.id, lang)
-    if taste is not None:  # a score was shown (plan P9)
-        props = {"fit": taste.fit, "surface": "title"}
-        events.log(db, events.Event("title_viewed", detail.id, props=props))
-    return TitlePage(
-        **detail.model_dump(),
-        posts=post_cards(db, rows, lang, ctx),
-        in_wishlist=wishlist_repository.in_wishlist(db, detail.id),
-        taste=taste,
-    )
+    with user_transaction(request, claims) as db:
+        rows = posts_repository.title_posts(db, detail.id)
+        ctx = TasteContext.load(db)  # a viewer with nothing of their own is locked: no taste
+        taste = title_taste(db, ctx, detail.id, lang)
+        if taste is not None:  # a score was shown (plan P9)
+            props = {"fit": taste.fit, "surface": "title"}
+            events.log(db, events.Event("title_viewed", detail.id, props=props))
+        return TitlePage(
+            **detail.model_dump(),
+            posts=post_cards(db, rows, lang, ctx),
+            in_wishlist=wishlist_repository.in_wishlist(db, detail.id),
+            taste=taste,
+        )
 
 
 @router.get("/{title_id}/reviews")

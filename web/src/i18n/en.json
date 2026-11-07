@@ -155,6 +155,7 @@
     "editProfile": "Edit profile",
     "findPeople": "Find people",
     "connections": "Connections",
+    "stats": "My Stats",
     "locked": "This account is private. Follow to see their posts.",
     "noPosts": "No posts yet."
   },
@@ -205,6 +206,47 @@
       "thriller": "Thriller",
       "war": "War",
       "western": "Western"
+    }
+  },
+  "stats": {
+    "title": "My Stats",
+    "privateNote": "Only you can see your stats.",
+    "rated_one": "{{count}} title rated",
+    "rated_two": "{{count}} titles rated",
+    "rated_many": "{{count}} titles rated",
+    "rated_other": "{{count}} titles rated",
+    "empty": "Rate a few titles to see your stats.",
+    "cta": "Post a rating",
+    "distribution": { "title": "Your ratings" },
+    "genres": {
+      "title": "Top genres",
+      "detail_one": "{{count}} title · average {{mean}}",
+      "detail_two": "{{count}} titles · average {{mean}}",
+      "detail_many": "{{count}} titles · average {{mean}}",
+      "detail_other": "{{count}} titles · average {{mean}}"
+    },
+    "imdb": {
+      "title": "You vs. IMDb",
+      "higher": "On average you rate {{gap}} higher than IMDb",
+      "lower": "On average you rate {{gap}} lower than IMDb",
+      "same": "On average you rate like IMDb",
+      "compared_one": "Based on {{count}} title with an IMDb rating",
+      "compared_two": "Based on {{count}} titles with an IMDb rating",
+      "compared_many": "Based on {{count}} titles with an IMDb rating",
+      "compared_other": "Based on {{count}} titles with an IMDb rating",
+      "empty": "None of your rated titles has an IMDb rating yet.",
+      "bucket": {
+        "much_lower": "Much lower",
+        "lower": "Lower",
+        "same": "About the same",
+        "higher": "Higher",
+        "much_higher": "Much higher"
+      }
+    },
+    "agreement": {
+      "title": "Who you agree with most",
+      "detail": "{{agreement}}% agreement · {{count}} titles in common",
+      "empty": "Rate titles that people you follow have rated to see who you agree with."
     }
   },
   "wishlist": {
