@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next'
+// TMDB's official compact logo, from themoviedb.org/about/logos-attribution.
+import tmdbLogo from '../assets/tmdb-logo.svg'
 
 /** What this product is built on: the TMDB notice TMDB requires, and where the ratings come from. */
 export function About() {
@@ -13,9 +15,9 @@ export function About() {
           href="https://www.themoviedb.org/"
           target="_blank"
           rel="noopener noreferrer"
-          className="me-2 inline-flex min-h-11 items-center font-extrabold tracking-wide text-accent underline"
+          className="me-2 inline-flex min-h-11 items-center"
         >
-          TMDB
+          <img src={tmdbLogo} alt="TMDB" className="h-3 w-auto" />
         </a>
         {t('about.tmdbNotice')}
       </p>

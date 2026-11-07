@@ -2,6 +2,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../api/client'
+import tmdbLogo from '../assets/tmdb-logo.svg'
 import { initI18n, setLocale } from '../i18n'
 import en from '../i18n/en.json'
 import he from '../i18n/he.json'
@@ -80,6 +81,9 @@ describe('SettingsPage', () => {
     expect(link).toHaveAttribute('rel', 'noopener noreferrer')
     expect(link).toHaveAttribute('target', '_blank')
     expect(link.className).toContain('min-h-11')
+    // The official TMDB logo (TMDB's attribution page), not a home-made wordmark.
+    const logo = within(link).getByRole('img', { name: 'TMDB' })
+    expect(logo).toHaveAttribute('src', tmdbLogo)
   })
 
   it('shows the same notice in English', async () => {
