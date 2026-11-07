@@ -186,3 +186,15 @@ export type WishlistPage = {
   items: WishlistItem[]
   next_cursor: string | null
 }
+
+/** Taste quiz state: the 18 genre chips (in order) and the 10 quiz titles. */
+export type OnboardingState = {
+  done: boolean
+  genres: { key: string; picked: boolean }[]
+  quiz: { media_type: MediaType; tmdb_id: number; my_rating: number | null }[]
+}
+
+export type OnboardingBody = {
+  genres: string[]
+  ratings: { title_id: number; rating: number }[]
+}

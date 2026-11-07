@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router'
 import { ApiError } from '../api/client'
 import type { Me } from '../api/types'
 import { useApi } from '../api/useApi'
@@ -32,6 +33,7 @@ export function OnboardingPage() {
   const { t } = useTranslation()
   const api = useApi()
   const client = useQueryClient()
+  const navigate = useNavigate()
   const { session } = useAuth()
   const [username, setUsername] = useState('')
   const [displayName, setDisplayName] = useState(() =>
@@ -43,7 +45,11 @@ export function OnboardingPage() {
   const create = useMutation({
     mutationFn: (body: { username: string; display_name: string; locale: 'he' | 'en' }) =>
       api<Me>('/me', { method: 'POST', body }),
-    onSuccess: () => client.invalidateQueries({ queryKey: ME_KEY }),
+    onSuccess: () => {
+      // The shell swaps this page for the app once /me has a profile; it should open on the quiz.
+      void navigate('/taste')
+      return client.invalidateQueries({ queryKey: ME_KEY })
+    },
     onError: (failure) => {
       if (failure instanceof ApiError && failure.detail === 'profile_exists') {
         // Another tab or request already created it: just continue into the app.

@@ -7,6 +7,7 @@ import { AppShell } from '../app/AppShell'
 import { initI18n, setLocale } from '../i18n'
 import en from '../i18n/en.json'
 import he from '../i18n/he.json'
+import { ONBOARDING_STATE, quizTitleRoutes } from '../test/fakeApi'
 import { fakeMeApi, PROFILE } from '../test/fakeMeApi'
 import { FAKE_SESSION, renderApp } from '../test/renderApp'
 
@@ -113,6 +114,24 @@ describe('onboarding', () => {
     await userEvent.click(screen.getByRole('button', { name: en.onboarding.submit }))
     await screen.findByRole('navigation')
     expect(fake.writes()[0][1]).toMatchObject({ body: { locale: 'en' } })
+  })
+})
+
+describe('after sign-up', () => {
+  it('a new profile goes to the quiz', async () => {
+    const fake = fakeMeApi(null)
+    const quiz: Record<string, unknown> = {
+      'GET /onboarding': ONBOARDING_STATE,
+      ...quizTitleRoutes(),
+    }
+    const api = ((path: string, init?: Parameters<typeof fake.api>[1]) =>
+      path === '/onboarding' || path.startsWith('/titles/')
+        ? Promise.resolve(quiz[`${init?.method ?? 'GET'} ${path}`])
+        : fake.api(path, init)) as typeof fake.api
+    renderApp(<AppShell />, { api })
+    await fillAndSubmit('gal_b')
+    expect(await screen.findByRole('heading', { name: he.quiz.title })).toBeInTheDocument()
+    expect(screen.getByRole('navigation')).toBeInTheDocument()
   })
 })
 

@@ -66,7 +66,8 @@
     "bioCount": "{{length}}/{{max}}",
     "save": "שמירה",
     "saved": "נשמר",
-    "language": "שפה"
+    "language": "שפה",
+    "tasteQuiz": "שאלון טעם"
   },
   "follow": { "follow": "מעקב", "requested": "נשלחה בקשה", "following": "במעקב" },
   "people": {
@@ -173,6 +174,37 @@
     "basedOnYou": "לפי הדירוגים שלך",
     "unlock": "דרגו כמה כותרים כדי לקבל התאמת טעם",
     "unlockCta": "לשאלון הטעם"
+  },
+  "quiz": {
+    "title": "מה אתם אוהבים לראות?",
+    "private": "הדירוגים בשאלון פרטיים ונראים רק לך.",
+    "genresHint": "בחרו 3–5 ז׳אנרים",
+    "titlesHeading": "דרגו כותרים שראיתם",
+    "notSeen": "לא ראיתי",
+    "yourRating": "הדירוג שלך",
+    "progress": "דורגו {{count}} מתוך 5",
+    "finish": "סיום",
+    "skip": "דילוג בינתיים",
+    "genre": {
+      "action": "אקשן",
+      "adventure": "הרפתקאות",
+      "animation": "אנימציה",
+      "comedy": "קומדיה",
+      "crime": "פשע",
+      "documentary": "תיעודי",
+      "drama": "דרמה",
+      "family": "משפחה",
+      "fantasy": "פנטזיה",
+      "history": "היסטוריה",
+      "horror": "אימה",
+      "music": "מוזיקה",
+      "mystery": "מסתורין",
+      "romance": "רומנטיקה",
+      "scifi": "מדע בדיוני",
+      "thriller": "מותחן",
+      "war": "מלחמה",
+      "western": "מערבון"
+    }
   },
   "wishlist": {
     "save": "שמירה לרשימה",

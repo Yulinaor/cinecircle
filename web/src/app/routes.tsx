@@ -10,6 +10,7 @@ import { PeopleSearchPage } from '../people/PeopleSearchPage'
 import { EditPostPage } from '../posts/EditPostPage'
 import { PostPage } from '../posts/PostPage'
 import { OwnProfilePage, UserProfilePage } from '../profile/ProfilePage'
+import { TasteQuizPage } from '../taste/TasteQuizPage'
 import { TitlePage } from '../titles/TitlePage'
 import { WishlistPage } from '../wishlist/WishlistPage'
 import { TABS } from './tabs'
@@ -32,6 +33,7 @@ export function AppRoutes() {
       <Route path="/posts/:id/edit" element={<EditPostPage />} />
       <Route path="/titles/:id" element={<TitlePage />} />
       <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/taste" element={<TasteQuizPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 import type { MyProfile } from '../api/types'
 import { useAuth } from '../auth/AuthProvider'
 import { LanguageChoice } from './LanguageChoice'
@@ -118,6 +119,12 @@ function SettingsForm({ profile }: { profile: MyProfile }) {
           {t('common.error')}
         </p>
       )}
+      <Link
+        to="/taste"
+        className={`${SECONDARY} flex items-center justify-center`}
+      >
+        {t('settings.tasteQuiz')}
+      </Link>
       <button type="button" onClick={() => void signOut()} className={SECONDARY}>
         {t('auth.signOut')}
       </button>
