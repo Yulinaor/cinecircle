@@ -1,5 +1,7 @@
 import { Route, Routes } from 'react-router'
 import { ComposePage } from '../compose/ComposePage'
+import { DiscoverPage } from '../discover/DiscoverPage'
+import { DiscoverTitleRedirect } from '../discover/DiscoverTitleRedirect'
 import { HomePage } from '../home/HomePage'
 import { SettingsPage } from '../me/SettingsPage'
 import { NotificationsPage } from '../notifications/NotificationsPage'
@@ -18,10 +20,12 @@ import { TABS } from './tabs'
 export function AppRoutes() {
   return (
     <Routes>
-      {TABS.filter((tab) => !['/', '/profile', '/post', '/wishlist'].includes(tab.path)).map((tab) => (
+      {TABS.filter((tab) => !['/', '/profile', '/post', '/wishlist', '/discover'].includes(tab.path)).map((tab) => (
         <Route key={tab.path} path={tab.path} element={<Placeholder titleKey={tab.labelKey} />} />
       ))}
       <Route path="/" element={<HomePage />} />
+      <Route path="/discover" element={<DiscoverPage />} />
+      <Route path="/discover/t/:mediaType/:tmdbId" element={<DiscoverTitleRedirect />} />
       <Route path="/post" element={<ComposePage />} />
       <Route path="/wishlist" element={<WishlistPage />} />
       <Route path="/profile" element={<OwnProfilePage />} />

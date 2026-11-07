@@ -9,6 +9,7 @@ from datetime import UTC, datetime, timedelta
 from sqlalchemy import Engine
 
 from cinecircle_api.catalog import repository as repo
+from cinecircle_api.catalog._http import deadline
 from cinecircle_api.catalog.errors import ExternalApiError, ExternalNotFound
 from cinecircle_api.catalog.omdb_client import OmdbClient
 from cinecircle_api.catalog.parse import (
@@ -79,14 +80,16 @@ class TitleService:
             row = repo.get_title(conn, title_id)
         if row is None:
             raise TitleNotFound
-        return self._serve(row)
+        with deadline():  # a refresh is up to six sequential calls (plan P8)
+            return self._serve(row)
 
     def get_by_tmdb(self, tmdb_id: int, media_type: MediaType) -> CachedTitle:
         with self._engine.connect() as conn:
             row = repo.get_title_by_tmdb(conn, tmdb_id, media_type)
-        if row is None:
-            return self._refresh(tmdb_id, media_type, None)
-        return self._serve(row)
+        with deadline():
+            if row is None:
+                return self._refresh(tmdb_id, media_type, None)
+            return self._serve(row)
 
     def fill_season_text(self, title_id: int, season_number: int) -> None:
         """Fetch a season's Hebrew name and overview from TMDB once, while both are unset.
@@ -104,7 +107,8 @@ class TitleService:
         if season is None or season.name_he is not None or season.overview_he is not None:
             return
         try:
-            raw = self._tmdb.season_details(row.tmdb_id, season_number, "he-IL")
+            with deadline():
+                raw = self._tmdb.season_details(row.tmdb_id, season_number, "he-IL")
         except (ExternalApiError, ExternalNotFound) as err:
             logger.warning(
                 "Hebrew season text unavailable for title %s season %s: %s",
@@ -131,7 +135,8 @@ class TitleService:
         if self._tmdb is None:
             raise CatalogUnavailable
         try:
-            rows = self._genre_rows()
+            with deadline():
+                rows = self._genre_rows()
         except ExternalApiError:
             raise CatalogUnavailable from None
         with self._engine.begin() as conn:

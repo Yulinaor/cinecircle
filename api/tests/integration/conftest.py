@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 from cinecircle_api.catalog.parse import GenreRow
 from cinecircle_api.catalog.service import TitleService
 from cinecircle_api.db import act_as, make_engine
+from cinecircle_api.discover.service import DiscoverService
 from cinecircle_api.main import create_app
 from tests.fakes import FakeOmdb, FakeTmdb
 from tests.tokens import auth_settings, make_token
@@ -20,7 +21,8 @@ URL = os.environ.get(
     "DATABASE_URL", "postgresql+psycopg://postgres:postgres@127.0.0.1:55322/postgres"
 )
 _TRUNCATE = sa.text(
-    "TRUNCATE app.title_genres, app.title_seasons, app.titles, app.genres RESTART IDENTITY CASCADE"
+    "TRUNCATE app.title_genres, app.title_seasons, app.titles, app.genres, app.discover_cache"
+    " RESTART IDENTITY CASCADE"  # external_reviews goes with titles
 )
 
 
@@ -156,7 +158,11 @@ def api(people, engine) -> Iterator[Callable[..., TestClient]]:
             with engine.begin() as conn:
                 conn.execute(_INSERT_FRESH_USER, {"id": user_id, "email": email})
         app = create_app(auth_settings(URL))
-        app.state.title_service = TitleService(app.state.engine, FakeTmdb(), FakeOmdb())
+        tmdb = FakeTmdb()
+        app.state.title_service = TitleService(app.state.engine, tmdb, FakeOmdb())
+        app.state.discover_service = DiscoverService(
+            app.state.engine, tmdb, app.state.title_service
+        )
         apps.append(app)
         token = make_token(str(user_id), **{"email": email, **claims})
         return TestClient(app, headers={"Authorization": f"Bearer {token}"})
@@ -241,6 +247,14 @@ def gal_content(people, clean_catalog, engine) -> GalContent:
                 " VALUES (:gal, :title, 'discover')"
             ),
             {"gal": GAL.id, "title": second},
+        )
+        conn.execute(
+            sa.text(
+                "INSERT INTO app.external_reviews"
+                " (title_id, source_review_id, author_name, excerpt, url)"
+                " VALUES (:title, 'r1', 'jdoe', 'Fine.', 'https://www.themoviedb.org/review/r1')"
+            ),
+            {"title": first},
         )
         conn.execute(sa.text("INSERT INTO app.genres (id, name_en) VALUES (28, 'Action')"))
         conn.execute(

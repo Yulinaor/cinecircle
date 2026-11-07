@@ -1,0 +1,147 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/h0OC7ouop8YLwbAVfS3UUE2Lw4T.jpg",
+      "id": 247718,
+      "name": "MobLand",
+      "original_name": "MobLand",
+      "overview": "Two mob families clash in a war that threatens to topple empires and lives.",
+      "poster_path": "/5Xc7WpWsgflfgEMoBlf9TmWhfbH.jpg",
+      "media_type": "tv",
+      "original_language": "en",
+      "genre_ids": [
+        80,
+        18
+      ],
+      "popularity": 395.0006,
+      "first_air_date": "2025-03-30",
+      "softcore": false,
+      "vote_average": 8.618,
+      "vote_count": 1171,
+      "origin_country": [
+        "GB",
+        "US"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/vcpj6rRDS93ImHCLPY8bwBuFGjR.jpg",
+      "id": 259909,
+      "name": "Dexter: Resurrection",
+      "original_name": "Dexter: Resurrection",
+      "overview": "Set 10 weeks after Dexter: New Blood, Dexter Morgan chases a missing Harrison to New York City, where Captain Angel Batista is hot on their trail from way down in Miami.",
+      "poster_path": "/o2Oyi3boT100bY5kCP4MBiTeetO.jpg",
+      "media_type": "tv",
+      "original_language": "en",
+      "genre_ids": [
+        80,
+        18,
+        9648
+      ],
+      "popularity": 117.52,
+      "first_air_date": "2025-07-13",
+      "softcore": false,
+      "vote_average": 8.6,
+      "vote_count": 733,
+      "origin_country": [
+        "US"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/uyL0MH8gtDlChQKpfpkVoUP41VY.jpg",
+      "id": 225385,
+      "name": "Black Doves",
+      "original_name": "Black Doves",
+      "overview": "When a spy posing as a politician's wife learns her lover has been murdered, an old assassin friend joins her on a quest for truth — and vengeance.",
+      "poster_path": "/srlsyEfIBz2MNWBndVc3opOaNGS.jpg",
+      "media_type": "tv",
+      "original_language": "en",
+      "genre_ids": [
+        10759,
+        9648,
+        80
+      ],
+      "popularity": 88.0524,
+      "first_air_date": "2024-12-05",
+      "softcore": false,
+      "vote_average": 7.1,
+      "vote_count": 472,
+      "origin_country": [
+        "GB"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/31o1Ufd7bStD5dGEcpzapOjwaqx.jpg",
+      "id": 213375,
+      "name": "VisionQuest",
+      "original_name": "VisionQuest",
+      "overview": "With a bounty on his head, Vision must confront his nature and resist Ultron's influence to survive.",
+      "poster_path": "/WGyAyBPncfuu8MZhLY9RtfZPM0.jpg",
+      "media_type": "tv",
+      "original_language": "en",
+      "genre_ids": [
+        10765,
+        18
+      ],
+      "popularity": 236.327,
+      "first_air_date": "2026-10-13",
+      "softcore": false,
+      "vote_average": 8.6,
+      "vote_count": 268,
+      "origin_country": [
+        "US"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/1ptukf8gx19U1HcBv3aRzzlXuyJ.jpg",
+      "id": 279246,
+      "name": "The Remarried Empress",
+      "original_name": "재혼 황후",
+      "overview": "Beloved Empress Navier rules the Eastern Empire alongside Emperor Sovieshu. But when Sovieshu falls for a runaway slave and demands a divorce, Navier will agree on one condition: that she's given approval to remarry rival Prince Heinrey of the Western Kingdom.",
+      "poster_path": "/zn3IXZzGavH3qle3o3g1r32eXDy.jpg",
+      "media_type": "tv",
+      "original_language": "ko",
+      "genre_ids": [
+        18,
+        10765
+      ],
+      "popularity": 174.8184,
+      "first_air_date": "2026-11-03",
+      "softcore": false,
+      "vote_average": 8.188,
+      "vote_count": 16,
+      "origin_country": [
+        "KR"
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/q6VPQREsEGFccpWVF7wFvy9oc25.jpg",
+      "id": 300146,
+      "name": "Where the Mask Ends",
+      "original_name": "嫁金钗",
+      "overview": "An ambitious street urchin seizes the chance to impersonate a noblewoman and becomes a warlord's bride, but when her comatose husband awakens, she must navigate deadly schemes, win his heart through cunning, and uncover her royal heritage to triumph over rivals and rise from gutter to glory.",
+      "poster_path": "/cE9Og0lCCRCP2RArarzJXmu6xEB.jpg",
+      "media_type": "tv",
+      "original_language": "zh",
+      "genre_ids": [
+        18
+      ],
+      "popularity": 83.7515,
+      "first_air_date": "2026-10-16",
+      "softcore": false,
+      "vote_average": 7.167,
+      "vote_count": 15,
+      "origin_country": [
+        "CN"
+      ]
+    }
+  ],
+  "total_pages": 500,
+  "total_results": 10000
+}

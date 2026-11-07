@@ -39,8 +39,10 @@ def _user_content_modules() -> list[Path]:
             "titles",
             "wishlist",
             "onboarding",
+            "discover",
         )
     ]
+    modules.append(PACKAGE / "discover" / "seeds.py")
     return modules
 
 
@@ -69,6 +71,8 @@ def test_guard_covers_the_user_content_modules():
         "routes/feed.py",
         "routes/titles.py",
         "routes/wishlist.py",
+        "routes/discover.py",
+        "discover/seeds.py",
     } <= names
 
 

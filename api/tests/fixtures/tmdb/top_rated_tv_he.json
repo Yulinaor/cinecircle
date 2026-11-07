@@ -1,0 +1,143 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/8phLVFEXOe02JgFmH9ldn3j4tXW.jpg",
+      "genre_ids": [
+        16,
+        10759,
+        10765
+      ],
+      "id": 312359,
+      "origin_country": [
+        "JP"
+      ],
+      "original_language": "ja",
+      "original_name": "ドラゴンボール超 ビルス",
+      "overview": "כאשר בירוס, אל ההרס, מתעורר בחיפוש אחר יריב ראוי, גוקו וחבריו עומדים בפני קרב אפי כדי למנוע ממנו להשמיד את כדור הארץ. גרסה מחודשת (Remastered) וערוכה מחדש של דרגון בול סופר.",
+      "popularity": 94.9897,
+      "poster_path": "/sGuCmIy8kEmx3FWZyMj654rF6g8.jpg",
+      "first_air_date": "2026-10-11",
+      "softcore": false,
+      "name": "דרגון בול סופר: בירוס",
+      "vote_average": 9.627,
+      "vote_count": 394
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/vyG93jhmPL7tBIhRtCLa5mdBKob.jpg",
+      "genre_ids": [
+        10759,
+        18,
+        35
+      ],
+      "id": 276161,
+      "origin_country": [
+        "KR"
+      ],
+      "original_language": "ko",
+      "original_name": "참교육",
+      "overview": "הגבולות והכבוד בבתי הספר קורסים, וצוות פקחים לא קונבנציונלי נשלח לתקן את המצב – בעזרת שיעורים קשוחים וענייניים שאי אפשר למצוא בספרי הלימוד.",
+      "popularity": 34.7243,
+      "poster_path": "/3QSe1ezSC1ZQ7qQUXFwI7OHHRhY.jpg",
+      "first_air_date": "2026-06-05",
+      "softcore": false,
+      "name": "סדרת חינוך",
+      "vote_average": 9.353,
+      "vote_count": 1012
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/ewlmL0nxo2lLqBj69upgp2gjHpV.jpg",
+      "genre_ids": [
+        37,
+        18
+      ],
+      "id": 299167,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Dutton Ranch",
+      "overview": "ריפ וילר ובת' דאטון מהמרים על הכל למען חיים חדשים בדרום טקסס, אך ההבטחה לבנות עתיד הרחק מרוחות הרפאים של ילוסטון מתנגשת במהרה עם מציאות חדשה ואכזרית ועם חווה יריבה שתעשה הכל כדי להגן על האימפריה שלה.",
+      "popularity": 32.4776,
+      "poster_path": "/xsiecCxd8lkcAluw0wWwbW5CwSv.jpg",
+      "first_air_date": "2026-05-15",
+      "softcore": false,
+      "name": "חוות דאטון",
+      "vote_average": 9.134,
+      "vote_count": 651
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/zoa11EvyuasC3j7PmH1QGftrSvf.jpg",
+      "genre_ids": [
+        16,
+        35,
+        9648,
+        10765
+      ],
+      "id": 229544,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Among Us",
+      "overview": "",
+      "popularity": 9.4302,
+      "poster_path": "/ourBbG4B1dAjfFUCzuUYEZpR101.jpg",
+      "first_air_date": "2026-06-05",
+      "softcore": false,
+      "name": "Among Us",
+      "vote_average": 9.007,
+      "vote_count": 213
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg",
+      "genre_ids": [
+        18,
+        80
+      ],
+      "id": 1396,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Breaking Bad",
+      "overview": "סדרת דרמה המתמקדת בוולטר וויט, מורה לכימיה בתיכון שסובל ממקרה חמור של משבר אמצע החיים, בנוסף הוא מתבשר שהינו גוסס ממחלה קשה. על מנת לממן את הטיפולים היקרים ולדאוג לעתיד משפחתו הוא חובר לתלמיד לשעבר והופך ליצרן וסוחר במתאמפטמין.",
+      "popularity": 155.3599,
+      "poster_path": "/dY2FtSKXFCvutAHNgYax27oqwqX.jpg",
+      "first_air_date": "2008-01-20",
+      "softcore": false,
+      "name": "שובר שורות",
+      "vote_average": 8.959,
+      "vote_count": 19051
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/6ekykPwvAywJRjFEnUoCFWTO9O3.jpg",
+      "genre_ids": [
+        35,
+        18
+      ],
+      "id": 278573,
+      "origin_country": [
+        "KR"
+      ],
+      "original_language": "ko",
+      "original_name": "21세기 대군부인",
+      "overview": "קוריאה של המאה ה-21, מונרכיה חוקתית שבה מסורת ומודרניות משתלבות עם סטייל וזוהר, לצד היררכיה חברתית נוקשה. יורשת עשירה ומנכ\"לית מבריקה שיש לה הכול מנסה לתפוס שליטה על עתידה, אחרי שפוגשת בנסיך בודד. ביחד, מחויבים תחת חוזה נישואים, הם ינסו לשכתב את הגורל שלהם.",
+      "popularity": 18.9194,
+      "poster_path": "/splJg8vrtzwrYIlHDIRP1Z8kZgL.jpg",
+      "first_air_date": "2026-04-10",
+      "softcore": false,
+      "name": "כתר מושלם",
+      "vote_average": 9.0,
+      "vote_count": 240
+    }
+  ],
+  "total_pages": 131,
+  "total_results": 2615
+}

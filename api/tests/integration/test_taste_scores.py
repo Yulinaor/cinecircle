@@ -141,4 +141,7 @@ def test_picks_unlock_a_cold_viewer(spec, engine):
         assert ctx.unlocked
         taste = ctx.for_title(SEVERANCE_GENRES, 8.7, None, "en")
     assert taste is not None
+    # G = (0.5 + 0.5 + 0.8) / 3 = 0.6 (one pick, no ratings); 0.7 * 0.6 + 0.3 * 0.87 = 0.681.
+    assert taste.fit == 68
+    assert taste.genres == ["Science Fiction"]
     assert taste.agreement is None

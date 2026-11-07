@@ -1,6 +1,14 @@
 import { vi } from 'vitest'
 import { ApiError } from '../api/client'
-import type { OnboardingState, PostCard, TitleDetail, WishlistItem } from '../api/types'
+import type {
+  DiscoverItem,
+  DiscoverPage,
+  ExternalReview,
+  OnboardingState,
+  PostCard,
+  TitleDetail,
+  WishlistItem,
+} from '../api/types'
 import type { ApiCall } from '../api/useApi'
 
 type Init = { method?: string; body?: unknown } | undefined
@@ -145,4 +153,53 @@ export function quizTitleRoutes(lang: 'he' | 'en' = 'he'): Record<string, TitleD
       } satisfies TitleDetail,
     ]),
   )
+}
+
+/** A TMDB review of a title, 7.5/10, by someone named jdoe; the excerpt contains literal markup. */
+export const EXTERNAL_REVIEW: ExternalReview = {
+  author_name: 'jdoe',
+  excerpt: 'A <b>x</b> film that stays with you.',
+  url: 'https://www.themoviedb.org/review/abc',
+  author_rating: 7.5,
+  source: 'tmdb',
+}
+
+/** A TMDB movie in Discover: Hebrew name, TMDB 7.8 only, no Taste Match (still locked). */
+export const DISCOVER_ITEM: DiscoverItem = {
+  tmdb_id: 603,
+  media_type: 'movie',
+  name: 'המטריקס',
+  name_lang: 'he',
+  poster_url: 'https://image.tmdb.org/t/p/w342/matrix.jpg',
+  year: 1999,
+  genres: [{ id: 28, name: 'אקשן' }],
+  tmdb_rating: 7.8,
+  imdb_rating: null,
+  taste: null,
+}
+
+/** A Discover page: Trending (two items) and Top rated (one), fresh, two genre chips. */
+export const DISCOVER_PAGE: DiscoverPage = {
+  type: 'movie',
+  sections: [
+    {
+      key: 'trending',
+      seed: null,
+      items: [
+        DISCOVER_ITEM,
+        { ...DISCOVER_ITEM, tmdb_id: 438631, name: 'דיונה', year: 2021, tmdb_rating: 7.9, imdb_rating: 8.4 },
+      ],
+    },
+    {
+      key: 'top_rated',
+      seed: null,
+      items: [{ ...DISCOVER_ITEM, tmdb_id: 278, name: 'חומות של תקווה', year: 1994, tmdb_rating: 8.7 }],
+    },
+  ],
+  genres: [
+    { id: 28, name: 'אקשן' },
+    { id: 878, name: 'מדע בדיוני' },
+  ],
+  stale: false,
+  fetched_at: null,
 }

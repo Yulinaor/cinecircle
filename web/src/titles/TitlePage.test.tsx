@@ -7,7 +7,7 @@ import type { TitlePage as TitlePageData } from '../api/types'
 import { initI18n, setLocale } from '../i18n'
 import en from '../i18n/en.json'
 import he from '../i18n/he.json'
-import { fakeApi, POST_CARD, WISHLIST_ITEM } from '../test/fakeApi'
+import { EXTERNAL_REVIEW, fakeApi, POST_CARD, WISHLIST_ITEM } from '../test/fakeApi'
 import { renderApp } from '../test/renderApp'
 import { ExternalRatings } from './ExternalRatings'
 import { TitlePage } from './TitlePage'
@@ -171,6 +171,17 @@ describe('TitlePage', () => {
     expect(heading.compareDocumentPosition(articles[0]!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
   })
 
+  it('shows TMDB reviews in the external part, above the followed-people divider', async () => {
+    const fake = fakeApi({
+      'GET /titles/3?lang=he': { ...TITLE, posts: [POST_CARD] },
+      'GET /titles/3/reviews': { reviews: [EXTERNAL_REVIEW] },
+    })
+    renderTitle(fake.api)
+    const reviews = await screen.findByRole('heading', { name: he.reviews.heading })
+    const divider = screen.getByRole('separator')
+    expect(reviews.compareDocumentPosition(divider)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+  })
+
   it('omits the section when there are no posts', async () => {
     renderTitle(serve(TITLE).api)
     await screen.findByRole('heading', { level: 1 })
@@ -198,6 +209,32 @@ describe('TitlePage', () => {
     expect(button).toHaveAttribute('aria-pressed', 'false')
     expect(post.parentElement).toContainElement(button)
     await userEvent.click(button)
+    expect(fake.calls).toHaveBeenCalledWith('/wishlist', {
+      method: 'POST',
+      body: { title_id: 3, source: 'search' },
+    })
+  })
+
+  it('saves from Discover with source discover', async () => {
+    const fake = fakeApi({
+      'GET /titles/3?lang=he': TITLE,
+      'POST /wishlist': WISHLIST_ITEM,
+    })
+    renderTitle(fake.api, '/titles/3?via=discover')
+    await userEvent.click(await screen.findByRole('button', { name: he.wishlist.save }))
+    expect(fake.calls).toHaveBeenCalledWith('/wishlist', {
+      method: 'POST',
+      body: { title_id: 3, source: 'discover' },
+    })
+  })
+
+  it('ignores an unknown via', async () => {
+    const fake = fakeApi({
+      'GET /titles/3?lang=he': TITLE,
+      'POST /wishlist': WISHLIST_ITEM,
+    })
+    renderTitle(fake.api, '/titles/3?via=feed')
+    await userEvent.click(await screen.findByRole('button', { name: he.wishlist.save }))
     expect(fake.calls).toHaveBeenCalledWith('/wishlist', {
       method: 'POST',
       body: { title_id: 3, source: 'search' },

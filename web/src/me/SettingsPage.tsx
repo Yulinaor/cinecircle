@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import type { MyProfile } from '../api/types'
 import { useAuth } from '../auth/AuthProvider'
+import { About } from './About'
 import { LanguageChoice } from './LanguageChoice'
 import { useMe, useUpdateMe, type ProfileChanges } from './useMe'
 
@@ -128,6 +129,7 @@ function SettingsForm({ profile }: { profile: MyProfile }) {
       <button type="button" onClick={() => void signOut()} className={SECONDARY}>
         {t('auth.signOut')}
       </button>
+      <About />
     </>
   )
 }

@@ -45,3 +45,18 @@ class TmdbClient:
 
     def genre_list(self, kind: Literal["movie", "tv"], language: TmdbLanguage) -> dict:
         return self._get(f"genre/{kind}/list", language=language)
+
+    def trending(self, kind: Literal["movie", "tv"], language: TmdbLanguage) -> dict:
+        return self._get(f"trending/{kind}/week", language=language, page="1")
+
+    def top_rated(self, kind: Literal["movie", "tv"], language: TmdbLanguage) -> dict:
+        return self._get(f"{kind}/top_rated", language=language, page="1")
+
+    def recommendations(
+        self, kind: Literal["movie", "tv"], tmdb_id: int, language: TmdbLanguage
+    ) -> dict:
+        return self._get(f"{kind}/{tmdb_id}/recommendations", language=language, page="1")
+
+    def reviews(self, kind: Literal["movie", "tv"], tmdb_id: int) -> dict:
+        # No language parameter: TMDB then returns reviews written in any language.
+        return self._get(f"{kind}/{tmdb_id}/reviews", page="1")

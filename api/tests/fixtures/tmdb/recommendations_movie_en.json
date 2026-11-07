@@ -1,0 +1,139 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/wvlIoof1FnKPLv9jAYanuP31V0C.jpg",
+      "id": 87101,
+      "title": "Terminator Genisys",
+      "original_title": "Terminator Genisys",
+      "overview": "The year is 2029. John Connor, leader of the resistance continues the war against the machines. At the Los Angeles offensive, John's fears of the unknown future begin to emerge when TECOM spies reveal a new plot by SkyNet that will attack him from both fronts; past and future, and will ultimately change warfare forever.",
+      "poster_path": "/oZRVDpNtmHk8M1VYy1aeOWUXgbC.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        878,
+        28,
+        53
+      ],
+      "popularity": 13.1155,
+      "release_date": "2015-06-23",
+      "softcore": false,
+      "video": false,
+      "vote_average": 5.964,
+      "vote_count": 9282
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/2n7lYEeIbucsEQCswRcVB6ZYmMP.jpg",
+      "id": 777443,
+      "title": "The Electric State",
+      "original_title": "The Electric State",
+      "overview": "An orphaned teen hits the road with a mysterious robot to find her long-lost brother, teaming up with a smuggler and his wisecracking sidekick.",
+      "poster_path": "/sI2NiMU8o65hmIMY0JI9CjJ0p7f.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        28,
+        12,
+        878
+      ],
+      "popularity": 6.6899,
+      "release_date": "2025-02-24",
+      "softcore": false,
+      "video": false,
+      "vote_average": 6.48,
+      "vote_count": 1875
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/u6QKT8EqpPHoPUng7aE90mWXigX.jpg",
+      "id": 274855,
+      "title": "Geostorm",
+      "original_title": "Geostorm",
+      "overview": "After an unprecedented series of natural disasters threatened the planet, the world's leaders came together to create an intricate network of satellites to control the global climate and keep everyone safe. But now, something has gone wrong: the system built to protect Earth is attacking it, and it becomes a race against the clock to uncover the real threat before a worldwide geostorm wipes out everything and everyone along with it.",
+      "poster_path": "/nrsx0jEaBgXq4PWo7SooSnYJTv.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        28,
+        878,
+        53
+      ],
+      "popularity": 6.4607,
+      "release_date": "2017-10-12",
+      "softcore": false,
+      "video": false,
+      "vote_average": 6.129,
+      "vote_count": 5417
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/kjQBrc00fB2RjHZB3PGR4w9ibpz.jpg",
+      "id": 670292,
+      "title": "The Creator",
+      "original_title": "The Creator",
+      "overview": "Amid a future war between the human race and the forces of artificial intelligence, a hardened ex-special forces agent grieving the disappearance of his wife, is recruited to hunt down and kill the Creator, the elusive architect of advanced AI who has developed a mysterious weapon with the power to end the war—and mankind itself.",
+      "poster_path": "/3dSivDtOuyxLDxPH4v2tcNG1fP7.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        878,
+        28,
+        12
+      ],
+      "popularity": 9.4356,
+      "release_date": "2023-09-27",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.017,
+      "vote_count": 4278
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/kIBK5SKwgqIIuRKhhWrJn3XkbPq.jpg",
+      "id": 99861,
+      "title": "Avengers: Age of Ultron",
+      "original_title": "Avengers: Age of Ultron",
+      "overview": "When Tony Stark tries to jumpstart a dormant peacekeeping program, things go awry and Earth’s Mightiest Heroes are put to the ultimate test as the fate of the planet hangs in the balance. As the villainous Ultron emerges, it is up to The Avengers to stop him from enacting his terrible plans, and soon uneasy alliances and unexpected action pave the way for an epic and unique global adventure.",
+      "poster_path": "/4ssDuvEDkSArWEdyBl2X5EHvYKU.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        28,
+        12,
+        878
+      ],
+      "popularity": 29.778,
+      "release_date": "2015-04-22",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.278,
+      "vote_count": 25303
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/qtamfYGFfDLfGRcucx1zNwohRts.jpg",
+      "id": 860,
+      "title": "WarGames",
+      "original_title": "WarGames",
+      "overview": "High school student David Lightman has a talent for hacking. But while trying to hack into a computer system to play unreleased video games, he unwittingly taps into the Department of Defense's war computer and initiates a confrontation of global proportions. Together with his friend and a wizardly computer genius, David must race against time to outwit his opponent and prevent a nuclear Armageddon.",
+      "poster_path": "/zZ1rN4LoPxKNfAp67Xl300WxVeD.jpg",
+      "media_type": "movie",
+      "original_language": "en",
+      "genre_ids": [
+        18,
+        878,
+        53
+      ],
+      "popularity": 5.7545,
+      "release_date": "1983-06-03",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.069,
+      "vote_count": 2296
+    }
+  ],
+  "total_pages": 31,
+  "total_results": 601
+}

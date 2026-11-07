@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { Link, useParams } from 'react-router'
+import { Link, useParams, useSearchParams } from 'react-router'
 import { ApiError } from '../api/client'
-import type { Season, TitlePage as TitlePageData } from '../api/types'
+import type { Season, TitlePage as TitlePageData, WishlistSource } from '../api/types'
 import { useApi } from '../api/useApi'
 import { LangLabel } from '../i18n/LangLabel'
 import { useLang } from '../i18n/useLang'
@@ -14,6 +14,7 @@ import { parsePostId } from '../posts/usePost'
 import { TasteLine } from '../taste/TasteLine'
 import { SaveButton } from '../wishlist/SaveButton'
 import { ExternalRatings } from './ExternalRatings'
+import { ExternalReviews } from './ExternalReviews'
 
 /** `/titles/:id`. A malformed id, or a title the API says is missing, is Not found. */
 export function TitlePage() {
@@ -25,6 +26,8 @@ function TitlePageBody({ id }: { id: number }) {
   const { t } = useTranslation()
   const api = useApi()
   const lang = useLang()
+  // Arriving from a Discover card (through its resolver) makes Save say so.
+  const source = useSearchParams()[0].get('via') === 'discover' ? 'discover' : 'search'
   const query = useQuery({
     queryKey: titleKey(id, lang),
     queryFn: ({ signal }) => api<TitlePageData>(`/titles/${id}?lang=${lang}`, { signal }),
@@ -48,13 +51,13 @@ function TitlePageBody({ id }: { id: number }) {
           {t('auth.loading')}
         </p>
       ) : (
-        <TitleBody title={query.data} />
+        <TitleBody title={query.data} source={source} />
       )}
     </section>
   )
 }
 
-function TitleBody({ title }: { title: TitlePageData }) {
+function TitleBody({ title, source }: { title: TitlePageData; source: WishlistSource }) {
   const { t } = useTranslation()
   // A range only when both ends are known and differ; a lone year otherwise.
   const years =
@@ -126,8 +129,10 @@ function TitleBody({ title }: { title: TitlePageData }) {
         >
           {t('title.postAbout')}
         </Link>
-        <SaveButton titleId={title.id} saved={title.in_wishlist} source="search" />
+        <SaveButton titleId={title.id} saved={title.in_wishlist} source={source} />
       </div>
+
+      <ExternalReviews titleId={title.id} />
 
       {title.posts.length > 0 && (
         <>
