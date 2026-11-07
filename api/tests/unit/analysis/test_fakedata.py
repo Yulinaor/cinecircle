@@ -24,6 +24,8 @@ END = START + timedelta(weeks=WEEKS)
 USERNAME = re.compile(r"^[a-z0-9_.]{3,30}$")
 GENRE_IDS = {28, 12, 16, 35, 80, 99, 18, 10751, 14, 36, 27, 10402, 9648, 10749, 878, 10770, 53}
 GENRE_IDS |= {10752, 37}
+# Views stay before END; a save follows its view by up to 300 s; "watched" trails its post by 1 s.
+MAX_EVENT_DELAY = timedelta(seconds=300)
 
 
 @pytest.fixture(scope="module")
@@ -160,7 +162,7 @@ def test_wishes_and_events_reference_existing_rows(ds):
     users = {u.n for u in ds.users}
     for e in ds.events:
         assert e.user in users
-        assert START <= e.created_at < END + timedelta(days=4)
+        assert START <= e.created_at < END + MAX_EVENT_DELAY
         if e.title is not None:
             assert 0 <= e.title < len(ds.titles)
         if e.post is not None:
@@ -192,15 +194,22 @@ def test_events_shapes(ds):
         elif e.event_type == "discover_opened":
             assert keys == {"type", "genre", "fits"} and e.props["genre"] is None
             assert e.props["type"] in ("movie", "series")
-            assert len(e.props["fits"]) in (0, 10)
+            assert len(e.props["fits"]) <= 10
         elif e.event_type == "watched":
-            assert e.props == {"via": "wishlist"}
+            assert e.props == {"via": "post"}  # a later post on a wished title, as the app logs it
         elif e.event_type == "post_created":
             assert keys == {"shared", "surface"}
             assert e.props["surface"] in ("compose", "onboarding")
         elif e.event_type == "onboarding_done":
             assert keys == {"genres", "ratings"} and e.props["genres"] == 3
     posts = {(p.author, p.title): p for p in ds.posts}
+    for e in ds.events:  # an unlocked Discover page shows min(10, unrated titles of the type)
+        if e.event_type == "discover_opened" and e.props["fits"]:
+            rated = {
+                p.title for p in ds.posts if p.author == e.user and p.created_at < e.created_at
+            }
+            pool = [t for t in ds.titles if t.media_type == e.props["type"] and t.i not in rated]
+            assert len(e.props["fits"]) == min(10, len(pool))
     created = [e for e in ds.events if e.event_type == "post_created"]
     for e in created:
         post = posts[e.post]
@@ -223,6 +232,30 @@ def test_views_only_follow_accepted_follows(ds):
         post = posts[e.post]
         assert post.is_shared and post.created_at < e.created_at
         assert accepted[(e.user, post.author)] < post.created_at
+
+
+def test_saves_follow_the_view_by_seconds_to_minutes(ds):
+    """A save is its own moment: 5-300 s after a view (or Discover visit) that prompted it, and
+    the wishlist row carries the same time as the `saved` event. (A locked viewer's feed view
+    logs no event, so those saves have no view to match.)"""
+    views: dict[tuple[int, int | None], list] = {}
+    for e in ds.events:
+        if e.event_type == "post_viewed":
+            views.setdefault((e.user, e.title), []).append(e.created_at)
+        elif e.event_type == "discover_opened":
+            views.setdefault((e.user, None), []).append(e.created_at)
+    added = {(w.owner, w.title): w.added_at for w in ds.wishes}
+    saved = [e for e in ds.events if e.event_type == "saved"]
+    assert len(saved) == len(ds.wishes)
+    matched = 0
+    for e in saved:
+        assert added[(e.user, e.title)] == e.created_at
+        key = (e.user, e.title if e.props["source"] == "post" else None)
+        gaps = [e.created_at - t for t in views.get(key, [])]
+        if gaps:
+            assert any(timedelta(seconds=5) <= g <= timedelta(seconds=300) for g in gaps)
+            matched += 1
+    assert matched > 0.9 * len(saved)
 
 
 def test_locked_viewers_have_no_fit(ds):

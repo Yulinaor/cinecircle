@@ -80,6 +80,7 @@ _PRIVATE = 0.16  # of the non-onboarding ratings; onboarding ratings are all pri
 _VIEW_P = 0.6
 _DISCOVER_P = 1 / 3  # of the weeks a user rated something
 _DISCOVER_SHOWN = 10
+_SAVE_DELAY = (5.0, 300.0)  # seconds from seeing a title to saving it
 _ACCEPTED = 0.9
 _MAX_RATED_SHARE = 0.8  # nobody rates more than this share of the catalogue
 _SIGNUP_MARGIN = timedelta(hours=1)  # ratings come at least this long after sign-up
@@ -539,7 +540,7 @@ def generate(seed: int = 7, users: int = 50, titles: int = 300, ratings: int = 3
                 "watched",
                 title.i,
                 None,
-                {"via": "wishlist"},
+                {"via": "post"},  # as routes/posts.py logs a post on a wished title
                 when + timedelta(seconds=1),
             )
         return post
@@ -564,13 +565,15 @@ def generate(seed: int = 7, users: int = 50, titles: int = 300, ratings: int = 3
         source: Literal["post", "discover"],
         source_post: tuple[int, int] | None,
     ) -> None:
+        """Decide now whether to save; the save itself lands a few seconds to minutes later (the
+        fit is the one shown at `when`, from the history before it)."""
         person = people[index]
         if title in person.rated or title in person.wishes:
             return
         if rng.random() >= _sigmoid(1.2 * (latent[index][title] - 7) - 1.0):
             return
-        person.wishes[title] = _Wish(person.user.n, title, source, source_post, fit, when)
-        log(person.user.n, "saved", title, source_post, {"fit": fit, "source": source}, when)
+        saved_at = when + _seconds(rng, *_SAVE_DELAY)
+        push(saved_at, "save", index, (title, fit, source, source_post))
 
     while heap:
         when, _, kind, index, extra = heapq.heappop(heap)
@@ -612,6 +615,19 @@ def generate(seed: int = 7, users: int = 50, titles: int = 300, ratings: int = 3
                     when,
                 )
             maybe_save(index, title_i, fit, when, "post", key)
+        elif kind == "save":
+            title_i, fit, source, source_post = extra
+            if title_i in person.rated or title_i in person.wishes:
+                continue  # rated (or saved from elsewhere) in the meantime
+            person.wishes[title_i] = _Wish(person.user.n, title_i, source, source_post, fit, when)
+            log(
+                person.user.n,
+                "saved",
+                title_i,
+                source_post,
+                {"fit": fit, "source": source},
+                when,
+            )
         else:  # open: the Discover page
             media = "movie" if rng.random() < 0.7 else "series"
             pool = [t for t in by_type[media] if t not in person.rated]

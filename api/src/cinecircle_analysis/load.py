@@ -71,7 +71,6 @@ _TITLES = _table(
     _col("imdb_rating"),
     _col("tmdb_rating"),
     _col("raw_tmdb", JSONB),
-    _col("fetched_at"),
 )
 _TITLE_GENRES = _table("title_genres", _col("title_id"), _col("genre_id"))
 _POSTS = _table(
@@ -231,7 +230,6 @@ def _write(conn: Connection, ds: Dataset) -> dict[str, int]:
         ],
     )
 
-    fetched = ds.users[0].signed_up if ds.users else None
     title_rows = _insert_returning(
         conn,
         _TITLES,
@@ -245,7 +243,6 @@ def _write(conn: Connection, ds: Dataset) -> dict[str, int]:
                 "imdb_rating": t.imdb_rating,
                 "tmdb_rating": t.tmdb_rating,
                 "raw_tmdb": {"fake": True},
-                **({"fetched_at": fetched} if fetched else {}),
             }
             for t in ds.titles
         ],
