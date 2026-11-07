@@ -3,17 +3,12 @@ import { useParams } from 'react-router'
 import { ApiError } from '../api/client'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { PostCard } from './PostCard'
-import { usePost } from './usePost'
+import { parsePostId, usePost } from './usePost'
 
 /** `/posts/:id`. A malformed id, or a post that is missing or hidden from the viewer, is Not found. */
 export function PostPage() {
-  const { id } = useParams()
-  const postId = id !== undefined && /^[1-9]\d*$/.test(id) ? Number(id) : null
-  return postId === null || !Number.isSafeInteger(postId) ? (
-    <NotFoundPage />
-  ) : (
-    <PostPageBody id={postId} />
-  )
+  const postId = parsePostId(useParams().id)
+  return postId === null ? <NotFoundPage /> : <PostPageBody id={postId} />
 }
 
 function PostPageBody({ id }: { id: number }) {

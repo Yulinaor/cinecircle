@@ -100,6 +100,37 @@
     "tmdb": "TMDB",
     "minutes": "{{n}} min"
   },
+  "compose": {
+    "title": "New post",
+    "search": "Search for a movie or series",
+    "searchHint": "Type the name of a movie or series.",
+    "movie": "Movie",
+    "series": "Series",
+    "change": "Change",
+    "season": "Season",
+    "rating": "Rating",
+    "ratingUnset": "No rating chosen yet",
+    "decrease": "Lower by half a point",
+    "increase": "Raise by half a point",
+    "opinion": "Your opinion (optional)",
+    "opinionCount": "{{n}}/{{max}}",
+    "spoiler": "My opinion contains spoilers",
+    "share": "Share with followers",
+    "keepPrivate": "Keep private",
+    "submit": "Post",
+    "save": "Save",
+    "delete": "Delete",
+    "confirmDelete": "Delete this post?",
+    "yes": "Yes",
+    "cancel": "Cancel",
+    "errors": {
+      "catalog_unavailable": "Couldn't load details, try again",
+      "post_exists": "You already posted about this.",
+      "editExisting": "Edit your existing post",
+      "season_invalid": "That season doesn't exist for this series. Pick another one.",
+      "opinion_too_long": "Your opinion is too long. Up to {{max}} characters."
+    }
+  },
   "notFound": {
     "title": "Not found",
     "body": "This page doesn't exist, or you can't see it.",

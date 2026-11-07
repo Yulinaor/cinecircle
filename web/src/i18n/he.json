@@ -100,6 +100,37 @@
     "tmdb": "TMDB",
     "minutes": "{{n}} דק׳"
   },
+  "compose": {
+    "title": "פוסט חדש",
+    "search": "חיפוש סרט או סדרה",
+    "searchHint": "הקלידו את השם של סרט או סדרה.",
+    "movie": "סרט",
+    "series": "סדרה",
+    "change": "שינוי",
+    "season": "עונה",
+    "rating": "דירוג",
+    "ratingUnset": "עדיין לא נבחר דירוג",
+    "decrease": "הורידו חצי נקודה",
+    "increase": "הוסיפו חצי נקודה",
+    "opinion": "הדעה שלכם (לא חובה)",
+    "opinionCount": "{{n}}/{{max}}",
+    "spoiler": "הדעה מכילה ספוילר",
+    "share": "שיתוף עם העוקבים",
+    "keepPrivate": "להשאיר פרטי",
+    "submit": "פרסום",
+    "save": "שמירה",
+    "delete": "מחיקה",
+    "confirmDelete": "למחוק את הפוסט?",
+    "yes": "כן",
+    "cancel": "ביטול",
+    "errors": {
+      "catalog_unavailable": "לא הצלחנו לטעון את הפרטים, נסו שוב",
+      "post_exists": "כבר פרסמת על זה.",
+      "editExisting": "לעריכת הפוסט הקיים",
+      "season_invalid": "העונה הזו לא קיימת בסדרה. בחרו עונה אחרת.",
+      "opinion_too_long": "הדעה ארוכה מדי. אפשר עד {{max}} תווים."
+    }
+  },
   "notFound": {
     "title": "לא נמצא",
     "body": "הדף הזה לא קיים, או שאין לכם גישה אליו.",
