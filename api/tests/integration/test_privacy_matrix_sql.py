@@ -10,6 +10,8 @@ import pytest
 import sqlalchemy as sa
 from sqlalchemy.exc import ProgrammingError
 
+from cinecircle_api.stats.repository import MY_CTE
+from cinecircle_api.taste.repository import _AGREEMENTS
 from tests.integration.conftest import (
     GAL_PRIVATE_OPINION,
     GAL_SHARED_OPINION,
@@ -94,6 +96,24 @@ PROBES |= {
 }
 SEES |= {"external_reviews": {"gal", "dana", "noa", "ron"}}  # TMDB reviews: catalogue data (P7)
 PROBES |= {"external_reviews": "SELECT count(*) = 1 FROM app.external_reviews"}
+SEES |= {
+    "stats_ratings": {"gal"},  # the My Stats `my` CTE holds only the viewer's own ratings
+    "stats_agreement_with_gal": {"dana"},  # Gal is an author in the viewer's agreement rows
+}
+PROBES |= {
+    "stats_ratings": MY_CTE + " SELECT count(*) > 0 FROM my WHERE title_id = :title2",
+    # `load_agreements`' statement as is; it needs a rated title in common with Gal.
+    "stats_agreement_with_gal": (
+        "SELECT count(*) > 0 FROM (" + _AGREEMENTS.text + ") a WHERE a.author_id = :gal"
+    ),
+}
+# Statements run as the viewer, in the probe's transaction, before the probe (rolled back after).
+SETUP = {
+    "stats_agreement_with_gal": (
+        "INSERT INTO app.posts (author_id, title_id, rating, is_shared)"
+        " VALUES (auth.uid(), :title1, 7.5, false) ON CONFLICT DO NOTHING"
+    ),
+}
 CONTENT_TABLES = ["posts", "wishlist_items", "user_genre_prefs", "events"]
 
 
@@ -112,6 +132,8 @@ def test_r5_visibility(row, viewer, people, gal_content, engine):
         "title2": gal_content.title_ids[1],
     }
     with as_user(engine, people[viewer]) as conn:
+        if row in SETUP:
+            conn.execute(sa.text(SETUP[row]), params)
         assert conn.scalar(sa.text(PROBES[row]), params) is (viewer in SEES[row])
 
 

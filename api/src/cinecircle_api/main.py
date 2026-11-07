@@ -26,6 +26,7 @@ from cinecircle_api.routes import (
     notifications,
     onboarding,
     posts,
+    stats,
     titles,
     users,
     wishlist,
@@ -105,6 +106,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # Everything except /live and /health requires sign-in; later routers get the same guard.
     app.include_router(titles.router, dependencies=[Depends(current_claims)])
     app.include_router(me.router, dependencies=[Depends(current_claims)])
+    app.include_router(stats.router, dependencies=[Depends(current_claims)])
     app.include_router(users.router, dependencies=[Depends(current_claims)])
     app.include_router(follows.router, dependencies=[Depends(current_claims)])
     app.include_router(notifications.router, dependencies=[Depends(current_claims)])
