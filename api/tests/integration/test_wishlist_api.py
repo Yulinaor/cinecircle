@@ -51,7 +51,17 @@ def test_save_list_and_remove(api):
     r = _save(dana, odyssey["id"])
     assert r.status_code == 201, r.text
     item = r.json()
-    assert set(item) == {"title", "status", "source", "via", "added_at", "watched_at", "my_post"}
+    assert set(item) == {
+        "title",
+        "status",
+        "source",
+        "via",
+        "added_at",
+        "watched_at",
+        "my_post",
+        "taste",
+    }
+    assert item["taste"] is None  # Dana has rated nothing here: locked, so no score
     assert item["title"]["id"] == odyssey["id"]
     assert item["title"]["name"] == "האודיסאה"
     assert item["title"]["media_type"] == "movie"

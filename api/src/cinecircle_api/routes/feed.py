@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, Query
 
 from cinecircle_api.catalog.parse import Locale, TypeFilter
 from cinecircle_api.db import UserDb
+from cinecircle_api.events import repository as events
 from cinecircle_api.pagination import PAGE_SIZE, Cursor, cursor_param, page_of
 from cinecircle_api.people.deps import require_profile
 from cinecircle_api.posts import repository
@@ -26,4 +27,16 @@ def home(
 ) -> PostPage:
     rows = repository.feed(db, type_filter, after, PAGE_SIZE + 1)
     page, next_cursor = page_of(rows, key=lambda row: row.cursor)
-    return PostPage(posts=post_cards(db, page, lang), next_cursor=next_cursor)
+    cards = post_cards(db, page, lang)
+    # A card that showed a score was viewed with that fit (plan P9); unscored ones log nothing.
+    events.log(
+        db,
+        *(
+            events.Event(
+                "post_viewed", card.title.id, card.id, {"fit": card.taste.fit, "surface": "home"}
+            )
+            for card in cards
+            if card.taste is not None
+        ),
+    )
+    return PostPage(posts=cards, next_cursor=next_cursor)

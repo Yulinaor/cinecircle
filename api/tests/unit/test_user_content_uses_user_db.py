@@ -15,7 +15,7 @@ FORBIDDEN = ("app.state.engine", "state.engine", "get_engine")
 def _user_content_modules() -> list[Path]:
     modules = [
         p
-        for folder in ("people", "follows", "notifications", "posts", "wishlist", "taste")
+        for folder in ("people", "follows", "notifications", "posts", "wishlist", "taste", "events")
         for p in (PACKAGE / folder).glob("**/*.py")
     ]
     modules += [
@@ -47,6 +47,7 @@ def test_guard_covers_the_user_content_modules():
         "taste/repository.py",
         "taste/context.py",
         "taste/models.py",
+        "events/repository.py",
         "routes/me.py",
         "routes/users.py",
         "routes/follows.py",

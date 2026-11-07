@@ -19,6 +19,7 @@ from cinecircle_api.catalog.service import (
     TitleService,
 )
 from cinecircle_api.db import UserDb
+from cinecircle_api.events import repository as events
 from cinecircle_api.posts import repository as posts_repository
 from cinecircle_api.posts.models import TitlePage
 from cinecircle_api.taste.cards import post_cards, title_taste
@@ -85,9 +86,13 @@ def by_id(
     detail = _detail(lambda: service.get(title_id), lang)
     rows = posts_repository.title_posts(db, detail.id)
     ctx = TasteContext.load(db)  # a viewer with nothing of their own is locked: no taste, no error
+    taste = title_taste(db, ctx, detail.id, lang)
+    if taste is not None:  # a score was shown (plan P9)
+        props = {"fit": taste.fit, "surface": "title"}
+        events.log(db, events.Event("title_viewed", detail.id, props=props))
     return TitlePage(
         **detail.model_dump(),
         posts=post_cards(db, rows, lang, ctx),
         in_wishlist=wishlist_repository.in_wishlist(db, detail.id),
-        taste=title_taste(db, ctx, detail.id, lang),
+        taste=taste,
     )

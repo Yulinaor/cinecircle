@@ -14,6 +14,7 @@ from fastapi.responses import JSONResponse
 from cinecircle_api.catalog.parse import Locale
 from cinecircle_api.catalog.service import TitleService
 from cinecircle_api.db import UserDb
+from cinecircle_api.events import repository as events
 from cinecircle_api.pagination import BIGINT_MAX
 from cinecircle_api.people.deps import Profile, require_profile
 from cinecircle_api.posts import repository
@@ -63,7 +64,16 @@ def create(
         raise HTTPException(404, "not_found") from None
     except repository.SeasonInvalid:
         raise HTTPException(422, "season_invalid") from None
-    wishlist_repository.mark_watched_on_post(db, body.title_id)  # plan P9, same transaction
+    created = events.Event(
+        "post_created",
+        body.title_id,
+        post_id,
+        {"shared": body.is_shared, "surface": "compose"},
+    )
+    if wishlist_repository.mark_watched_on_post(db, body.title_id):  # plan P9, same transaction
+        events.log(db, created, events.Event("watched", body.title_id, props={"via": "post"}))
+    else:
+        events.log(db, created)
     return _card_or_404(db, post_id, lang)
 
 

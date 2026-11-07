@@ -11,6 +11,7 @@ from cinecircle_api.catalog.parse import Locale
 from cinecircle_api.pagination import BIGINT_MAX
 from cinecircle_api.people.models import UserCard
 from cinecircle_api.posts.models import CardTitle, card_title
+from cinecircle_api.taste.models import Taste
 
 if TYPE_CHECKING:
     from cinecircle_api.wishlist.repository import WishlistRow
@@ -18,6 +19,7 @@ if TYPE_CHECKING:
 # The schema also allows 'dropped'; the API never uses it (plan P3).
 WishlistStatus = Literal["want", "watched"]
 WishlistSource = Literal["post", "discover", "search"]
+WishlistSort = Literal["recent", "fit"]  # newest first, or best Taste Match first (plan P11)
 
 
 class WishlistVia(BaseModel):
@@ -42,6 +44,7 @@ class WishlistItem(BaseModel):
     added_at: datetime
     watched_at: datetime | None
     my_post: MyPost | None
+    taste: Taste | None  # the title formula for the owner (plan P3); None while locked
 
 
 class WishlistPage(BaseModel):
@@ -71,7 +74,7 @@ class UpdateWishlist(BaseModel):
     status: WishlistStatus
 
 
-def wishlist_item(row: WishlistRow, lang: Locale) -> WishlistItem:
+def wishlist_item(row: WishlistRow, lang: Locale, taste: Taste | None) -> WishlistItem:
     via = None
     if row.via_post_id is not None and row.via_author is not None:
         via = WishlistVia(post_id=row.via_post_id, author=row.via_author.card())
@@ -86,4 +89,5 @@ def wishlist_item(row: WishlistRow, lang: Locale) -> WishlistItem:
         added_at=row.added_at,
         watched_at=row.watched_at,
         my_post=my_post,
+        taste=taste,
     )

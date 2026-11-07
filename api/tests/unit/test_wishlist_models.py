@@ -1,7 +1,7 @@
 import pytest
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 
-from cinecircle_api.wishlist.models import SaveTitle, UpdateWishlist
+from cinecircle_api.wishlist.models import SaveTitle, UpdateWishlist, WishlistSort
 
 
 def _save(**fields) -> SaveTitle:
@@ -42,3 +42,12 @@ def test_update_status_values():
     for body in bad:
         with pytest.raises(ValidationError):
             UpdateWishlist.model_validate(body)
+
+
+def test_wishlist_sort_values():
+    sort = TypeAdapter(WishlistSort)
+    assert sort.validate_python("recent") == "recent"
+    assert sort.validate_python("fit") == "fit"
+    for bad in ("x", "", "Fit", None, 1):
+        with pytest.raises(ValidationError):
+            sort.validate_python(bad)
