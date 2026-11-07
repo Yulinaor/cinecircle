@@ -58,7 +58,12 @@ describe('TasteLine', () => {
 
   it('shows the spec reason line and lower-cases the second English genre', async () => {
     await setLocale('en')
-    renderApp(<TasteLine taste={{ fit: 76, genres: ['Action', 'Adventure'], agreement: 74 }} authorName="Gal" />)
+    renderApp(
+      <TasteLine
+        taste={{ fit: 76, genres: ['Action', 'Adventure'], agreement: 74 }}
+        authorName="Gal"
+      />,
+    )
     expect(lineText()).toBe(
       '76% match · Action & adventure fit you · you agree with Gal 74% of the time',
     )
@@ -66,7 +71,10 @@ describe('TasteLine', () => {
 
   it('Hebrew reason line', () => {
     renderApp(
-      <TasteLine taste={{ fit: 76, genres: ['אקשן', 'הרפתקאות'], agreement: 74 }} authorName="Gal" />,
+      <TasteLine
+        taste={{ fit: 76, genres: ['אקשן', 'הרפתקאות'], agreement: 74 }}
+        authorName="Gal"
+      />,
     )
     expect(lineText()).toBe('76% התאמה · אקשן והרפתקאות מתאימים לך · 74% הסכמה עם Gal')
   })
@@ -93,6 +101,6 @@ describe('TasteLine', () => {
     const bdis = Array.from(screen.getByTestId('taste-line').querySelectorAll('bdi')).map(
       (b) => b.textContent,
     )
-    expect(bdis.sort()).toEqual(['74', '76', 'Gal'])
+    expect(bdis.sort()).toEqual(['74%', '76%', 'Gal'])
   })
 })
