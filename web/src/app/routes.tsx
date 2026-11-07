@@ -10,6 +10,7 @@ import { PeopleSearchPage } from '../people/PeopleSearchPage'
 import { EditPostPage } from '../posts/EditPostPage'
 import { PostPage } from '../posts/PostPage'
 import { OwnProfilePage, UserProfilePage } from '../profile/ProfilePage'
+import { TitlePage } from '../titles/TitlePage'
 import { TABS } from './tabs'
 
 export function AppRoutes() {
@@ -27,6 +28,7 @@ export function AppRoutes() {
       <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/posts/:id" element={<PostPage />} />
       <Route path="/posts/:id/edit" element={<EditPostPage />} />
+      <Route path="/titles/:id" element={<TitlePage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

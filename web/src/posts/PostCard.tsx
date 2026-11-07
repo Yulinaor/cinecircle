@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import type { PostCard as PostCardData } from '../api/types'
-import { useLang } from '../i18n/useLang'
+import { LangLabel } from '../i18n/LangLabel'
 import { Avatar } from '../people/Avatar'
 
 const BADGE = 'rounded-full bg-accent-soft px-2 py-0.5 text-xs font-semibold text-accent'
@@ -10,7 +10,6 @@ const BADGE = 'rounded-full bg-accent-soft px-2 py-0.5 text-xs font-semibold tex
 /** The one way a post is shown, on every screen. */
 export function PostCard({ post }: { post: PostCardData }) {
   const { t } = useTranslation()
-  const lang = useLang()
   const { author, title, season } = post
   const isAuthor = author.follow_state === 'self'
   const [revealed, setRevealed] = useState(false)
@@ -109,9 +108,7 @@ export function PostCard({ post }: { post: PostCardData }) {
 
       {summary.overview && (
         <div className="flex flex-col gap-1">
-          {summary.overview_lang !== null && summary.overview_lang !== lang && (
-            <span className="self-start text-xs font-semibold text-muted">{t('post.english')}</span>
-          )}
+          <LangLabel lang={summary.overview_lang} />
           <p dir="auto" className="line-clamp-3 text-sm text-muted">
             {summary.overview}
           </p>

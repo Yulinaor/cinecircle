@@ -100,7 +100,6 @@
     "spoiler": "This opinion contains a spoiler.",
     "showSpoiler": "Show spoiler",
     "edit": "Edit",
-    "english": "English",
     "outOf": "/10",
     "imdb": "IMDb",
     "tmdb": "TMDB",
@@ -147,6 +146,15 @@
     "locked": "This account is private. Follow to see their posts.",
     "noPosts": "No posts yet."
   },
+  "title": {
+    "postAbout": "Post about this",
+    "seasons": "Seasons",
+    "episodes": "{{n}} episodes",
+    "votes": "{{n}} votes",
+    "fromPeopleYouFollow": "From people you follow",
+    "stale": "These details may be out of date."
+  },
+  "lang": { "he": "Hebrew", "en": "English" },
   "notFound": {
     "title": "Not found",
     "body": "This page doesn't exist, or you can't see it.",
