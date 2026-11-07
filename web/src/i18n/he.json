@@ -183,6 +183,7 @@
     "notSeen": "לא ראיתי",
     "yourRating": "הדירוג שלך",
     "progress": "דורגו {{count}} מתוך 5",
+    "progressEnough": "דורגו {{count}} — מספיק להתאמת טעם",
     "finish": "סיום",
     "skip": "דילוג בינתיים",
     "genre": {

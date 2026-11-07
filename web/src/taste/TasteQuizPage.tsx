@@ -6,8 +6,11 @@ import type { OnboardingBody, OnboardingState } from '../api/types'
 import { useApi } from '../api/useApi'
 import { GenreChips, MAX_GENRES } from './GenreChips'
 import { QuizTitle, type QuizEntry } from './QuizTitle'
+import { number, useIsolating } from './useIsolating'
 
 const MIN_GENRES = 3
+/** Ratings it takes for Taste Match to work from them (the API's full profile). */
+const ENOUGH_RATINGS = 5
 const PRIMARY =
   'min-h-11 w-full rounded-xl bg-accent px-4 text-base font-semibold text-white disabled:opacity-60'
 const SECONDARY =
@@ -55,6 +58,7 @@ function QuizForm({ state }: { state: OnboardingState }) {
   const api = useApi()
   const client = useQueryClient()
   const navigate = useNavigate()
+  const isolating = useIsolating()
   const [picked, setPicked] = useState<ReadonlySet<string>>(
     () => new Set(state.genres.filter((g) => g.picked).map((g) => g.key)),
   )
@@ -65,6 +69,13 @@ function QuizForm({ state }: { state: OnboardingState }) {
   const save = useMutation({
     mutationFn: (body: OnboardingBody) =>
       api<OnboardingState>('/onboarding', { method: 'POST', body }),
+    // Here, not in `mutate()`: TanStack does not call those callbacks once the page is left.
+    onSuccess: () => {
+      // Taste Match now has data: every list that shows a score or a rating is out of date.
+      for (const queryKey of [['me'], ['posts'], ['title'], ['wishlist']]) {
+        void client.invalidateQueries({ queryKey })
+      }
+    },
   })
 
   function toggle(key: string) {
@@ -93,15 +104,7 @@ function QuizForm({ state }: { state: OnboardingState }) {
           return given ? [{ title_id: given.titleId, rating: given.rating }] : []
         }),
       },
-      {
-        onSuccess: () => {
-          // Taste Match now has data: every list that shows a score or a rating is out of date.
-          for (const queryKey of [['me'], ['posts'], ['title'], ['wishlist']]) {
-            void client.invalidateQueries({ queryKey })
-          }
-          void navigate('/')
-        },
-      },
+      { onSuccess: () => void navigate('/') },
     )
   }
 
@@ -128,17 +131,29 @@ function QuizForm({ state }: { state: OnboardingState }) {
         })}
       </ul>
       <p role="status" className="text-sm font-medium text-muted">
-        {t('quiz.progress', { count })}
+        {isolating(count < ENOUGH_RATINGS ? 'quiz.progress' : 'quiz.progressEnough', {
+          count: number(count),
+        })}
       </p>
       {save.isError && (
         <p role="alert" className="text-sm font-medium text-danger">
           {t('common.error')}
         </p>
       )}
-      <button type="button" onClick={finish} disabled={!ready || save.isPending} className={PRIMARY}>
+      <button
+        type="button"
+        onClick={finish}
+        disabled={!ready || save.isPending}
+        className={PRIMARY}
+      >
         {t('quiz.finish')}
       </button>
-      <button type="button" onClick={() => void navigate('/')} className={SECONDARY}>
+      <button
+        type="button"
+        onClick={() => void navigate('/')}
+        disabled={save.isPending}
+        className={SECONDARY}
+      >
         {t('quiz.skip')}
       </button>
     </>

@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
+import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { OnboardingState, TitleDetail } from '../api/types'
 import { useApi } from '../api/useApi'
 import { RatingInput } from '../compose/RatingInput'
 import { LangLabel } from '../i18n/LangLabel'
 import { useLang } from '../i18n/useLang'
+import { useActionName } from '../people/actionName'
 
 export type QuizEntry = OnboardingState['quiz'][number]
 
@@ -33,10 +35,14 @@ export function QuizTitle({
   const { t } = useTranslation()
   const api = useApi()
   const lang = useLang()
+  const nameId = useId()
+  const notSeenName = useActionName(nameId)
   const title = useQuery({
     queryKey: ['title', 'tmdb', entry.media_type, entry.tmdb_id, lang],
     queryFn: ({ signal }) =>
-      api<TitleDetail>(`/titles/tmdb/${entry.media_type}/${entry.tmdb_id}?lang=${lang}`, { signal }),
+      api<TitleDetail>(`/titles/tmdb/${entry.media_type}/${entry.tmdb_id}?lang=${lang}`, {
+        signal,
+      }),
   })
 
   if (title.isError) return null
@@ -58,7 +64,7 @@ export function QuizTitle({
           <div aria-hidden="true" className="aspect-[2/3] w-16 shrink-0 rounded-xl bg-line" />
         )}
         <div className="flex min-w-0 flex-1 flex-col">
-          <h3 dir="auto" className="text-lg font-bold leading-snug text-ink">
+          <h3 id={nameId} dir="auto" className="text-lg font-bold leading-snug text-ink">
             {detail.name}
           </h3>
           <LangLabel lang={detail.name_lang} />
@@ -76,8 +82,12 @@ export function QuizTitle({
       ) : (
         !skipped && (
           <>
-            <RatingInput value={value} onChange={(rating) => onRate(detail.id, rating)} />
-            <button type="button" onClick={onSkip} className={SECONDARY}>
+            <RatingInput
+              value={value}
+              titleNameId={nameId}
+              onChange={(rating) => onRate(detail.id, rating)}
+            />
+            <button type="button" {...notSeenName} onClick={onSkip} className={SECONDARY}>
               {t('quiz.notSeen')}
             </button>
           </>

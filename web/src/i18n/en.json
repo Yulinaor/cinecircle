@@ -183,6 +183,7 @@
     "notSeen": "Haven't seen it",
     "yourRating": "Your rating",
     "progress": "{{count}} of 5 rated",
+    "progressEnough": "{{count}} rated — enough for Taste Match",
     "finish": "Done",
     "skip": "Skip for now",
     "genre": {

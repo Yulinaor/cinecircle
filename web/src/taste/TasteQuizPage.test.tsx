@@ -47,9 +47,17 @@ function setup(
 }
 
 const genre = (key: string) =>
-  screen.getByRole('button', { name: (he.quiz.genre as Record<string, string>)[key] })
+  screen.getByRole('button', {
+    name: (he.quiz.genre as Record<string, string>)[key],
+  })
 const done = () => screen.getByRole('button', { name: he.quiz.finish })
 const progress = (count: number) => he.quiz.progress.replace('{{count}}', String(count))
+const allSliders = async () => {
+  await vi.waitFor(() => expect(screen.getAllByRole('slider')).toHaveLength(10))
+  return screen.getAllByRole('slider')
+}
+const progressLine = () =>
+  (screen.getByRole('status').textContent ?? '').replace(/\s+/g, ' ').trim()
 const posts = (fake: ReturnType<typeof setup>['fake']) =>
   fake.calls.mock.calls.filter(([, init]) => init?.method === 'POST')
 
@@ -70,7 +78,10 @@ describe('TasteQuizPage', () => {
   it('prefills the genres picked earlier', async () => {
     const state = {
       ...ONBOARDING_STATE,
-      genres: ONBOARDING_STATE.genres.map((g) => ({ ...g, picked: g.key === 'drama' })),
+      genres: ONBOARDING_STATE.genres.map((g) => ({
+        ...g,
+        picked: g.key === 'drama',
+      })),
     }
     setup(state)
     await screen.findByRole('button', { name: he.quiz.genre.drama })
@@ -101,9 +112,9 @@ describe('TasteQuizPage', () => {
     await pick('action', 'drama', 'comedy')
     const sliders = await screen.findAllByRole('slider')
     expect(sliders).toHaveLength(10)
-    expect(screen.getByText(progress(0))).toBeInTheDocument()
+    expect(progressLine()).toBe(progress(0))
     fireEvent.change(sliders[0], { target: { value: '8.5' } })
-    expect(screen.getByText(progress(1))).toBeInTheDocument()
+    expect(progressLine()).toBe(progress(1))
     await userEvent.click(done())
     await screen.findByText('HOME')
     expect(posts(fake)).toEqual([
@@ -138,6 +149,60 @@ describe('TasteQuizPage', () => {
     expect(keys).toEqual(expect.arrayContaining([['me'], ['posts'], ['title'], ['wishlist']]))
   })
 
+  it('counts ratings towards 5, then says there are enough', async () => {
+    setup()
+    await pick('action', 'drama', 'comedy')
+    const sliders = await screen.findAllByRole('slider')
+    for (const slider of sliders.slice(0, 4)) fireEvent.change(slider, { target: { value: '7' } })
+    expect(progressLine()).toBe(progress(4))
+    fireEvent.change(sliders[4], { target: { value: '7' } })
+    expect(progressLine()).toBe(he.quiz.progressEnough.replace('{{count}}', '5'))
+    for (const slider of sliders.slice(5, 7)) fireEvent.change(slider, { target: { value: '7' } })
+    expect(progressLine()).toBe('דורגו 7 — מספיק להתאמת טעם')
+    // The number is its own left-to-right run inside the right-to-left line.
+    expect(within(screen.getByRole('status')).getByText('7').closest('bdi')).not.toBeNull()
+  })
+
+  it('counts ratings in English without ever saying 7 of 5', async () => {
+    await setLocale('en')
+    setup(ONBOARDING_STATE, {}, 'en')
+    await screen.findByRole('button', { name: en.quiz.genre.action })
+    const sliders = await allSliders()
+    for (const slider of sliders.slice(0, 4)) fireEvent.change(slider, { target: { value: '7' } })
+    expect(progressLine()).toBe('4 of 5 rated')
+    expect(within(screen.getByRole('status')).getByText('4').closest('bdi')).not.toBeNull()
+    for (const slider of sliders.slice(4, 7)) fireEvent.change(slider, { target: { value: '7' } })
+    expect(progressLine()).toBe('7 rated — enough for Taste Match')
+    expect(within(screen.getByRole('status')).getByText('7').closest('bdi')).not.toBeNull()
+  })
+
+  it('has the exact progress copy in Hebrew and English', () => {
+    expect(he.quiz.progressEnough).toBe('דורגו {{count}} — מספיק להתאמת טעם')
+    expect(en.quiz.progressEnough).toBe('{{count}} rated — enough for Taste Match')
+  })
+
+  it('names each slider and Not seen button after its title', async () => {
+    const routes = quizTitleRoutes('he')
+    const key = 'GET /titles/tmdb/movie/278?lang=he'
+    setup(ONBOARDING_STATE, { [key]: { ...routes[key], name: 'Inception' } })
+    await pick('action', 'drama', 'comedy')
+    const slider = await screen.findByRole('slider', {
+      name: new RegExp(`${he.compose.rating}.*Inception`),
+    })
+    const notSeen = screen.getByRole('button', {
+      name: `${he.quiz.notSeen} Inception`,
+    })
+    const row = screen.getByText('Inception').closest('li')!
+    expect(row).toContainElement(slider)
+    expect(row).toContainElement(notSeen)
+    // Each of the ten rows gets its own names.
+    expect(
+      screen.getAllByRole('button', {
+        name: new RegExp(`^${he.quiz.notSeen} `),
+      }),
+    ).toHaveLength(10)
+  })
+
   it('skips titles not seen and shows existing ratings', async () => {
     const state = {
       ...ONBOARDING_STATE,
@@ -150,15 +215,21 @@ describe('TasteQuizPage', () => {
     const mine = screen.getByText(he.quiz.yourRating).closest('li')!
     expect(within(mine).getByText('7.0').closest('bdi')).not.toBeNull()
     expect(within(mine).queryByRole('slider')).not.toBeInTheDocument()
-    expect(within(mine).queryByRole('button', { name: he.quiz.notSeen })).not.toBeInTheDocument()
+    expect(
+      within(mine).queryByRole('button', { name: new RegExp(`^${he.quiz.notSeen}`) }),
+    ).not.toBeInTheDocument()
 
     const first = screen.getByText('Quiz 278').closest('li')!
-    await userEvent.click(within(first).getByRole('button', { name: he.quiz.notSeen }))
+    await userEvent.click(
+      within(first).getByRole('button', { name: `${he.quiz.notSeen} Quiz 278` }),
+    )
     expect(within(first).queryByRole('slider')).not.toBeInTheDocument()
     expect(screen.getAllByRole('slider')).toHaveLength(8)
 
     // Only a rating made in this visit is sent (not the existing 7, not the skipped one).
-    fireEvent.change(screen.getAllByRole('slider')[0], { target: { value: '6' } })
+    fireEvent.change(screen.getAllByRole('slider')[0], {
+      target: { value: '6' },
+    })
     await userEvent.click(done())
     await screen.findByText('HOME')
     expect(posts(fake)[0][1]).toMatchObject({
@@ -172,8 +243,10 @@ describe('TasteQuizPage', () => {
     const sliders = await screen.findAllByRole('slider')
     fireEvent.change(sliders[0], { target: { value: '9' } })
     const first = screen.getByText('Quiz 278').closest('li')!
-    await userEvent.click(within(first).getByRole('button', { name: he.quiz.notSeen }))
-    expect(screen.getByText(progress(0))).toBeInTheDocument()
+    await userEvent.click(
+      within(first).getByRole('button', { name: `${he.quiz.notSeen} Quiz 278` }),
+    )
+    expect(progressLine()).toBe(progress(0))
     await userEvent.click(done())
     await screen.findByText('HOME')
     expect(posts(fake)[0][1]).toMatchObject({ body: { ratings: [] } })
@@ -185,6 +258,40 @@ describe('TasteQuizPage', () => {
     await userEvent.click(screen.getByRole('button', { name: he.quiz.skip }))
     await screen.findByText('HOME')
     expect(posts(fake)).toHaveLength(0)
+  })
+
+  it('disables Skip for now while the save is pending', async () => {
+    let finishSave: () => void = () => {}
+    const pending = new Promise<OnboardingState>((resolve) => {
+      finishSave = () => resolve(ONBOARDING_STATE)
+    })
+    setup(ONBOARDING_STATE, { 'POST /onboarding': () => pending })
+    await pick('action', 'drama', 'comedy')
+    await userEvent.click(done())
+    const skip = screen.getByRole('button', { name: he.quiz.skip })
+    await vi.waitFor(() => expect(skip).toBeDisabled())
+    expect(done()).toBeDisabled()
+    finishSave()
+    await screen.findByText('HOME')
+  })
+
+  it('still refreshes the lists when the page was left while saving', async () => {
+    let finishSave: () => void = () => {}
+    const pending = new Promise<OnboardingState>((resolve) => {
+      finishSave = () => resolve(ONBOARDING_STATE)
+    })
+    const { client, unmount } = setup(ONBOARDING_STATE, {
+      'POST /onboarding': () => pending,
+    })
+    const invalidate = vi.spyOn(client, 'invalidateQueries')
+    await pick('action', 'drama', 'comedy')
+    await userEvent.click(done())
+    unmount()
+    finishSave()
+    await vi.waitFor(() => {
+      const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey)
+      expect(keys).toEqual(expect.arrayContaining([['me'], ['posts'], ['title'], ['wishlist']]))
+    })
   })
 
   it('shows an error and lets you try again when saving fails', async () => {

@@ -5,7 +5,7 @@ import { initI18n, setLocale } from '../i18n'
 import en from '../i18n/en.json'
 import he from '../i18n/he.json'
 import { renderApp } from '../test/renderApp'
-import { TasteLine } from './TasteLine'
+import { TasteChip, TasteLine } from './TasteLine'
 
 vi.mock('../auth/supabase', () => ({ supabase: null }))
 
@@ -81,7 +81,9 @@ describe('TasteLine', () => {
 
   it('names one genre', async () => {
     await setLocale('en')
-    renderApp(<TasteLine taste={{ fit: 80, genres: ['Drama'], agreement: null }} authorName="Gal" />)
+    renderApp(
+      <TasteLine taste={{ fit: 80, genres: ['Drama'], agreement: null }} authorName="Gal" />,
+    )
     expect(lineText()).toBe('80% match · Drama fits you')
   })
 
@@ -102,5 +104,20 @@ describe('TasteLine', () => {
       (b) => b.textContent,
     )
     expect(bdis.sort()).toEqual(['74%', '76%', 'Gal'])
+  })
+
+  // toHaveTextContent normalises whitespace; the space between "83%" and the word must really be there.
+  it.each([
+    ['he', '83% התאמה'],
+    ['en', '83% match'],
+  ] as const)('the pill chip keeps the space in %s', async (lang, expected) => {
+    await setLocale(lang)
+    renderApp(<TasteChip fit={83} />)
+    const chip = screen.getByTestId('taste-chip')
+    expect(chip.textContent).toBe(expected)
+    // One flex item, or the trailing text becomes its own item and its leading space collapses.
+    expect(chip.children).toHaveLength(1)
+    expect(chip.childNodes).toHaveLength(1)
+    expect(chip.querySelector('bdi')?.textContent).toBe('83%')
   })
 })

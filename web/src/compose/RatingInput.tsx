@@ -24,9 +24,12 @@ const BUTTON =
 export function RatingInput({
   value,
   onChange,
+  titleNameId,
 }: {
   value: number | null
   onChange: (value: number) => void
+  /** Id of the element naming the title, when several inputs share a page: "Rating <title>". */
+  titleNameId?: string
 }) {
   const { t } = useTranslation()
   const id = useId()
@@ -39,7 +42,7 @@ export function RatingInput({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between gap-3">
-        <label htmlFor={id} className="text-sm font-medium">
+        <label id={`${id}-label`} htmlFor={id} className="text-sm font-medium">
           {t('compose.rating')}
         </label>
         <bdi aria-hidden="true" className="text-3xl font-extrabold text-ink">
@@ -62,6 +65,7 @@ export function RatingInput({
           max={MAX}
           step={STEP}
           value={value ?? MIDDLE}
+          aria-labelledby={titleNameId ? `${id}-label ${titleNameId}` : undefined}
           aria-valuetext={value === null ? t('compose.ratingUnset') : value.toFixed(1)}
           onChange={(e) => {
             const next = valid(Number(e.target.value))
