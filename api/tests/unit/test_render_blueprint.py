@@ -8,6 +8,18 @@ BLUEPRINT = Path(__file__).resolve().parents[3] / "render.yaml"
 API_URL = "https://cinecircle-server.onrender.com"
 WEB_URL = "https://cinecircle-web.onrender.com"
 SECRET_KEYS = ("DATABASE_URL", "TMDB_API_KEY", "OMDB_API_KEY")
+# The only env vars that may carry a literal `value:`; anything new (a secret) must fail here.
+VALUE_ALLOWLIST = {
+    "APP_ENV",
+    "CORS_ORIGINS",
+    "SUPABASE_URL",
+    "PYTHON_VERSION",
+    "UV_PYTHON_DOWNLOADS",
+    "NODE_VERSION",
+    "VITE_API_URL",
+    "VITE_SUPABASE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+}
 
 
 def _text() -> str:
@@ -43,6 +55,20 @@ def test_blueprint_keeps_secrets_out():
         assert forbidden not in text, forbidden
     assert "postgres://" not in text
     assert "postgresql://" not in text
+    assert "eyJ" not in text  # a JWT (service-role or anon key) would start like this
+
+
+def test_only_allowlisted_env_vars_carry_a_value():
+    text = _text()
+    keys = re.findall(r"^\s*- key: (\w+)\s*$", text, re.MULTILINE)
+    assert set(SECRET_KEYS) <= set(keys)
+    for key in keys:
+        if "value:" in _env_block(key):
+            assert key in VALUE_ALLOWLIST, f"{key} has a literal value"
+
+
+def test_publishable_key_is_the_publishable_one():
+    assert _value("VITE_SUPABASE_PUBLISHABLE_KEY").startswith("sb_publishable_")
 
 
 def test_blueprint_is_production():
@@ -68,3 +94,14 @@ def test_blueprint_points_web_at_the_api():
     assert _value("CORS_ORIGINS") == WEB_URL
     for key in ("VITE_API_URL", "CORS_ORIGINS"):
         assert not _value(key).endswith("/")
+
+
+def test_blueprint_pins_the_tested_setup():
+    text = _text()
+    assert "rootDir: api" in text
+    assert ".venv/bin/uvicorn" in text
+    assert "staticPublishPath: web/dist" in text
+    assert _value("PYTHON_VERSION") == "3.14.6"
+    assert _value("NODE_VERSION") == "22"
+    # A Python mismatch must fail the build, not download an interpreter missing at runtime.
+    assert _value("UV_PYTHON_DOWNLOADS") == "never"

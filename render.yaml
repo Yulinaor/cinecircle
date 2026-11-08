@@ -22,6 +22,10 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.14.6
+      # A Python mismatch fails the build instead of downloading an interpreter that
+      # would not exist at runtime.
+      - key: UV_PYTHON_DOWNLOADS
+        value: never
       - key: APP_ENV
         value: production
       - key: CORS_ORIGINS
