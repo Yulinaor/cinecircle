@@ -112,6 +112,23 @@ To stop the database: `npm run db:stop`. To rebuild it from the migrations: `npm
 
 GitHub Actions runs the same checks on every push (`.github/workflows/ci.yml`).
 
+## Deploy
+
+CineCircle runs on Render's free plan (API and static web app, from `render.yaml`) with the hosted Supabase project `jmccdivicqpmkrmymkwh`. Do these steps in order. Nothing secret is in git.
+
+1. **Database URL.** In the Supabase dashboard open **Database settings → Reset database password**, set a new password and keep it. Then click **Connect → Transaction pooler** and copy the connection string (port 6543); replace `[YOUR-PASSWORD]` with that password.
+2. **Render.** [New → Blueprint](https://dashboard.render.com/blueprints), pick this repository and branch `main`. Render lists two services, `cinecircle-server` and `cinecircle-web`, and asks for three values once: `DATABASE_URL` (the string from step 1), `TMDB_API_KEY` and `OMDB_API_KEY`. Apply. The first build takes a few minutes.
+3. **Supabase Auth → URL configuration.** Set **Site URL** to `https://cinecircle-web.onrender.com` and add the same address under **Redirect URLs**.
+4. **Google sign-in.** In [Google Cloud Console](https://console.cloud.google.com/apis/credentials) create an OAuth client of type **Web application** with the authorized redirect URI `https://jmccdivicqpmkrmymkwh.supabase.co/auth/v1/callback`. Paste its client id and secret into **Supabase Auth → Providers → Google** and enable it.
+5. **Check.** Run `npm run smoke:prod`. It sends a few read-only requests and needs no sign-in and no key. Then sign in once with Google in the browser.
+
+Good to know:
+
+- **Email sign-up.** Supabase's built-in email reaches only members of the Supabase project's team, and at most 2 messages per hour. Friends should use Google sign-in, unless custom SMTP is added under Auth → SMTP settings.
+- **Sleeping.** The free API sleeps after 15 minutes without traffic; the first request afterwards takes up to a minute, and the app shows a waking banner meanwhile.
+- **Never run `npm run fake:load` against the cloud database.** It is for the local database only (the loader refuses non-local hosts).
+- The web app and the API redeploy only when their own files change. The secret/service key of Supabase is not used anywhere; only the publishable key is in `render.yaml`.
+
 ## Fake data and notebooks
 
 | Command | What it does |
