@@ -41,8 +41,10 @@ Every route except `/live` and `/health` requires sign-in: `test_every_route_req
 ## R5 — who can see what
 
 The SQL matrix runs one probe per R5 row as four people: Gal (owner), Dana (approved follower),
-Noa (stranger) and Ron (pending request, who must see what a stranger sees). Each probe is the
-same query the API runs. It is `test_r5_visibility`, parametrised by row and viewer. The API
+Noa (stranger) and Ron (pending request, who must see what a stranger sees). Each probe is a query equivalent to what the API runs, written out in the
+test file, except the stats probes, which reuse the API's own SQL (`MY_CTE` and `_AGREEMENTS`) as
+it is. Probes run as the viewer through `as_user`, the same way the API switches roles. It is
+`test_r5_visibility`, parametrised by row and viewer. The API
 matrix (`test_api_matrix`) then calls 20 endpoints as each of the four and checks that sentinel
 strings planted in Gal's private data (bio, shared and private opinions, wishlist title) appear
 only in the responses of people allowed to see them, and that the expected 404s are 404 and never
