@@ -297,6 +297,20 @@ def test_loader_refuses_remote_hosts(ds):
             assert_local(make_engine(url))
 
 
+def test_assert_local_refuses_a_remote_pghostaddr(monkeypatch):
+    """libpq lets PGHOSTADDR override the URL's host, so a local-looking URL can still connect
+    out. The environment counts like the `hostaddr=` query option."""
+    engine = make_engine("postgresql+psycopg://u:p@127.0.0.1:55322/x")
+    monkeypatch.setenv("PGHOSTADDR", "203.0.113.9")
+    with pytest.raises(NotLocal):
+        assert_local(engine)
+    for local in ("127.0.0.1", "::1"):
+        monkeypatch.setenv("PGHOSTADDR", local)
+        assert_local(engine)  # does not raise
+    monkeypatch.delenv("PGHOSTADDR")
+    assert_local(engine)  # does not raise
+
+
 @pytest.mark.parametrize("host", ["127.0.0.1", "localhost", "[::1]"])
 def test_loader_accepts_local_hosts(host):
     assert_local(make_engine(f"postgresql+psycopg://u:p@{host}:55322/x"))  # does not raise

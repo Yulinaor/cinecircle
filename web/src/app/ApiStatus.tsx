@@ -11,6 +11,22 @@ const DOT: Record<Status, string> = {
 export function ApiStatus() {
   const { t } = useTranslation()
   const status = useApiStatus()
+  if (status === 'waking') {
+    // The free server takes a while to wake, so say so where it can be seen on a phone, not in a
+    // dot. `fixed` keeps it out of the layout; 4.5rem clears the header (two 44 px controls
+    // plus padding and border), and the banner can never be wider than the screen.
+    return (
+      <>
+        <span aria-hidden="true" className={`size-2.5 shrink-0 rounded-full ${DOT[status]}`} />
+        <p
+          role="status"
+          className="fixed inset-x-4 top-[4.5rem] z-20 rounded-xl border border-amber-500 bg-amber-50 px-4 py-2 text-center text-sm font-medium text-ink shadow-sm"
+        >
+          {t('api.waking')}
+        </p>
+      </>
+    )
+  }
   return (
     <span
       role="status"
