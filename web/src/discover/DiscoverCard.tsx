@@ -5,7 +5,8 @@ import { TasteChip } from '../taste/TasteLine'
 
 /**
  * One external title in a Discover row; the whole card links to the resolver, which caches the
- * title and lands on its page. Its rating names its source (R4.2): IMDb when we have it, else TMDB.
+ * title and lands on its page. Its rating names its source (R4.2): IMDb when we have it, else TMDB;
+ * with neither, a muted "TMDB —" holds the place.
  */
 export function DiscoverCard({ item }: { item: DiscoverItem }) {
   const rating =
@@ -38,10 +39,14 @@ export function DiscoverCard({ item }: { item: DiscoverItem }) {
           <bdi>{item.year}</bdi>
         </span>
       )}
-      {rating && (
+      {rating ? (
         <span className="text-xs">
           <span className="text-muted">{rating.source}</span>{' '}
           <bdi className="font-bold">{rating.value.toFixed(1)}</bdi>
+        </span>
+      ) : (
+        <span className="text-xs text-muted">
+          TMDB <bdi>—</bdi>
         </span>
       )}
       {item.taste && (
