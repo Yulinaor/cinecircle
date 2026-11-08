@@ -25,7 +25,13 @@ _SET_SUB = sa.text("SELECT set_config('request.jwt.claim.sub', :sub, true)")
 
 def make_engine(database_url: str) -> Engine:
     """Create a lazy engine: no connection is opened until first use."""
-    return sa.create_engine(database_url, pool_pre_ping=True, connect_args={"connect_timeout": 3})
+    # prepare_threshold=None: Supavisor's transaction pooler cannot keep server-side prepared
+    # statements, and psycopg would otherwise prepare a query after its fifth use.
+    return sa.create_engine(
+        database_url,
+        pool_pre_ping=True,
+        connect_args={"connect_timeout": 3, "prepare_threshold": None},
+    )
 
 
 def check_db(engine: Engine) -> DbStatus:

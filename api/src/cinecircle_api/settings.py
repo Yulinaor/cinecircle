@@ -36,6 +36,18 @@ class Settings(BaseSettings):
             return value.strip() or None
         return value
 
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def _use_psycopg_driver(cls, value: object) -> object:
+        # The Supabase dashboard gives postgres:// or postgresql://, which SQLAlchemy would
+        # take to mean psycopg2. Only the scheme changes; the rest (password included) is kept.
+        if isinstance(value, str):
+            value = value.strip()
+            for scheme in ("postgres://", "postgresql://"):
+                if value.startswith(scheme):
+                    return "postgresql+psycopg://" + value[len(scheme) :]
+        return value
+
     @field_validator("supabase_url", mode="before")
     @classmethod
     def _clean_supabase_url(cls, value: object) -> object:

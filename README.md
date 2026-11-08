@@ -36,7 +36,7 @@ Copy the example environment files:
 
 The defaults point at the local database (port 55322) and the local API (port 8000). Sign-in needs a few more values; see [Sign-in setup](#sign-in-setup).
 
-The local Supabase ports are 553xx (API 55321, database 55322, Studio 55323), so CineCircle can run next to another local Supabase project on the default 543xx ports. `DATABASE_URL` must start with `postgresql+psycopg://`; a plain `postgres://` URL is rejected.
+The local Supabase ports are 553xx (API 55321, database 55322, Studio 55323), so CineCircle can run next to another local Supabase project on the default 543xx ports. `DATABASE_URL` may be copied as `postgres://…` from the Supabase dashboard; the API adds the driver. For a hosted project use the **Transaction pooler** string (port 6543).
 
 The first `npm run db:start` downloads several GB of Docker images; later starts take seconds.
 
