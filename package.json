@@ -8,6 +8,7 @@
     "api:lint": "uv --directory api run ruff check . && uv --directory api run ruff format --check .",
     "api:test:integration": "uv --directory api run pytest tests/integration -m integration",
     "fake:load": "uv --directory api run python -m cinecircle_analysis load",
+    "smoke:prod": "uv --directory api run python scripts/smoke_production.py",
     "fake:wipe": "uv --directory api run python -m cinecircle_analysis wipe",
     "analysis:run": "uv --directory api run --group analysis python -m cinecircle_analysis notebooks",
     "db:start": "supabase start",

@@ -279,7 +279,8 @@
     "fromTmdb": "מתוך TMDB",
     "updated": "עודכן {{when}}",
     "unavailable": "אי אפשר לטעון את ״גלו״ כרגע. נסו שוב בעוד כמה דקות.",
-    "allGenres": "כל הז׳אנרים"
+    "allGenres": "כל הז׳אנרים",
+    "noRating": "אין דירוג"
   },
   "reviews": {
     "heading": "ביקורות",

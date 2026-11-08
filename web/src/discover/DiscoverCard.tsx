@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import type { DiscoverItem } from '../api/types'
 import { LangLabel } from '../i18n/LangLabel'
@@ -5,9 +6,11 @@ import { TasteChip } from '../taste/TasteLine'
 
 /**
  * One external title in a Discover row; the whole card links to the resolver, which caches the
- * title and lands on its page. Its rating names its source (R4.2): IMDb when we have it, else TMDB.
+ * title and lands on its page. Its rating names its source (R4.2): IMDb when we have it, else TMDB;
+ * with neither, a muted "TMDB —" holds the place.
  */
 export function DiscoverCard({ item }: { item: DiscoverItem }) {
+  const { t } = useTranslation()
   const rating =
     item.imdb_rating !== null
       ? { source: 'IMDb', value: item.imdb_rating }
@@ -38,10 +41,16 @@ export function DiscoverCard({ item }: { item: DiscoverItem }) {
           <bdi>{item.year}</bdi>
         </span>
       )}
-      {rating && (
+      {rating ? (
         <span className="text-xs">
           <span className="text-muted">{rating.source}</span>{' '}
           <bdi className="font-bold">{rating.value.toFixed(1)}</bdi>
+        </span>
+      ) : (
+        <span className="text-xs text-muted">
+          TMDB{' '}
+          <bdi aria-hidden="true">—</bdi>
+          <span className="sr-only">{t('discover.noRating')}</span>
         </span>
       )}
       {item.taste && (

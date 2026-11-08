@@ -51,6 +51,21 @@ export function DiscoverPage() {
   })
   const page = query.data
 
+  // The chips outlive a failed filtered fetch: remember the last genres seen for this media type
+  // and language (genre names are in the UI language), so the user can still clear the genre (a
+  // failed query has no data, not even the placeholder).
+  const [seen, setSeen] = useState<{
+    type: MediaType
+    lang: string
+    genres: DiscoverPageData['genres']
+  } | null>(null)
+  // Placeholder data is the previous query's page (possibly the other language): never remember it.
+  const changed = seen?.type !== type || seen.lang !== lang || seen.genres !== page?.genres
+  if (page && !query.isPlaceholderData && changed) {
+    setSeen({ type, lang, genres: page.genres })
+  }
+  const genres = page?.genres ?? (seen?.type === type && seen.lang === lang ? seen.genres : [])
+
   const pickType = (next: MediaType) => {
     if (next === type) return
     setType(next)
@@ -74,8 +89,8 @@ export function DiscoverPage() {
         ))}
       </div>
 
-      {page && page.genres.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+      {genres.length > 0 && (
+        <div className="flex min-w-0 flex-nowrap gap-2 overflow-x-auto pb-1">
           <button
             type="button"
             aria-pressed={genre === null}
@@ -84,7 +99,7 @@ export function DiscoverPage() {
           >
             {t('discover.allGenres')}
           </button>
-          {page.genres.map((g) => (
+          {genres.map((g) => (
             <button
               key={g.id}
               type="button"

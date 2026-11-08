@@ -3,9 +3,11 @@ import { beforeEach, expect, it, vi } from 'vitest'
 import { initI18n, setLocale } from '../i18n'
 import { ApiStatus } from './ApiStatus'
 
-vi.mock('../api/useApiStatus', () => ({ useApiStatus: () => 'waking' }))
+const state = vi.hoisted(() => ({ status: 'waking' }))
+vi.mock('../api/useApiStatus', () => ({ useApiStatus: () => state.status }))
 
 beforeEach(async () => {
+  state.status = 'waking'
   initI18n()
   await setLocale('he')
 })
@@ -15,7 +17,35 @@ it('renders the waking message in Hebrew inside role=status', () => {
   expect(screen.getByRole('status')).toHaveTextContent('מעיר את השרת…')
 })
 
-it('shows only the dot on phones: the text is still there for screen readers', () => {
+it('shows a visible banner while the server is waking', () => {
   render(<ApiStatus />)
-  expect(screen.getByText('מעיר את השרת…')).toHaveClass('sr-only')
+  const banner = screen.getByText('מעיר את השרת…')
+  expect(banner).not.toHaveClass('sr-only')
+  expect(banner).toHaveClass('fixed', 'inset-x-4')
+  // The banner is inside the one live region, so it is announced once, not twice.
+  expect(screen.getByRole('status')).toContainElement(banner)
+  expect(screen.getAllByText('מעיר את השרת…')).toHaveLength(1)
+})
+
+it('keeps one status node as the state changes, so the waking text is announced', () => {
+  state.status = 'checking'
+  const { rerender } = render(<ApiStatus />)
+  const node = screen.getByRole('status')
+  expect(node).not.toHaveTextContent('מעיר את השרת…')
+  state.status = 'waking'
+  rerender(<ApiStatus />)
+  expect(screen.getByRole('status')).toBe(node)
+  expect(node).toHaveTextContent('מעיר את השרת…')
+  state.status = 'connected'
+  rerender(<ApiStatus />)
+  expect(screen.getByRole('status')).toBe(node)
+  expect(screen.getByText('מחובר')).toHaveClass('sr-only')
+})
+
+it('shows no banner once connected, only the dot with its text for screen readers', () => {
+  state.status = 'connected'
+  render(<ApiStatus />)
+  expect(screen.getByRole('status')).toBeInTheDocument()
+  expect(screen.getByText('מחובר')).toHaveClass('sr-only')
+  expect(document.querySelector('.fixed')).toBeNull()
 })

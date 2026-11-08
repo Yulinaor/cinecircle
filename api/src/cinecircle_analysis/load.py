@@ -5,6 +5,7 @@ any database that is not on this machine before it opens a connection. The app
 (`cinecircle_api`) never imports it.
 """
 
+import os
 from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
 from typing import Any
@@ -32,7 +33,11 @@ class FakeTitleInUse(Exception):
 def assert_local(engine: Engine) -> None:
     """Raise `NotLocal` unless the engine points at this machine. Reads the URL only: no
     connection is made. A `host=`/`hostaddr=` query option overrides the URL's host in libpq, so
-    those count too, and a missing host (a unix socket) is refused as well."""
+    those count too, and a missing host (a unix socket) is refused as well. So does the
+    `PGHOSTADDR` environment variable, which libpq also lets override the URL's host."""
+    env_addr = os.environ.get("PGHOSTADDR")
+    if env_addr and env_addr not in ("127.0.0.1", "::1"):
+        raise NotLocal("refusing to touch the database: PGHOSTADDR is not a local address")
     url = engine.url
     hosts = [url.host]
     for option in ("host", "hostaddr"):

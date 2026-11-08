@@ -61,7 +61,19 @@ describe('useApiStatus', () => {
     expect(fetchHealth).toHaveBeenCalledTimes(2)
   })
 
-  it('goes offline after 60s with no answer and aborts the request', async () => {
+  it('keeps waking through a slow cold start and only goes offline after 90s', async () => {
+    const fetchHealth = vi.fn(() => new Promise<HealthResponse>(() => {}))
+    const { result } = renderHook(() => useApiStatus(fetchHealth))
+    await advance(60000)
+    expect(result.current).toBe('waking')
+    await advance(29999)
+    expect(result.current).toBe('waking')
+    await advance(1)
+    expect(result.current).toBe('offline')
+    expect(OFFLINE_AFTER_MS).toBe(90000)
+  })
+
+  it('goes offline after the give-up time with no answer and aborts the request', async () => {
     const signals: AbortSignal[] = []
     const fetchHealth = vi.fn((signal?: AbortSignal) => {
       if (signal) signals.push(signal)

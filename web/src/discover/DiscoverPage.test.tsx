@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../api/client'
@@ -187,6 +187,96 @@ describe('DiscoverPage', () => {
     expect(
       await screen.findByRole('region', { name: he.discover.section.top_rated }),
     ).toBeInTheDocument()
+  })
+
+  it('keeps the genre chips when a filtered fetch fails', async () => {
+    renderDiscover({
+      [HE_MOVIES]: DISCOVER_PAGE,
+      [`${HE_MOVIES}&genre=28`]: () => {
+        throw new ApiError(503, 'discover_unavailable')
+      },
+    })
+    await userEvent.click(await screen.findByRole('button', { name: 'אקשן' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(he.discover.unavailable)
+    // The chips are still there, so the user can clear the genre and recover.
+    expect(screen.getByRole('button', { name: 'אקשן' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'מדע בדיוני' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: he.discover.allGenres }))
+    expect(
+      await screen.findByRole('region', { name: he.discover.section.trending }),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('does not show old-language chips when a fetch fails after a language switch', async () => {
+    const action: DiscoverPageData = {
+      ...DISCOVER_PAGE,
+      sections: [{ ...DISCOVER_PAGE.sections[0]!, items: [DISCOVER_ITEM] }],
+    }
+    renderDiscover({
+      [HE_MOVIES]: DISCOVER_PAGE,
+      [`${HE_MOVIES}&genre=28`]: action,
+      'GET /discover?type=movie&lang=en&genre=28': () => {
+        throw new ApiError(503, 'discover_unavailable')
+      },
+    })
+    await userEvent.click(await screen.findByRole('button', { name: 'אקשן' }))
+    await vi.waitFor(() =>
+      expect(screen.queryByRole('region', { name: he.discover.section.top_rated })).toBeNull(),
+    )
+    await act(() => setLocale('en'))
+    expect(await screen.findByRole('alert')).toHaveTextContent(en.discover.unavailable)
+    // The remembered chips were Hebrew names; none of them may linger under an English UI.
+    expect(screen.queryByRole('button', { name: 'אקשן' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'מדע בדיוני' })).not.toBeInTheDocument()
+  })
+
+  it('puts the genre chips in one scrolling row', async () => {
+    renderDiscover({ [HE_MOVIES]: DISCOVER_PAGE })
+    const all = await screen.findByRole('button', { name: he.discover.allGenres })
+    const row = all.parentElement!
+    expect(row.className).toContain('overflow-x-auto')
+    expect(row.className).toContain('flex-nowrap')
+    expect(row.className).not.toContain('flex-wrap')
+    for (const chip of Array.from(row.children)) expect(chip.className).toContain('shrink-0')
+  })
+
+  it('shows a muted TMDB dash on unrated cards', async () => {
+    const page: DiscoverPageData = {
+      ...DISCOVER_PAGE,
+      sections: [
+        {
+          key: 'trending',
+          seed: null,
+          items: [{ ...DISCOVER_ITEM, tmdb_rating: null, imdb_rating: null }],
+        },
+      ],
+    }
+    renderDiscover({ [HE_MOVIES]: page })
+    const card = await screen.findByRole('link')
+    expect(card).toHaveTextContent('TMDB —')
+    const dash = within(card).getByText('—', { selector: 'bdi' })
+    expect(dash.parentElement).toHaveClass('text-muted')
+    // The dash is decoration; screen readers get words.
+    expect(dash).toHaveAttribute('aria-hidden', 'true')
+    expect(within(card).getByText(he.discover.noRating)).toHaveClass('sr-only')
+  })
+
+  it('names the missing rating in the UI language', async () => {
+    await setLocale('en')
+    const page: DiscoverPageData = {
+      ...DISCOVER_PAGE,
+      sections: [
+        {
+          key: 'trending',
+          seed: null,
+          items: [{ ...DISCOVER_ITEM, tmdb_rating: null, imdb_rating: null }],
+        },
+      ],
+    }
+    renderDiscover({ 'GET /discover?type=movie&lang=en': page })
+    const card = await screen.findByRole('link')
+    expect(within(card).getByText(en.discover.noRating)).toHaveClass('sr-only')
   })
 
   it('shows the match chip only with taste', async () => {

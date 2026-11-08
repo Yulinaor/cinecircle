@@ -1,0 +1,76 @@
+# Render Blueprint for CineCircle: one API web service and one static site.
+# Secrets are never written here. Render asks for each `sync: false` value once, when the
+# Blueprint is created. Setup steps are in README.md ("Deploy").
+services:
+  - type: web
+    name: cinecircle-server
+    runtime: python
+    region: frankfurt
+    plan: free
+    rootDir: api
+    # The last step removes the fake-data loader: it writes as `postgres` and does not belong
+    # on the production server. The editable install then cannot import it.
+    buildCommand: pip install uv && uv sync --frozen --no-dev && rm -rf src/cinecircle_analysis
+    startCommand: .venv/bin/uvicorn cinecircle_api.main:create_app --factory --host 0.0.0.0 --port $PORT
+    # /live does not touch the database, so a database blip does not restart the service.
+    healthCheckPath: /live
+    buildFilter:
+      paths:
+        - api/**
+      ignoredPaths:
+        - api/tests/**
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.14.6
+      # A Python mismatch fails the build instead of downloading an interpreter that
+      # would not exist at runtime.
+      - key: UV_PYTHON_DOWNLOADS
+        value: never
+      - key: APP_ENV
+        value: production
+      - key: CORS_ORIGINS
+        value: https://cinecircle-web.onrender.com
+      - key: SUPABASE_URL
+        value: https://jmccdivicqpmkrmymkwh.supabase.co
+      - key: DATABASE_URL
+        sync: false
+      - key: TMDB_API_KEY
+        sync: false
+      - key: OMDB_API_KEY
+        sync: false
+
+  - type: web
+    name: cinecircle-web
+    runtime: static
+    buildCommand: npm ci -w web --include=dev && npm -w web run build
+    staticPublishPath: web/dist
+    buildFilter:
+      paths:
+        - web/**
+        - package.json
+        - package-lock.json
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: VITE_API_URL
+        value: https://cinecircle-server.onrender.com
+      - key: VITE_SUPABASE_URL
+        value: https://jmccdivicqpmkrmymkwh.supabase.co
+      # Browser-safe by design (the publishable key). Never put the secret key here.
+      - key: VITE_SUPABASE_PUBLISHABLE_KEY
+        value: sb_publishable_y8gvR7xH2kuW1tZUk3PrtA_HI7Y8ftZ
+    # A deep link or a refresh (/titles/4, /stats) must serve the app, not a 404.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
