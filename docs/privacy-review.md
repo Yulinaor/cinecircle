@@ -153,8 +153,9 @@ These are known and left as they are. Each says what it costs and what would cha
    a remote database still looks local to `assert_local`; the `APP_ENV` check is the second lock,
    and it only protects while the cloud service runs with `APP_ENV=production`, which the smoke
    script confirms from outside (the docs routes are 404 only when `APP_ENV` is not `local`).
-   Also, the loader code (`cinecircle_analysis`) is inside the API package, so it is present
-   on the server even though nothing there calls it.
+   Also, the loader code (`cinecircle_analysis`) sits inside the API package in the repository,
+   but the Render build deletes it (`rm -rf src/cinecircle_analysis` in `render.yaml`), so it is
+   absent on the server.
 3. **Analytics on real users needs a privacy policy first.** The app already logs behaviour for
    every real user into `app.events` (titles viewed, saves, Discover opens and the fit scores
    shown). Those rows are readable only by their owner through the app, but whoever holds the

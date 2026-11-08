@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../api/client'
@@ -208,6 +208,29 @@ describe('DiscoverPage', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
+  it('does not show old-language chips when a fetch fails after a language switch', async () => {
+    const action: DiscoverPageData = {
+      ...DISCOVER_PAGE,
+      sections: [{ ...DISCOVER_PAGE.sections[0]!, items: [DISCOVER_ITEM] }],
+    }
+    renderDiscover({
+      [HE_MOVIES]: DISCOVER_PAGE,
+      [`${HE_MOVIES}&genre=28`]: action,
+      'GET /discover?type=movie&lang=en&genre=28': () => {
+        throw new ApiError(503, 'discover_unavailable')
+      },
+    })
+    await userEvent.click(await screen.findByRole('button', { name: 'אקשן' }))
+    await vi.waitFor(() =>
+      expect(screen.queryByRole('region', { name: he.discover.section.top_rated })).toBeNull(),
+    )
+    await act(() => setLocale('en'))
+    expect(await screen.findByRole('alert')).toHaveTextContent(en.discover.unavailable)
+    // The remembered chips were Hebrew names; none of them may linger under an English UI.
+    expect(screen.queryByRole('button', { name: 'אקשן' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'מדע בדיוני' })).not.toBeInTheDocument()
+  })
+
   it('puts the genre chips in one scrolling row', async () => {
     renderDiscover({ [HE_MOVIES]: DISCOVER_PAGE })
     const all = await screen.findByRole('button', { name: he.discover.allGenres })
@@ -232,7 +255,28 @@ describe('DiscoverPage', () => {
     renderDiscover({ [HE_MOVIES]: page })
     const card = await screen.findByRole('link')
     expect(card).toHaveTextContent('TMDB —')
-    expect(within(card).getByText('—', { selector: 'bdi' }).parentElement).toHaveClass('text-muted')
+    const dash = within(card).getByText('—', { selector: 'bdi' })
+    expect(dash.parentElement).toHaveClass('text-muted')
+    // The dash is decoration; screen readers get words.
+    expect(dash).toHaveAttribute('aria-hidden', 'true')
+    expect(within(card).getByText(he.discover.noRating)).toHaveClass('sr-only')
+  })
+
+  it('names the missing rating in the UI language', async () => {
+    await setLocale('en')
+    const page: DiscoverPageData = {
+      ...DISCOVER_PAGE,
+      sections: [
+        {
+          key: 'trending',
+          seed: null,
+          items: [{ ...DISCOVER_ITEM, tmdb_rating: null, imdb_rating: null }],
+        },
+      ],
+    }
+    renderDiscover({ 'GET /discover?type=movie&lang=en': page })
+    const card = await screen.findByRole('link')
+    expect(within(card).getByText(en.discover.noRating)).toHaveClass('sr-only')
   })
 
   it('shows the match chip only with taste', async () => {

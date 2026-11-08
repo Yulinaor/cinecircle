@@ -5,8 +5,8 @@ export type ApiStatus = 'checking' | 'connected' | 'waking' | 'offline'
 
 /** No answer after this long: the free server is probably waking up. */
 export const WAKING_AFTER_MS = 3000
-/** No answer after this long: give up on this attempt. */
-export const OFFLINE_AFTER_MS = 60000
+/** No answer after this long: give up on this attempt. A free-tier cold start can take over a minute. */
+export const OFFLINE_AFTER_MS = 90000
 /** While offline, try again this often. */
 export const RETRY_EVERY_MS = 15000
 /** While connected, check again this often so the header notices when the server stops. */

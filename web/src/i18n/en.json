@@ -279,7 +279,8 @@
     "fromTmdb": "From TMDB",
     "updated": "Updated {{when}}",
     "unavailable": "Discover can't load right now. Try again in a few minutes.",
-    "allGenres": "All genres"
+    "allGenres": "All genres",
+    "noRating": "No rating"
   },
   "reviews": {
     "heading": "Reviews",

@@ -304,7 +304,7 @@ def test_assert_local_refuses_a_remote_pghostaddr(monkeypatch):
     monkeypatch.setenv("PGHOSTADDR", "203.0.113.9")
     with pytest.raises(NotLocal):
         assert_local(engine)
-    for local in ("127.0.0.1", "::1"):
+    for local in ("127.0.0.1", "::1", ""):  # an empty value is "unset" to libpq
         monkeypatch.setenv("PGHOSTADDR", local)
         assert_local(engine)  # does not raise
     monkeypatch.delenv("PGHOSTADDR")

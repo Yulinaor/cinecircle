@@ -175,6 +175,28 @@ def test_the_scan_follows_imported_chunks():
     assert "/assets/lazy-1.js" in failures[0].detail
 
 
+def _chunk_answers(status: int):
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/assets/index-abc.js":
+            return _js('import("./chunk.js")')
+        if request.url.path == "/assets/chunk.js":
+            return httpx.Response(status, text="nope")
+        return _healthy(request)
+
+    return httpx.Client(transport=httpx.MockTransport(handler))
+
+
+def test_the_scan_still_passes_when_a_guessed_chunk_is_404():
+    assert _run(_chunk_answers(404)) == []
+
+
+@pytest.mark.parametrize("status", [429, 500, 503])
+def test_the_scan_fails_when_a_chunk_answers_anything_but_200_or_404(status):
+    failures = _run(_chunk_answers(status))
+    assert [f.check for f in failures] == [SECRET_CHECK]
+    assert f"/assets/chunk.js answered {status}" in failures[0].detail
+
+
 def test_the_scan_fails_when_there_is_nothing_to_scan():
     def page_without_scripts(request: httpx.Request) -> httpx.Response:
         if request.url.host == "web.test":

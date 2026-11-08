@@ -104,9 +104,10 @@ def _bundle_files(
             return files, f"more than {MAX_BUNDLE_FILES} files; stopped at the limit"
         response = client.get(url, follow_redirects=True)
         if response.status_code != 200:
-            if url in listed:
-                return files, f"{urlparse(url).path} answered {response.status_code}"
-            continue  # a guessed chunk name that does not exist is not a failure
+            if url not in listed and response.status_code == 404:
+                continue  # a guessed chunk name that does not exist is not a failure
+            # Anything else (a 429, a 5xx, a listed script that is gone) leaves the scan incomplete.
+            return files, f"{urlparse(url).path} answered {response.status_code}"
         files[url] = response.text
         queue.extend(_chunk_url(web, url, ref) for ref in _CHUNK_REF.findall(response.text))
     return files, None
