@@ -5,7 +5,7 @@ from pathlib import Path
 
 BLUEPRINT = Path(__file__).resolve().parents[3] / "render.yaml"
 
-API_URL = "https://cinecircle-server.onrender.com"
+API_URL = "https://cinecircle-server-kb2r.onrender.com"
 WEB_URL = "https://cinecircle-web.onrender.com"
 SECRET_KEYS = ("DATABASE_URL", "TMDB_API_KEY", "OMDB_API_KEY")
 # The only env vars that may carry a literal `value:`; anything new (a secret) must fail here.

@@ -320,7 +320,7 @@ def test_smoke_main_exit_codes(monkeypatch, capsys):
 
 
 @pytest.mark.parametrize(
-    "url", ["https://cinecircle-server.onrender.com", "https://cinecircle-web.onrender.com"]
+    "url", ["https://cinecircle-server-kb2r.onrender.com", "https://cinecircle-web.onrender.com"]
 )
 def test_defaults_point_at_the_render_services(url):
     from scripts import smoke_production

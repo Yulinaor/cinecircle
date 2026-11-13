@@ -23,7 +23,7 @@ from urllib.parse import urljoin, urlparse
 
 import httpx
 
-DEFAULT_API = "https://cinecircle-server.onrender.com"
+DEFAULT_API = "https://cinecircle-server-kb2r.onrender.com"
 DEFAULT_WEB = "https://cinecircle-web.onrender.com"
 WAKE_SECONDS = 90  # how long to wait for a sleeping server, by the clock
 WAKE_INTERVAL = 5

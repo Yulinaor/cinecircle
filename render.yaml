@@ -53,7 +53,7 @@ services:
       - key: NODE_VERSION
         value: "22"
       - key: VITE_API_URL
-        value: https://cinecircle-server.onrender.com
+        value: https://cinecircle-server-kb2r.onrender.com
       - key: VITE_SUPABASE_URL
         value: https://jmccdivicqpmkrmymkwh.supabase.co
       # Browser-safe by design (the publishable key). Never put the secret key here.
